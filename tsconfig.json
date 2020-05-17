@@ -2,22 +2,22 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "target": "es5",
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": false,
     "experimentalDecorators": true,
     "lib": [
       "dom",
       "es6",
-      "es5"
+      "es5",
+      "es2017"
     ]
   },
   "include": [
     "./src/**/*"
   ],
   "exclude": [
-    "node_modules",
-    "./test/**/*.spec.ts"
+    "./test/**/*"
   ],
   "compileOnSave": false
 }

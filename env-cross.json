@@ -1,0 +1,3 @@
+{
+  "TS_NODE_COMPILER_OPTIONS": { "module": "commonjs" }
+}
