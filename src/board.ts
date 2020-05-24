@@ -1,14 +1,14 @@
-type BoardConfig = {
+export type BoardConfig = {
   x: number;
   y: number;
 };
 
-type ColumnType = {
+export type ColumnType = {
   id: string;
   value: object;
 };
 
-type RowType = {
+export type RowType = {
   [index: number]: ColumnType;
 };
 
@@ -27,7 +27,7 @@ class Board {
     for (let rowIndex = 0; rowIndex < x; rowIndex += 1) {
       const row = [];
       for (let columnIndex = 0; columnIndex < y; columnIndex += 1) {
-        row.push({ id: `${rowIndex + 1}_${columnIndex + 1}`, value: null });
+        row.push({ id: `${rowIndex}_${columnIndex}`, value: null });
       }
       this.board.push(row);
     }
