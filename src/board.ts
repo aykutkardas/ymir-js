@@ -59,7 +59,7 @@ class Board {
     for (let rowIndex = 0; rowIndex < x; rowIndex += 1) {
       const row = [];
       for (let columnIndex = 0; columnIndex < y; columnIndex += 1) {
-        row.push({ id: `${rowIndex}_${columnIndex}`, value: null });
+        row.push({ id: `${rowIndex}|${columnIndex}`, value: null });
       }
       board.push(row);
     }
