@@ -35,20 +35,4 @@ describe('Board Tests', () => {
       [{ id: '4|0', value: null }, { id: '4|1', value: null }, { id: '4|2', value: null }],
     ]);
   });
-
-  it('Positions on 3x3 Board', () => {
-    const positions = new Board().init({ x: 3, y: 3 }).positions;
-
-    expect(positions).to.deep.equal({
-      ET: ['0|1'],
-      EL: ['1|0'],
-      EB: ['2|1'],
-      ER: ['1|2'],
-      C: ['1|1'],
-      CTL: ['0|0'],
-      CTR: ['0|2'],
-      CBR: ['2|2'],
-      CBL: ['2|0']
-    });
-  });
 });
