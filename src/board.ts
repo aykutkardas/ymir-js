@@ -1,3 +1,5 @@
+import useCoord from './utils/useCoord';
+
 export type BoardConfig = {
   x: number;
   y: number;
@@ -58,8 +60,8 @@ class Board {
 
     for (let rowIndex = 0; rowIndex < x; rowIndex += 1) {
       const row = [];
-      for (let columnIndex = 0; columnIndex < y; columnIndex += 1) {
-        row.push({ id: `${rowIndex}|${columnIndex}`, value: null });
+      for (let colIndex = 0; colIndex < y; colIndex += 1) {
+        row.push({ id: `${rowIndex}|${colIndex}`, value: null });
       }
       board.push(row);
     }
@@ -82,41 +84,49 @@ class Board {
 
     // [TODO]: Find a way to write shorter.
     board.forEach((row, rowId) => {
-      row.forEach((column, columnId) => {
+      row.forEach((col, colId) => {
         const isFirstRow = rowId === 0;
-        const isFirstColumn = columnId === 0;
+        const isFirstCol = colId === 0;
         const isLastRow = rowId === board.length - 1;
-        const isLastColumn = columnId === row.length - 1;
+        const isLastCol = colId === row.length - 1;
 
         if (isFirstRow) {
-          if (isFirstColumn) {
-            positions.CTL.push(column.id);
-          } else if (isLastColumn) {
-            positions.CTR.push(column.id);
+          if (isFirstCol) {
+            positions.CTL.push(col.id);
+          } else if (isLastCol) {
+            positions.CTR.push(col.id);
           } else if (isFirstRow) {
-            positions.ET.push(column.id);
+            positions.ET.push(col.id);
           }
         } else if (!isFirstRow && !isLastRow) {
-          if (isFirstColumn) {
-            positions.EL.push(column.id);
-          } else if (isLastColumn) {
-            positions.ER.push(column.id);
+          if (isFirstCol) {
+            positions.EL.push(col.id);
+          } else if (isLastCol) {
+            positions.ER.push(col.id);
           } else {
-            positions.C.push(column.id);
+            positions.C.push(col.id);
           }
         } else if (isLastRow) {
-          if (isFirstColumn) {
-            positions.CBL.push(column.id);
-          } else if (isLastColumn) {
-            positions.CBR.push(column.id);
+          if (isFirstCol) {
+            positions.CBL.push(col.id);
+          } else if (isLastCol) {
+            positions.CBR.push(col.id);
           } else {
-            positions.EB.push(column.id);
+            positions.EB.push(col.id);
           }
         }
       });
     });
 
     return positions;
+  };
+
+
+  isExistCoord = (id: string): boolean => {
+    const { x, y } = this.config;
+    const [rowId, colId] = useCoord(id);
+
+    return (rowId >= 0 && rowId < y && colId >= 0 && colId < x);
   };
 }
 
