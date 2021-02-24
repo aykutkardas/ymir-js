@@ -1,4 +1,4 @@
-import useCoord from './utils/useCoord';
+import useCoord from "./utils/useCoord";
 
 export type BoardConfig = {
   x: number;
@@ -47,7 +47,7 @@ class Board {
     const { x, y } = this.config;
     const [rowId, colId] = useCoord(id);
 
-    return (rowId >= 0 && rowId < y && colId >= 0 && colId < x);
+    return rowId >= 0 && rowId < x && colId >= 0 && colId < y;
   };
 }
 
