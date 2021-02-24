@@ -12,20 +12,29 @@ const boardElement = document.createElement("div");
 boardElement.setAttribute("class", "board");
 
 const appElement = document.querySelector(".app");
+appElement.append(boardElement);
 
 board.board.forEach((row) => {
   const rowElement = document.createElement("div");
   rowElement.setAttribute("class", "row");
-  appElement.append(rowElement);
+  boardElement.append(rowElement);
 
   row.forEach((col) => {
     const colElement = document.createElement("div");
     colElement.setAttribute("class", "column");
     colElement.setAttribute("data-coord", col.id);
-    colElement.innerHTML = col.id;
+
+    const itemElement = document.createElement("div");
+    itemElement.setAttribute("class", "item");
+    itemElement.setAttribute("data-coord", col.id);
+    itemElement.innerHTML = col.id;
+
+    colElement.append(itemElement);
+    
     rowElement.append(colElement);
   });
 });
+
 
 const colElements = document.querySelectorAll(".column");
 
