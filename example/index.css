@@ -1,52 +1,55 @@
 body {
-    background-color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    padding: 0;
-    margin: 0;
-    font-family: Arial;
-  }
+  background-color: #b68e8e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  font-family: Arial;
+}
 
-  .board {
-    border: 1px solid #444;
-    background-color: #222;
-  }
+.board {
+}
 
-  .row {
-    display: flex;
-    height: 50px;
-    width: 100%;
-  }
+.row {
+  display: flex;
+  height: 50px;
+  width: 100%;
+  padding: 2px;
+}
 
-  .column {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    border: 1px solid #555;
-    color: white;
-    cursor: pointer;
-    transition: .1s;
-  }
+.column {
+  display: flex;
+  background-color: rgb(255, 255, 255, .5);
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  color: white;
+  cursor: pointer;
+  transition: 0.1s;
+  margin: 2px;
+}
 
-  .column:hover {
-      background-color: blue;
-  }
+.column.available {
+  background-color: #cafcca;
+}
 
-  .column.available {
-      background-color: darkblue;
-  }
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #fff;
+  font-size: 12px;
+  box-shadow: 1px 1px 3px #aaa;
+}
 
-  .item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: #444;
-    font-size: 12px;
-  }
+
+.control {
+  display: flex;
+  flex-direction: column;
+}
