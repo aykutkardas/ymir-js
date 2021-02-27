@@ -1,4 +1,5 @@
 import useCoord from "./utils/useCoord";
+import { ItemType } from "./item";
 
 export type BoardConfig = {
   x: number;
@@ -7,7 +8,7 @@ export type BoardConfig = {
 
 export type ColumnType = {
   id: string;
-  value: object;
+  item: object;
 };
 
 export type RowType = ColumnType[];
@@ -19,6 +20,21 @@ class Board {
 
   board: BoardType = [];
 
+  static createBoard = (config: BoardConfig): BoardType => {
+    const { x, y } = config;
+    const board: BoardType = [];
+
+    for (let rowIndex = 0; rowIndex < x; rowIndex += 1) {
+      const row = [];
+      for (let colIndex = 0; colIndex < y; colIndex += 1) {
+        row.push({ id: `${rowIndex}|${colIndex}`, item: null });
+      }
+      board.push(row);
+    }
+
+    return board;
+  };
+
   init(config: BoardConfig): Board {
     const board = Board.createBoard(config);
 
@@ -28,19 +44,13 @@ class Board {
     return this;
   }
 
-  static createBoard = (config: BoardConfig): BoardType => {
-    const { x, y } = config;
-    const board: BoardType = [];
+  setItemToCoord = (id: string, item: ItemType) => {
+    const isExistCoord = this.isExistCoord(id);
 
-    for (let rowIndex = 0; rowIndex < x; rowIndex += 1) {
-      const row = [];
-      for (let colIndex = 0; colIndex < y; colIndex += 1) {
-        row.push({ id: `${rowIndex}|${colIndex}`, value: null });
-      }
-      board.push(row);
-    }
+    if (!isExistCoord) return;
 
-    return board;
+    const [rowId, colId] = useCoord(id);
+    this.board[rowId][colId].item = item;
   };
 
   isExistCoord = (id: string): boolean => {

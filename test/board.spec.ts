@@ -8,9 +8,9 @@ describe('Board Tests', () => {
     const board = new Board().init({ x: 3, y: 3 }).board;
 
     expect(board).to.deep.equal([
-      [{ id: '0|0', value: null }, { id: '0|1', value: null }, { id: '0|2', value: null }],
-      [{ id: '1|0', value: null }, { id: '1|1', value: null }, { id: '1|2', value: null }],
-      [{ id: '2|0', value: null }, { id: '2|1', value: null }, { id: '2|2', value: null }],
+      [{ id: '0|0', item: null }, { id: '0|1', item: null }, { id: '0|2', item: null }],
+      [{ id: '1|0', item: null }, { id: '1|1', item: null }, { id: '1|2', item: null }],
+      [{ id: '2|0', item: null }, { id: '2|1', item: null }, { id: '2|2', item: null }],
     ]);
   });
 
@@ -18,9 +18,9 @@ describe('Board Tests', () => {
     const board = new Board().init({ x: 3, y: 5 }).board;
 
     expect(board).to.deep.equal([
-      [{ id: '0|0', value: null }, { id: '0|1', value: null }, { id: '0|2', value: null }, { id: '0|3', value: null }, { id: '0|4', value: null }],
-      [{ id: '1|0', value: null }, { id: '1|1', value: null }, { id: '1|2', value: null }, { id: '1|3', value: null }, { id: '1|4', value: null }],
-      [{ id: '2|0', value: null }, { id: '2|1', value: null }, { id: '2|2', value: null }, { id: '2|3', value: null }, { id: '2|4', value: null }],
+      [{ id: '0|0', item: null }, { id: '0|1', item: null }, { id: '0|2', item: null }, { id: '0|3', item: null }, { id: '0|4', item: null }],
+      [{ id: '1|0', item: null }, { id: '1|1', item: null }, { id: '1|2', item: null }, { id: '1|3', item: null }, { id: '1|4', item: null }],
+      [{ id: '2|0', item: null }, { id: '2|1', item: null }, { id: '2|2', item: null }, { id: '2|3', item: null }, { id: '2|4', item: null }],
     ]);
   });
 
@@ -28,11 +28,11 @@ describe('Board Tests', () => {
     const board = new Board().init({ x: 5, y: 3 }).board;
 
     expect(board).to.deep.equal([
-      [{ id: '0|0', value: null }, { id: '0|1', value: null }, { id: '0|2', value: null }],
-      [{ id: '1|0', value: null }, { id: '1|1', value: null }, { id: '1|2', value: null }],
-      [{ id: '2|0', value: null }, { id: '2|1', value: null }, { id: '2|2', value: null }],
-      [{ id: '3|0', value: null }, { id: '3|1', value: null }, { id: '3|2', value: null }],
-      [{ id: '4|0', value: null }, { id: '4|1', value: null }, { id: '4|2', value: null }],
+      [{ id: '0|0', item: null }, { id: '0|1', item: null }, { id: '0|2', item: null }],
+      [{ id: '1|0', item: null }, { id: '1|1', item: null }, { id: '1|2', item: null }],
+      [{ id: '2|0', item: null }, { id: '2|1', item: null }, { id: '2|2', item: null }],
+      [{ id: '3|0', item: null }, { id: '3|1', item: null }, { id: '3|2', item: null }],
+      [{ id: '4|0', item: null }, { id: '4|1', item: null }, { id: '4|2', item: null }],
     ]);
   });
 });
