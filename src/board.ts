@@ -20,6 +20,15 @@ class Board {
 
   board: BoardType = [];
 
+  constructor(config: BoardConfig) {
+    const board = Board.createBoard(config);
+
+    this.config = config;
+    this.board = board;
+
+    return this;
+  }
+
   static createBoard = (config: BoardConfig): BoardType => {
     const { x, y } = config;
     const board: BoardType = [];
@@ -34,15 +43,6 @@ class Board {
 
     return board;
   };
-
-  init(config: BoardConfig): Board {
-    const board = Board.createBoard(config);
-
-    this.config = config;
-    this.board = board;
-
-    return this;
-  }
 
   setItemToCoord = (id: string, item: ItemType) => {
     const isExistCoord = this.isExistCoord(id);

@@ -6,7 +6,7 @@ import { RulesType } from "./item";
 class Rules {
   board: Board = null;
 
-  init(board: Board): Rules {
+  constructor(board: Board) {
     this.board = board;
     return this;
   }

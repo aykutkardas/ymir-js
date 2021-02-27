@@ -6,8 +6,8 @@ import Rules from "../src/rules";
 
 describe("Rules Tests", () => {
   it('getAvaiblableColumn for "0|0" on 3x3 Board', () => {
-    const board = new Board().init({ x: 3, y: 3 });
-    const availableColumn = new Rules().init(board).getAvaiblableColumn("0|0", {
+    const board = new Board({ x: 3, y: 3 });
+    const availableColumn = new Rules(board).getAvaiblableColumn("0|0", {
       movement: {
         stepCount: 1,
         linear: true,
@@ -19,8 +19,8 @@ describe("Rules Tests", () => {
   });
 
   it('getAvaiblableColumn for "1|1" on 3x3 Board', () => {
-    const board = new Board().init({ x: 3, y: 3 });
-    const availableColumn = new Rules().init(board).getAvaiblableColumn("1|1", {
+    const board = new Board({ x: 3, y: 3 });
+    const availableColumn = new Rules(board).getAvaiblableColumn("1|1", {
       movement: {
         stepCount: 1,
         linear: true,

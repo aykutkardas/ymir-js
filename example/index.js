@@ -2,7 +2,7 @@ const Board = require("../dist/board").default;
 const Rules = require("../dist/rules").default;
 const Item = require("../dist/item").default;
 
-const board = new Board().init({
+const board = new Board({
   x: 9,
   y: 9,
 });
@@ -19,7 +19,7 @@ const item = new Item({
 
 board.setItemToCoord("4|4", item);
 
-const rules = new Rules().init(board);
+const rules = new Rules(board);
 
 const boardElement = document.createElement("div");
 boardElement.setAttribute("class", "board");
@@ -41,7 +41,6 @@ board.board.forEach((row) => {
       const itemElement = document.createElement("div");
       itemElement.setAttribute("class", "item");
       itemElement.setAttribute("data-coord", col.id);
-      // itemElement.innerHTML = item.name;
       itemElement._props = item;
 
       colElement.append(itemElement);
