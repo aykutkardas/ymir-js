@@ -21,13 +21,19 @@ board.setItemToCoord("4|4", item);
 
 const rules = new Rules(board);
 
+
+// For Debug
+window.board = board;
+window.rules = rules;
+// -
+
 const boardElement = document.createElement("div");
 boardElement.setAttribute("class", "board");
 
 const appElement = document.querySelector(".app");
 appElement.append(boardElement);
 
-board.board.forEach((row) => {
+board.getBoardMatrix().forEach((row) => {
   const rowElement = document.createElement("div");
   rowElement.setAttribute("class", "row");
   boardElement.append(rowElement);
@@ -59,7 +65,7 @@ function showAvailableCoords() {
   }
 
   const coord = itemElement.dataset.coord;
-  const availableColumns = rules.getAvaiblableColumn(
+  const availableColumns = rules.getAvaiblableColumns(
     coord,
     itemElement._props.rules
   );
@@ -74,7 +80,6 @@ function showAvailableCoords() {
 }
 
 function update() {
-  console.log(1);
   const directionAngularEl = document.querySelector("#direction_angular");
   const directionLinearEl = document.querySelector("#direction_linear");
   const stepCountEl = document.querySelector("#step_count");
@@ -103,5 +108,3 @@ function update() {
 document.querySelector("#direction_angular").addEventListener("change", update);
 document.querySelector("#direction_linear").addEventListener("change", update);
 document.querySelector("#step_count").addEventListener("change", update);
-
-window.update = update;

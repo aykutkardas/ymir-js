@@ -7,18 +7,17 @@ export type BoardConfig = {
 };
 
 export type ColumnType = {
-  id: string;
-  item: object;
+  item: ItemType;
 };
 
-export type RowType = ColumnType[];
-
-export type BoardType = RowType[];
+export type BoardType = {
+  [key: string]: ColumnType;
+};
 
 class Board {
   config: BoardConfig;
 
-  board: BoardType = [];
+  board: BoardType = {};
 
   constructor(config: BoardConfig) {
     const board = Board.createBoard(config);
@@ -31,17 +30,29 @@ class Board {
 
   static createBoard = (config: BoardConfig): BoardType => {
     const { x, y } = config;
-    const board: BoardType = [];
+    const board: BoardType = {};
 
     for (let rowIndex = 0; rowIndex < x; rowIndex += 1) {
-      const row = [];
       for (let colIndex = 0; colIndex < y; colIndex += 1) {
-        row.push({ id: `${rowIndex}|${colIndex}`, item: null });
+        board[`${rowIndex}|${colIndex}`] = { item: null };
       }
-      board.push(row);
     }
 
     return board;
+  };
+
+  getBoardMatrix = () => {
+    const matrix = [];
+    Object.entries(this.board).forEach(([id, data]) => {
+      const [rowId, colId] = useCoord(id);
+      if (matrix[rowId]) {
+        matrix[rowId][colId] = { id, item: data.item };
+      } else {
+        matrix[rowId] = [{ id, item: data.item }];
+      }
+    });
+
+    return matrix;
   };
 
   setItemToCoord = (id: string, item: ItemType) => {
@@ -49,15 +60,11 @@ class Board {
 
     if (!isExistCoord) return;
 
-    const [rowId, colId] = useCoord(id);
-    this.board[rowId][colId].item = item;
+    this.board[id].item = item;
   };
 
   isExistCoord = (id: string): boolean => {
-    const { x, y } = this.config;
-    const [rowId, colId] = useCoord(id);
-
-    return rowId >= 0 && rowId < x && colId >= 0 && colId < y;
+    return !!this.board[id];
   };
 }
 

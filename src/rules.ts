@@ -11,15 +11,15 @@ class Rules {
     return this;
   }
 
-  getAvaiblableColumn = (id: string, rules: RulesType): string[] => {
+  getAvaiblableColumns = (id: string, rules: RulesType): string[] => {
     const [rowId, colId] = useCoord(id);
 
-    const avaiblableColumn = [];
+    const avaiblableColumns = [];
     const stepCount = rules?.movement?.stepCount || 1;
 
     for (let step = 1; step <= stepCount; step++) {
       if (rules?.movement?.linear) {
-        avaiblableColumn.push(
+        avaiblableColumns.push(
           `${rowId - step}|${colId}`,
           `${rowId}|${colId - step}`,
           `${rowId}|${colId + step}`,
@@ -27,7 +27,7 @@ class Rules {
         );
       }
       if (rules?.movement?.angular) {
-        avaiblableColumn.push(
+        avaiblableColumns.push(
           `${rowId - step}|${colId - step}`,
           `${rowId - step}|${colId + step}`,
           `${rowId + step}|${colId - step}`,
@@ -36,7 +36,7 @@ class Rules {
       }
     }
 
-    return avaiblableColumn.filter((coord) => this.board.isExistCoord(coord));
+    return avaiblableColumns.filter((coord) => this.board.isExistCoord(coord));
   };
 }
 
