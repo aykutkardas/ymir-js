@@ -17,6 +17,7 @@ body {
   height: 50px;
   width: 100%;
   padding: 2px;
+  position: relative;
 }
 
 .column {
@@ -30,6 +31,7 @@ body {
   cursor: pointer;
   transition: 0.1s;
   margin: 2px;
+  position: relative;
 }
 
 .column.available {
@@ -52,4 +54,17 @@ body {
 .control {
   display: flex;
   flex-direction: column;
+}
+
+
+.rowLegend{
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  transform:translateY(-50%);
+}
+
+.colLegend{
+  position: absolute;
+  top:-25px;
 }

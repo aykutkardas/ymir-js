@@ -3,8 +3,8 @@ const Rules = require("../dist/rules").default;
 const Item = require("../dist/item").default;
 
 const board = new Board({
-  x: 9,
-  y: 9,
+  x: 5,
+  y: 7,
 });
 
 const item = new Item({
@@ -17,7 +17,7 @@ const item = new Item({
   },
 });
 
-board.setItemToCoord("4|4", item);
+board.setItemToCoord("3|5", item);
 
 const rules = new Rules(board);
 
@@ -27,16 +27,34 @@ boardElement.setAttribute("class", "board");
 const appElement = document.querySelector(".app");
 appElement.append(boardElement);
 
-board.board.forEach((row) => {
+board.board.forEach((row,index) => {
   const rowElement = document.createElement("div");
   rowElement.setAttribute("class", "row");
   boardElement.append(rowElement);
+  
+  // Row legendlerı ekle
+    const rowLegend = document.createElement("span");
+    rowLegend.setAttribute('class','rowLegend');
+    rowLegend.innerHTML=index;
+    rowElement.append(rowLegend);  
+  // Row legendlerı ekle
 
   row.forEach((col) => {
     const colElement = document.createElement("div");
     colElement.setAttribute("class", "column");
     colElement.setAttribute("data-coord", col.id);
-
+   
+    // Col legendlerı ekle
+      const isItFirstRow = col.id.split('|')[0] === '0';
+      const rowNumber = col.id.split('|')[1];
+      const colLegend = document.createElement("span");
+      colLegend.setAttribute('class','colLegend');
+      colLegend.innerHTML=rowNumber
+      if(isItFirstRow){
+        colElement.append(colLegend)
+      }
+    // Col legendlerı ekle
+   
     if (col.item) {
       const itemElement = document.createElement("div");
       itemElement.setAttribute("class", "item");
@@ -59,16 +77,16 @@ function showAvailableCoords() {
   }
 
   const coord = itemElement.dataset.coord;
+
   const availableColumns = rules.getAvaiblableColumn(
     coord,
     itemElement._props.rules
   );
-
+  
   availableColumns.forEach((coord) => {
     const availableColumn = document.querySelector(
       '.column[data-coord="' + coord + '"]'
     );
-
     availableColumn.classList.add("available");
   });
 }
