@@ -44,11 +44,13 @@ function createBoard() {
       colElement.setAttribute("class", "column");
       colElement.setAttribute("data-coord", col.id);
 
-      colElement.addEventListener("click", function (e) {
-        const toId = e.target.dataset.coord;
+      colElement.addEventListener("click", function ({ target }) {
+        const toId = target.dataset.coord;
         const itemElement = document.querySelector(".item");
-        board.moveItemToCoord(itemElement.dataset.coord, toId);
-        update();
+        if (target.classList.contains("available")) {
+          board.moveItemToCoord(itemElement.dataset.coord, toId);
+          update();
+        }
       });
 
       if (col.item) {
