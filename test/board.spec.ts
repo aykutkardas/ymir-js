@@ -65,6 +65,33 @@ describe("Board Tests", () => {
     });
   });
 
+  it("Set Item Method", () => {
+    const board = new Board({ x: 3, y: 3 });
+    const item = new Item({
+      rules: {
+        movement: {
+          angular: true,
+          linear: true,
+          stepCount: 4,
+        },
+      },
+    });
+
+    board.setItemToCoord("0|1", item);
+
+    expect(board.board).to.deep.equal({
+      "0|0": { item: null },
+      "0|1": { item: item },
+      "0|2": { item: null },
+      "1|0": { item: null },
+      "1|1": { item: null },
+      "1|2": { item: null },
+      "2|0": { item: null },
+      "2|1": { item: null },
+      "2|2": { item: null },
+    });
+  });
+
   it("Move Item Method", () => {
     const board = new Board({ x: 3, y: 3 });
     const item = new Item({
