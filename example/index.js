@@ -21,40 +21,51 @@ board.setItemToCoord("4|4", item);
 
 const rules = new Rules(board);
 
-
 // For Debug
 window.board = board;
 window.rules = rules;
 // -
 
-const boardElement = document.createElement("div");
-boardElement.setAttribute("class", "board");
+function createBoard() {
+  const boardElement = document.createElement("div");
+  boardElement.setAttribute("class", "board");
 
-const appElement = document.querySelector(".app");
-appElement.append(boardElement);
+  const appElement = document.querySelector(".app");
+  appElement.innerHTML = "";
+  appElement.append(boardElement);
 
-board.getBoardMatrix().forEach((row) => {
-  const rowElement = document.createElement("div");
-  rowElement.setAttribute("class", "row");
-  boardElement.append(rowElement);
+  board.getBoardMatrix().forEach((row) => {
+    const rowElement = document.createElement("div");
+    rowElement.setAttribute("class", "row");
+    boardElement.append(rowElement);
 
-  row.forEach((col) => {
-    const colElement = document.createElement("div");
-    colElement.setAttribute("class", "column");
-    colElement.setAttribute("data-coord", col.id);
+    row.forEach((col) => {
+      const colElement = document.createElement("div");
+      colElement.setAttribute("class", "column");
+      colElement.setAttribute("data-coord", col.id);
 
-    if (col.item) {
-      const itemElement = document.createElement("div");
-      itemElement.setAttribute("class", "item");
-      itemElement.setAttribute("data-coord", col.id);
-      itemElement._props = item;
+      colElement.addEventListener("click", function (e) {
+        const toId = e.target.dataset.coord;
+        const itemElement = document.querySelector(".item");
+        board.moveItemToCoord(itemElement.dataset.coord, toId);
+        update();
+      });
 
-      colElement.append(itemElement);
-    }
+      if (col.item) {
+        const itemElement = document.createElement("div");
+        itemElement.setAttribute("class", "item");
+        itemElement.setAttribute("data-coord", col.id);
+        itemElement._props = item;
 
-    rowElement.append(colElement);
+        colElement.append(itemElement);
+      }
+
+      rowElement.append(colElement);
+    });
   });
-});
+}
+
+createBoard();
 
 function showAvailableCoords() {
   const itemElement = document.querySelector(".item");
@@ -80,6 +91,7 @@ function showAvailableCoords() {
 }
 
 function update() {
+  createBoard();
   const directionAngularEl = document.querySelector("#direction_angular");
   const directionLinearEl = document.querySelector("#direction_linear");
   const stepCountEl = document.querySelector("#step_count");
