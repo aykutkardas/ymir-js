@@ -45,10 +45,11 @@ class Board {
     const matrix = [];
     Object.entries(this.board).forEach(([id, data]) => {
       const [rowId, colId] = useCoord(id);
+      const item = { id, ...data };
       if (matrix[rowId]) {
-        matrix[rowId][colId] = { id, item: data.item };
+        matrix[rowId][colId] = item;
       } else {
-        matrix[rowId] = [{ id, item: data.item }];
+        matrix[rowId] = [item];
       }
     });
 
