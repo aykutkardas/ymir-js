@@ -77,7 +77,7 @@ describe("Board Tests", () => {
       },
     });
 
-    board.setItemToCoord("0|1", item);
+    board.setItem("0|1", item);
 
     expect(board.board).to.deep.equal({
       "0|0": { item: null },
@@ -104,7 +104,7 @@ describe("Board Tests", () => {
       },
     });
 
-    board.setItemToCoord("0|1", item);
+    board.setItem("0|1", item);
     board.moveItemToCoord("0|1", "1|1");
 
     expect(board.board).to.deep.equal({

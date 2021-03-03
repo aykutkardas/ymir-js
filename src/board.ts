@@ -56,7 +56,7 @@ class Board {
     return matrix;
   };
 
-  setItemToCoord = (id: string, item: ItemType) => {
+  setItem = (id: string, item: ItemType) => {
     const isExistCoord = this.isExistCoord(id);
 
     if (!isExistCoord) return;

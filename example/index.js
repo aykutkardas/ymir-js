@@ -17,7 +17,7 @@ const item = new Item({
   },
 });
 
-board.setItemToCoord("4|4", item);
+board.setItem("4|4", item);
 
 const rules = new Rules(board);
 
