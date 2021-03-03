@@ -64,7 +64,7 @@ class Board {
     this.board[id].item = item;
   };
 
-  moveItemToCoord = (fromId: string, toId: string) => {
+  moveItem = (fromId: string, toId: string) => {
     const item = this.board[fromId].item;
     this.board[fromId].item = null;
     this.board[toId].item = item;

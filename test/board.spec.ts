@@ -105,7 +105,7 @@ describe("Board Tests", () => {
     });
 
     board.setItem("0|1", item);
-    board.moveItemToCoord("0|1", "1|1");
+    board.moveItem("0|1", "1|1");
 
     expect(board.board).to.deep.equal({
       "0|0": { item: null },

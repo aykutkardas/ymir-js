@@ -48,7 +48,7 @@ function createBoard() {
         const toId = target.dataset.coord;
         const itemElement = document.querySelector(".item");
         if (target.classList.contains("available")) {
-          board.moveItemToCoord(itemElement.dataset.coord, toId);
+          board.moveItem(itemElement.dataset.coord, toId);
           update();
         }
       });
