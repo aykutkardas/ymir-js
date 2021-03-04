@@ -65,7 +65,12 @@ class Board {
   };
 
   moveItem = (fromId: string, toId: string) => {
-    const item = this.board[fromId].item;
+    const isExistFromCoord = this.isExistCoord(fromId);
+    const isExistToCoord = this.isExistCoord(toId);
+
+    if (!isExistFromCoord || !isExistToCoord) return;
+
+    const { item } = this.board[fromId];
     this.board[fromId].item = null;
     this.board[toId].item = item;
   };
