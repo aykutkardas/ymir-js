@@ -119,4 +119,11 @@ describe("Board Tests", () => {
       "2|2": { item: null },
     });
   });
+
+  it("getDistanceBetweenTwoCoords Method", () => {
+    const board = new Board({ x: 3, y: 3 });
+    const distance = board.getDistanceBetweenTwoCoords("0|0", "1|1");
+
+    expect(distance).to.deep.equal({ x: 1, y: 1 });
+  });
 });

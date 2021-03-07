@@ -64,6 +64,21 @@ class Board {
     this.board[id].item = item;
   };
 
+  getDistanceBetweenTwoCoords = (
+    fromId: string,
+    toId: string
+  ): { x: number; y: number } => {
+    const isExistFromCoord = this.isExistCoord(fromId);
+    const isExistToCoord = this.isExistCoord(toId);
+
+    if (!isExistFromCoord || !isExistToCoord) return;
+
+    const [fromRowId, fromColId] = useCoord(fromId);
+    const [toRowId, toColId] = useCoord(toId);
+
+    return { y: toRowId - fromRowId, x: toColId - fromColId };
+  };
+
   moveItem = (fromId: string, toId: string) => {
     const isExistFromCoord = this.isExistCoord(fromId);
     const isExistToCoord = this.isExistCoord(toId);
