@@ -64,6 +64,39 @@ class Board {
     this.board[id].item = item;
   };
 
+  deselectAllItems = () => {
+    Object.keys(this.board).forEach((coord) => {
+      const item = this.board[coord].item;
+      if (item) {
+        item.selected = false;
+      }
+    });
+  };
+
+  selectItem = (id: string) => {
+    const isExistCoord = this.isExistCoord(id);
+
+    if (!isExistCoord) return;
+
+    const item = this.board[id].item;
+
+    if (item) {
+      item.selected = true;
+    }
+  };
+
+  deselectItem = (id: string) => {
+    const isExistCoord = this.isExistCoord(id);
+
+    if (!isExistCoord) return;
+
+    const item = this.board[id].item;
+
+    if (item) {
+      item.selected = false;
+    }
+  };
+
   getDistanceBetweenTwoCoords = (
     fromId: string,
     toId: string

@@ -126,4 +126,90 @@ describe("Board Tests", () => {
 
     expect(distance).to.deep.equal({ x: 1, y: 1 });
   });
+
+  it("selectItem Method", () => {
+    const board = new Board({ x: 3, y: 3 });
+    const item = new Item({
+      rules: {
+        movement: {
+          angular: true,
+          linear: true,
+          stepCount: 4,
+        },
+      },
+    });
+
+    board.setItem("0|1", { ...item });
+    board.selectItem("0|1");
+
+    expect(board.board).to.deep.equal({
+      "0|0": { item: null },
+      "0|1": { item: { ...item, selected: true } },
+      "0|2": { item: null },
+      "1|0": { item: null },
+      "1|1": { item: null },
+      "1|2": { item: null },
+      "2|0": { item: null },
+      "2|1": { item: null },
+      "2|2": { item: null },
+    });
+  });
+
+  it("deselectItem Method", () => {
+    const board = new Board({ x: 3, y: 3 });
+    const item = new Item({
+      rules: {
+        movement: {
+          angular: true,
+          linear: true,
+          stepCount: 4,
+        },
+      },
+    });
+
+    board.setItem("0|1", { ...item });
+    board.selectItem("0|1");
+    board.deselectItem("0|1");
+
+    expect(board.board).to.deep.equal({
+      "0|0": { item: null },
+      "0|1": { item: { ...item, selected: false } },
+      "0|2": { item: null },
+      "1|0": { item: null },
+      "1|1": { item: null },
+      "1|2": { item: null },
+      "2|0": { item: null },
+      "2|1": { item: null },
+      "2|2": { item: null },
+    });
+  });
+
+  it("deselectAllItems Method", () => {
+    const board = new Board({ x: 3, y: 3 });
+    const item = new Item({
+      rules: {
+        movement: {
+          angular: true,
+          linear: true,
+          stepCount: 4,
+        },
+      },
+    });
+
+    board.setItem("0|1", { ...item });
+    board.selectItem("0|1");
+    board.deselectAllItems();
+
+    expect(board.board).to.deep.equal({
+      "0|0": { item: null },
+      "0|1": { item: { ...item } },
+      "0|2": { item: null },
+      "1|0": { item: null },
+      "1|1": { item: null },
+      "1|2": { item: null },
+      "2|0": { item: null },
+      "2|1": { item: null },
+      "2|2": { item: null },
+    });
+  });
 });

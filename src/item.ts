@@ -9,15 +9,18 @@ export type RulesType = {
 export type ItemType = {
   name: string;
   lock: boolean;
+  selected: boolean;
   rules: RulesType;
 };
 
 class Item {
-  name: string = "anonymous";
+  name: string;
 
   data: any;
 
   lock: boolean = false;
+
+  selected: boolean = false;
 
   rules: RulesType = {
     movement: {
@@ -28,9 +31,10 @@ class Item {
   };
 
   constructor(item) {
+    this.data = item.data;
     this.name = item.name || this.name;
     this.lock = item.lock || this.lock;
-    this.data = item.data;
+    this.selected = item.selected || this.selected;
 
     if (item?.rules?.movement) {
       this.rules = {
