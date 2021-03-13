@@ -65,7 +65,7 @@ describe("Board Tests", () => {
     });
   });
 
-  it("Set Item Method", () => {
+  it("setItem Method", () => {
     const board = new Board({ x: 3, y: 3 });
     const item = new Item({
       rules: {
@@ -92,7 +92,7 @@ describe("Board Tests", () => {
     });
   });
 
-  it("Move Item Method", () => {
+  it("moveItem Method", () => {
     const board = new Board({ x: 3, y: 3 });
     const item = new Item({
       rules: {
@@ -113,6 +113,51 @@ describe("Board Tests", () => {
       "0|2": { item: null },
       "1|0": { item: null },
       "1|1": { item: item },
+      "1|2": { item: null },
+      "2|0": { item: null },
+      "2|1": { item: null },
+      "2|2": { item: null },
+    });
+  });
+
+  it("switchItem Method", () => {
+    const board = new Board({ x: 3, y: 3 });
+    const firstItem = new Item({
+      data: {
+        color: "black",
+      },
+      rules: {
+        movement: {
+          angular: true,
+          linear: true,
+          stepCount: 4,
+        },
+      },
+    });
+
+    const secondItem = new Item({
+      data: {
+        color: "white",
+      },
+      rules: {
+        movement: {
+          angular: true,
+          linear: true,
+          stepCount: 4,
+        },
+      },
+    });
+
+    board.setItem("0|1", firstItem);
+    board.setItem("1|1", secondItem);
+    board.switchItem("0|1", "1|1");
+
+    expect(board.board).to.deep.equal({
+      "0|0": { item: null },
+      "0|1": { item: secondItem },
+      "0|2": { item: null },
+      "1|0": { item: null },
+      "1|1": { item: firstItem },
       "1|2": { item: null },
       "2|0": { item: null },
       "2|1": { item: null },

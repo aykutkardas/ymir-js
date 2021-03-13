@@ -123,6 +123,19 @@ class Board {
     this.board[toId].item = item;
   };
 
+  switchItem = (fromId: string, toId: string) => {
+    const isExistFromCoord = this.isExistCoord(fromId);
+    const isExistToCoord = this.isExistCoord(toId);
+
+    if (!isExistFromCoord || !isExistToCoord) return;
+
+    const { item: fromItem } = this.board[fromId];
+    const { item: toItem } = this.board[toId];
+
+    this.board[fromId].item = toItem;
+    this.board[toId].item = fromItem;
+  };
+
   isExistCoord = (id: string): boolean => {
     return !!this.board[id];
   };
