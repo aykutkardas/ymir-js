@@ -2,7 +2,6 @@ const Board = require("../dist/board").default;
 const Rules = require("../dist/rules").default;
 const Item = require("../dist/item").default;
 const anime = require("animejs").default;
-console.log(anime);
 
 const board = new Board({
   x: 9,
@@ -35,8 +34,19 @@ const blackItem = new Item({
   },
 });
 
-board.setItem("2|2", whiteItem);
-board.setItem("4|4", blackItem);
+const items = {
+  "3|3": { ...blackItem },
+  "3|4": { ...blackItem },
+  "3|5": { ...whiteItem },
+  "4|3": { ...blackItem, selected: true },
+  "4|4": { ...whiteItem },
+  "4|5": { ...whiteItem },
+  "5|3": { ...whiteItem },
+  "5|4": { ...blackItem },
+  "5|5": { ...blackItem },
+};
+
+Object.keys(items).forEach((coord) => board.setItem(coord, items[coord]));
 
 const rules = new Rules(board);
 
@@ -60,7 +70,7 @@ function createBoard() {
 
       colEl.addEventListener("click", function ({ target }) {
         const toId = target.dataset.coord;
-        const itemEl = document.querySelector(".item[data-color='black']");
+        const itemEl = document.querySelector(".item[data-selected='true']");
         if (target.classList.contains("available")) {
           const distance = board.getDistanceBetweenTwoCoords(
             itemEl.dataset.coord,
@@ -76,14 +86,34 @@ function createBoard() {
           }
 
           const moveAnimation = anime({
-            targets: itemEl,
             ...positions,
+            targets: itemEl,
             easing: "easeInOutQuad",
             duration: 350,
           });
 
-          board.moveItem(itemEl.dataset.coord, toId);
-          moveAnimation.finished.then(update);
+          const switchDistance = board.getDistanceBetweenTwoCoords(
+            toId,
+            itemEl.dataset.coord
+          );
+
+          const switchPositions = {};
+          if (!!switchDistance.x) {
+            switchPositions.left = `calc(${switchDistance.x * 54}px + 50%)`;
+          }
+          if (!!switchDistance.y) {
+            switchPositions.top = `calc(${switchDistance.y * 54}px + 50%)`;
+          }
+
+          const switchMoveAnimation = anime({
+            ...switchPositions,
+            targets: document.querySelector('.item[data-coord="' + toId + '"]'),
+            easing: "easeInOutQuad",
+            duration: 350,
+          });
+
+          board.switchItem(itemEl.dataset.coord, toId);
+          switchMoveAnimation.finished.then(update);
         }
       });
 
@@ -93,7 +123,15 @@ function createBoard() {
         itemEl.style.background = col.item.data.color;
         itemEl.setAttribute("data-color", col.item.data.color);
         itemEl.setAttribute("data-coord", col.id);
+        itemEl.setAttribute("data-selected", col.item.selected);
         itemEl._props = col.item;
+
+        itemEl.addEventListener("click", (e) => {
+          console.log(e.target.dataset.coord);
+          board.deselectAllItems();
+          board.selectItem(e.target.dataset.coord);
+          update();
+        });
 
         colEl.append(itemEl);
       }
@@ -106,7 +144,7 @@ function createBoard() {
 createBoard();
 
 function showAvailableCoords() {
-  const itemEl = document.querySelector(".item[data-color='black']");
+  const itemEl = document.querySelector(".item[data-selected='true']");
   const colEls = document.querySelectorAll(".column");
 
   for (colEl of colEls) {
@@ -130,28 +168,6 @@ function showAvailableCoords() {
 
 function update() {
   createBoard();
-  const directionAngularEl = document.querySelector("#direction_angular");
-  const directionLinearEl = document.querySelector("#direction_linear");
-  const stepCountEl = document.querySelector("#step_count");
-
-  const isAngular = directionAngularEl.checked;
-  const isLinear = directionLinearEl.checked;
-  const stepCount = parseInt(stepCountEl.value);
-
-  const itemEl = document.querySelector(".item");
-
-  const item = new Item({
-    rules: {
-      movement: {
-        angular: isAngular,
-        linear: isLinear,
-        stepCount: stepCount,
-      },
-    },
-  });
-
-  itemEl._props = item;
-
   showAvailableCoords();
 }
 
@@ -161,7 +177,3 @@ window.rules = rules;
 window.update = update;
 window.anime = anime;
 // -
-
-document.querySelector("#direction_angular").addEventListener("change", update);
-document.querySelector("#direction_linear").addEventListener("change", update);
-document.querySelector("#step_count").addEventListener("change", update);

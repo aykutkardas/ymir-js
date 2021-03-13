@@ -21,7 +21,7 @@ body {
 
 .column {
   display: flex;
-  background-color: rgb(255, 255, 255, .5);
+  background-color: rgb(255, 255, 255, 0.5);
   align-items: center;
   justify-content: center;
   width: 50px;
@@ -58,6 +58,9 @@ body {
   left: 50%;
 }
 
+.item[data-selected="true"] {
+  border: 4px solid rgb(255, 231, 113);
+}
 
 .control {
   display: flex;
