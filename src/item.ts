@@ -33,7 +33,7 @@ class Item {
       left: false,
       right: false,
       angular: false,
-      linear: true,
+      linear: false,
       stepCount: 1,
     },
   };
