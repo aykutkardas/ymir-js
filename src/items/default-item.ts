@@ -1,12 +1,13 @@
 export type RulesType = {
   movement: {
-    top: boolean;
-    bottom: boolean;
-    left: boolean;
-    right: boolean;
-    angular: boolean;
-    linear: boolean;
-    stepCount: number;
+    top?: boolean;
+    bottom?: boolean;
+    left?: boolean;
+    right?: boolean;
+    angular?: boolean;
+    linear?: boolean;
+    stepCount?: number;
+    [key: string]: any;
   };
 };
 
@@ -27,15 +28,7 @@ class Item {
   selected: boolean = false;
 
   rules: RulesType = {
-    movement: {
-      top: false,
-      bottom: false,
-      left: false,
-      right: false,
-      angular: false,
-      linear: false,
-      stepCount: 1,
-    },
+    movement: {},
   };
 
   constructor(item) {

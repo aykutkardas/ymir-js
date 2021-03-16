@@ -10,12 +10,7 @@ describe("Rules Tests", () => {
     const availableColumn = new Rules(board).getAvaiblableColumns("1|1", {
       movement: {
         top: true,
-        bottom: false,
-        left: false,
-        right: false,
         stepCount: 1,
-        linear: false,
-        angular: false,
       },
     });
 
@@ -26,13 +21,8 @@ describe("Rules Tests", () => {
     const board = new Board({ x: 3, y: 3 });
     const availableColumn = new Rules(board).getAvaiblableColumns("1|1", {
       movement: {
-        top: false,
         bottom: true,
-        left: false,
-        right: false,
         stepCount: 1,
-        linear: false,
-        angular: false,
       },
     });
 
@@ -43,13 +33,8 @@ describe("Rules Tests", () => {
     const board = new Board({ x: 3, y: 3 });
     const availableColumn = new Rules(board).getAvaiblableColumns("1|1", {
       movement: {
-        top: false,
-        bottom: false,
         left: true,
-        right: false,
         stepCount: 1,
-        linear: false,
-        angular: false,
       },
     });
 
@@ -60,13 +45,8 @@ describe("Rules Tests", () => {
     const board = new Board({ x: 3, y: 3 });
     const availableColumn = new Rules(board).getAvaiblableColumns("1|1", {
       movement: {
-        top: false,
-        bottom: false,
-        left: false,
         right: true,
         stepCount: 1,
-        linear: false,
-        angular: false,
       },
     });
 
@@ -77,13 +57,8 @@ describe("Rules Tests", () => {
     const board = new Board({ x: 3, y: 3 });
     const availableColumn = new Rules(board).getAvaiblableColumns("1|1", {
       movement: {
-        top: false,
-        bottom: false,
-        left: false,
-        right: false,
         stepCount: 1,
         linear: true,
-        angular: false,
       },
     });
 
@@ -94,12 +69,7 @@ describe("Rules Tests", () => {
     const board = new Board({ x: 3, y: 3 });
     const availableColumn = new Rules(board).getAvaiblableColumns("1|1", {
       movement: {
-        top: false,
-        bottom: false,
-        left: false,
-        right: false,
         stepCount: 1,
-        linear: false,
         angular: true,
       },
     });

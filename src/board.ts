@@ -1,5 +1,5 @@
 import useCoord from "./utils/useCoord";
-import { ItemType } from "./item";
+import { ItemType } from "./items/default-item";
 
 export type BoardConfig = {
   x: number;

@@ -1,37 +1,21 @@
 const Board = require("../dist/board").default;
 const Rules = require("../dist/rules").default;
-const Item = require("../dist/item").default;
+const CheckersItem = require("../dist/items/checkers-item").default;
 const anime = require("animejs").default;
 
 const board = new Board({
-  x: 9,
-  y: 9,
+  x: 8,
+  y: 8,
 });
 
-const whiteItem = new Item({
-  data: {
-    color: "white",
-  },
-  rules: {
-    movement: {
-      left: true,
-      linear: false,
-      stepCount: 1,
-    },
-  },
+const whiteItem = new CheckersItem({
+  color: "white",
+  checkersType: "turkish",
 });
 
-const blackItem = new Item({
-  data: {
-    color: "black",
-  },
-  rules: {
-    movement: {
-      right: true,
-      linear: false,
-      stepCount: 1,
-    },
-  },
+const blackItem = new CheckersItem({
+  color: "black",
+  checkersType: "turkish",
 });
 
 const items = {
@@ -85,7 +69,7 @@ function createBoard() {
             positions.top = `calc(${distance.y * 54}px + 50%)`;
           }
 
-          const moveAnimation = anime({
+          anime({
             ...positions,
             targets: itemEl,
             easing: "easeInOutQuad",
@@ -120,8 +104,8 @@ function createBoard() {
       if (col.item) {
         const itemEl = document.createElement("div");
         itemEl.classList.add("item");
-        itemEl.style.background = col.item.data.color;
-        itemEl.setAttribute("data-color", col.item.data.color);
+        itemEl.style.background = col.item.color;
+        itemEl.setAttribute("data-color", col.item.color);
         itemEl.setAttribute("data-coord", col.id);
         itemEl.setAttribute("data-selected", col.item.selected);
         itemEl._props = col.item;

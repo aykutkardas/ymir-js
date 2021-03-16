@@ -2,7 +2,7 @@ import { expect } from "chai";
 import "mocha";
 
 import Board from "../src/board";
-import Item from "../src/item";
+import Item from "../src/items/default-item";
 
 describe("Board Tests", () => {
   it("Square Board 3x3", () => {
@@ -247,7 +247,7 @@ describe("Board Tests", () => {
 
     expect(board.board).to.deep.equal({
       "0|0": { item: null },
-      "0|1": { item: { ...item } },
+      "0|1": { item: item },
       "0|2": { item: null },
       "1|0": { item: null },
       "1|1": { item: null },
