@@ -14,8 +14,8 @@ const whiteItem = new Item({
   },
   rules: {
     movement: {
-      angular: true,
-      linear: true,
+      left: true,
+      linear: false,
       stepCount: 1,
     },
   },
@@ -27,8 +27,8 @@ const blackItem = new Item({
   },
   rules: {
     movement: {
-      angular: true,
-      linear: true,
+      right: true,
+      linear: false,
       stepCount: 1,
     },
   },

@@ -1,5 +1,9 @@
 export type RulesType = {
   movement: {
+    top: boolean;
+    bottom: boolean;
+    left: boolean;
+    right: boolean;
     angular: boolean;
     linear: boolean;
     stepCount: number;
@@ -24,6 +28,10 @@ class Item {
 
   rules: RulesType = {
     movement: {
+      top: false,
+      bottom: false,
+      left: false,
+      right: false,
       angular: false,
       linear: true,
       stepCount: 1,

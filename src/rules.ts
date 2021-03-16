@@ -16,9 +16,22 @@ class Rules {
 
     const avaiblableColumns = [];
     const stepCount = rules?.movement?.stepCount || 1;
+    const movementRules = rules?.movement;
 
     for (let step = 1; step <= stepCount; step++) {
-      if (rules?.movement?.linear) {
+      if (movementRules?.top) {
+        avaiblableColumns.push(`${rowId - step}|${colId}`);
+      }
+      if (movementRules?.bottom) {
+        avaiblableColumns.push(`${rowId + step}|${colId}`);
+      }
+      if (movementRules?.left) {
+        avaiblableColumns.push(`${rowId}|${colId - step}`);
+      }
+      if (movementRules?.right) {
+        avaiblableColumns.push(`${rowId}|${colId + step}`);
+      }
+      if (movementRules?.linear) {
         avaiblableColumns.push(
           `${rowId - step}|${colId}`,
           `${rowId}|${colId - step}`,
@@ -26,7 +39,7 @@ class Rules {
           `${rowId + step}|${colId}`
         );
       }
-      if (rules?.movement?.angular) {
+      if (movementRules?.angular) {
         avaiblableColumns.push(
           `${rowId - step}|${colId - step}`,
           `${rowId - step}|${colId + step}`,
