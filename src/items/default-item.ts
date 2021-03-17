@@ -15,6 +15,7 @@ export type ItemType = {
   lock: boolean;
   selected: boolean;
   rules: RulesType;
+  [key: string]: any;
 };
 
 class Item {
