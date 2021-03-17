@@ -92,6 +92,24 @@ describe("Board Tests", () => {
     });
   });
 
+  it("getItem Method", () => {
+    const board = new Board({ x: 3, y: 3 });
+    const item = new Item({
+      rules: {
+        movement: {
+          angular: true,
+          linear: true,
+          stepCount: 4,
+        },
+      },
+    });
+
+    board.setItem("0|1", item);
+    const _item = board.getItem("0|1");
+
+    expect(_item).to.deep.equal(item);
+  });
+
   it("moveItem Method", () => {
     const board = new Board({ x: 3, y: 3 });
     const item = new Item({
