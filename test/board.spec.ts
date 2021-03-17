@@ -172,6 +172,27 @@ describe("Board Tests", () => {
     expect(distance).to.deep.equal({ x: 1, y: 1 });
   });
 
+  it("isEmpty Method", () => {
+    const board = new Board({ x: 3, y: 3 });
+    const item = new Item({
+      rules: {
+        movement: {
+          angular: true,
+          linear: true,
+          stepCount: 4,
+        },
+      },
+    });
+
+    board.setItem("0|1", item);
+
+    const firstIsEmpty = board.isEmpty("0|1");
+    const secondIsEmpty = board.isEmpty("1|1");
+
+    expect(firstIsEmpty).to.equal(false);
+    expect(secondIsEmpty).to.equal(true);
+  });
+
   it("selectItem Method", () => {
     const board = new Board({ x: 3, y: 3 });
     const item = new Item({

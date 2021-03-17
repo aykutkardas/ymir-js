@@ -64,15 +64,6 @@ class Board {
     this.board[id].item = item;
   };
 
-  deselectAllItems = () => {
-    Object.keys(this.board).forEach((coord) => {
-      const item = this.board[coord].item;
-      if (item) {
-        item.selected = false;
-      }
-    });
-  };
-
   selectItem = (id: string) => {
     const isExistCoord = this.isExistCoord(id);
 
@@ -97,6 +88,15 @@ class Board {
     }
   };
 
+  deselectAllItems = () => {
+    Object.keys(this.board).forEach((coord) => {
+      const item = this.board[coord].item;
+      if (item) {
+        item.selected = false;
+      }
+    });
+  };
+
   getDistanceBetweenTwoCoords = (
     fromId: string,
     toId: string
@@ -110,6 +110,14 @@ class Board {
     const [toRowId, toColId] = useCoord(toId);
 
     return { y: toRowId - fromRowId, x: toColId - fromColId };
+  };
+
+  isEmpty = (id: string): boolean => {
+    const isExistCoord = this.isExistCoord(id);
+
+    if (!isExistCoord) return;
+
+    return !this.board[id].item;
   };
 
   moveItem = (fromId: string, toId: string) => {
