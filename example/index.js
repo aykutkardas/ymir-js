@@ -1,5 +1,5 @@
 const Board = require("../dist/board").default;
-const Rules = require("../dist/rules").default;
+const Rules = require("../dist/rules/checkers-turkish").default;
 const CheckersItem = require("../dist/items/checkers-item").default;
 const anime = require("animejs").default;
 
@@ -10,24 +10,45 @@ const board = new Board({
 
 const whiteItem = new CheckersItem({
   color: "white",
-  checkersType: "turkish",
 });
 
 const blackItem = new CheckersItem({
   color: "black",
-  checkersType: "turkish",
 });
 
 const items = {
-  "3|3": { ...blackItem },
-  "3|4": { ...blackItem },
-  "3|5": { ...whiteItem },
-  "4|3": { ...blackItem, selected: true },
-  "4|4": { ...whiteItem },
-  "4|5": { ...whiteItem },
-  "5|3": { ...whiteItem },
+  "1|0": { ...whiteItem },
+  "1|1": { ...whiteItem },
+  "1|2": { ...whiteItem },
+  "1|3": { ...whiteItem },
+  "1|4": { ...whiteItem },
+  "1|5": { ...whiteItem },
+  "1|6": { ...whiteItem },
+  "1|7": { ...whiteItem },
+  "2|0": { ...whiteItem, king: true },
+  "2|1": { ...whiteItem },
+  "2|2": { ...whiteItem },
+  "2|3": { ...whiteItem },
+  "2|4": { ...whiteItem },
+  "2|5": { ...whiteItem },
+  "2|6": { ...whiteItem },
+  "2|7": { ...whiteItem },
+  "5|0": { ...blackItem, king: true },
+  "5|1": { ...blackItem },
+  "5|2": { ...blackItem },
+  "5|3": { ...blackItem },
   "5|4": { ...blackItem },
   "5|5": { ...blackItem },
+  "5|6": { ...blackItem },
+  "5|7": { ...blackItem },
+  "6|0": { ...blackItem },
+  "6|1": { ...blackItem },
+  "6|2": { ...blackItem },
+  "6|3": { ...blackItem },
+  "6|4": { ...blackItem },
+  "6|5": { ...blackItem },
+  "6|6": { ...blackItem },
+  "6|7": { ...blackItem },
 };
 
 Object.keys(items).forEach((coord) => board.setItem(coord, items[coord]));
@@ -136,10 +157,7 @@ function showAvailableCoords() {
   }
 
   const coord = itemEl.dataset.coord;
-  const availableColumns = rules.getAvaiblableColumns(
-    coord,
-    itemEl._props.rules
-  );
+  const availableColumns = rules.getAvaiblableColumns(coord, itemEl._props);
 
   availableColumns.forEach((coord) => {
     const availableColumn = document.querySelector(
