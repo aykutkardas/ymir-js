@@ -7,7 +7,6 @@ export type RulesType = {
     angular?: boolean;
     linear?: boolean;
     stepCount?: number;
-    [key: string]: any;
   };
 };
 
