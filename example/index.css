@@ -33,6 +33,15 @@ body {
   position: relative;
 }
 
+.column::before {
+  content: attr(data-coord);
+  display: block;
+  opacity: 0.25;
+  color: black;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
 .column.available {
   background-color: #cafcca;
 }
