@@ -1,7 +1,7 @@
 import Board from "../board";
 import useCoord from "../utils/useCoord";
 
-import { RulesType } from "../items/default-item";
+import { MovementType } from "../items/default-item";
 
 class Rules {
   board: Board = null;
@@ -11,27 +11,26 @@ class Rules {
     return this;
   }
 
-  getAvaiblableColumns = (id: string, rules: RulesType): string[] => {
+  getAvaiblableColumns = (id: string, movement: MovementType): string[] => {
     const [rowId, colId] = useCoord(id);
 
     const avaiblableColumns = [];
-    const stepCount = rules?.movement?.stepCount || 1;
-    const movementRules = rules?.movement;
+    const stepCount = movement?.stepCount || 1;
 
     for (let step = 1; step <= stepCount; step++) {
-      if (movementRules?.top) {
+      if (movement?.top) {
         avaiblableColumns.push(`${rowId - step}|${colId}`);
       }
-      if (movementRules?.bottom) {
+      if (movement?.bottom) {
         avaiblableColumns.push(`${rowId + step}|${colId}`);
       }
-      if (movementRules?.left) {
+      if (movement?.left) {
         avaiblableColumns.push(`${rowId}|${colId - step}`);
       }
-      if (movementRules?.right) {
+      if (movement?.right) {
         avaiblableColumns.push(`${rowId}|${colId + step}`);
       }
-      if (movementRules?.linear) {
+      if (movement?.linear) {
         avaiblableColumns.push(
           `${rowId - step}|${colId}`,
           `${rowId}|${colId - step}`,
@@ -39,7 +38,7 @@ class Rules {
           `${rowId + step}|${colId}`
         );
       }
-      if (movementRules?.angular) {
+      if (movement?.angular) {
         avaiblableColumns.push(
           `${rowId - step}|${colId - step}`,
           `${rowId - step}|${colId + step}`,

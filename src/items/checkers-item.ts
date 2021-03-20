@@ -1,6 +1,8 @@
-import Item, { ItemType, RulesType } from "./default-item";
+import Item, { ItemType, MovementType } from "./default-item";
+import { CHECKERS_WHITE, CHECKERS_BLACK } from "../rules/constant";
 
-export type CheckersColorType = "black" | "white";
+export type CheckersColorType = typeof CHECKERS_BLACK | typeof CHECKERS_WHITE;
+
 export interface CheckersItemType extends ItemType {
   color: CheckersColorType;
   king: boolean;
@@ -11,14 +13,24 @@ class CheckersItem extends Item implements CheckersItemType {
 
   king: boolean;
 
-  rules: RulesType;
+  movement: MovementType = {};
 
   constructor(item) {
     super(item);
 
-    this.color = item.color || "black";
+    this.color = item.color || CHECKERS_BLACK;
     this.king = item.king || false;
-    this.rules = item.rules || {};
+    this.movement = item.movement || {};
+
+    if (item.king) {
+      this.movement.linear = true;
+      this.movement.stepCount = 7;
+    } else {
+      const isBlack = this.color === CHECKERS_BLACK;
+      this.movement[isBlack ? "top" : "bottom"] = true;
+      this.movement.left = true;
+      this.movement.right = true;
+    }
   }
 }
 

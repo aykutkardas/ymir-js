@@ -1,5 +1,5 @@
 const Board = require("../dist/board").default;
-const Rules = require("../dist/rules/checkers-turkish").default;
+const Rules = require("../dist/rules/default-rules").default;
 const CheckersItem = require("../dist/items/checkers-item").default;
 const anime = require("animejs").default;
 
@@ -157,7 +157,7 @@ function showAvailableCoords() {
   }
 
   const coord = itemEl.dataset.coord;
-  const availableColumns = rules.getAvaiblableColumns(coord, itemEl._props);
+  const availableColumns = rules.getAvaiblableColumns(coord, itemEl._props.movement);
 
   availableColumns.forEach((coord) => {
     const availableColumn = document.querySelector(
