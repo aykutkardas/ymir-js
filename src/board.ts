@@ -2,6 +2,11 @@ import useCoord from "./utils/useCoord";
 import { ItemType } from "./items/default-item";
 import { CheckersItemType } from "./items/checkers-item";
 
+export type DistanceType = {
+  x: number;
+  y: number;
+};
+
 export type BoardConfig = {
   x: number;
   y: number;
@@ -106,10 +111,29 @@ class Board {
     });
   };
 
+  getDirection = (fromId: string, toId: string): string => {
+    const isExistFromCoord = this.isExistCoord(fromId);
+    const isExistToCoord = this.isExistCoord(toId);
+
+    if (!isExistFromCoord || !isExistToCoord) return;
+
+    const [fromRowId, fromColId] = useCoord(fromId);
+    const [toRowId, toColId] = useCoord(toId);
+
+    if (fromColId > toColId && fromRowId < toRowId) return "leftTop";
+    if (fromColId > toColId && fromRowId > toRowId) return "leftBottom";
+    if (fromColId < toColId && fromRowId < toRowId) return "rightTop";
+    if (fromColId < toColId && fromRowId > toRowId) return "rightBottom";
+    if (fromColId < toColId && fromRowId == toRowId) return "right";
+    if (fromColId > toColId && fromRowId == toRowId) return "left";
+    if (fromColId == toColId && fromRowId > toRowId) return "top";
+    if (fromColId == toColId && fromRowId < toRowId) return "bottom";
+  };
+
   getDistanceBetweenTwoCoords = (
     fromId: string,
     toId: string
-  ): { x: number; y: number } => {
+  ): DistanceType => {
     const isExistFromCoord = this.isExistCoord(fromId);
     const isExistToCoord = this.isExistCoord(toId);
 
