@@ -117,7 +117,23 @@ function createBoard() {
             duration: 350,
           });
 
-          board.switchItem(itemEl.dataset.coord, toId);
+          const coordsOfDestoryItems = rules.getItemsBetweenTwoCoords(
+            itemEl.dataset.coord,
+            toId
+          );
+
+          coordsOfDestoryItems.forEach((coord) => {
+            const destoryAniamtion = anime({
+              opacity: 0,
+              targets: document.querySelector(
+                '.item[data-coord="' + coord + '"]'
+              ),
+              easing: "easeInOutQuad",
+              duration: 350,
+            });
+            destoryAniamtion.finished.then(board.removeItem(coord));
+          });
+          board.moveItem(itemEl.dataset.coord, toId);
           switchMoveAnimation.finished.then(update);
         }
       });

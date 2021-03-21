@@ -10,6 +10,19 @@ class CheckersTurkishRules extends Rules {
     this.rules = new Rules(board);
   }
 
+  // TODO: Write Test
+  getItemsBetweenTwoCoords = (fromId: string, toId: string) => {
+    const direction = this.board.getDirection(fromId, toId);
+    const movement = { stepCount: 1 };
+
+    movement[direction] = true;
+
+    const betweenCoords = this.rules.getAvaiblableColumns(fromId, movement);
+
+    return betweenCoords.filter((coord) => !this.board.isEmpty(coord));
+  };
+
+  // TODO: Write Test
   getAvailableColumns = (id: string, movement: MovementType) => {
     const avaiblableColumns = this.rules.getAvaiblableColumns(id, movement);
     return avaiblableColumns
