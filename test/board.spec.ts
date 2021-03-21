@@ -110,6 +110,25 @@ describe("Board Tests", () => {
     expect(_item).to.deep.equal(item);
   });
 
+  it("removeItem Method", () => {
+    const board = new Board({ x: 3, y: 3 });
+    const item = new Item({
+      rules: {
+        movement: {
+          angular: true,
+          linear: true,
+          stepCount: 4,
+        },
+      },
+    });
+
+    board.setItem("0|1", item);
+    board.removeItem("0|1");
+    const _item = board.getItem("0|1");
+
+    expect(_item).to.deep.equal(null);
+  });
+
   it("moveItem Method", () => {
     const board = new Board({ x: 3, y: 3 });
     const item = new Item({

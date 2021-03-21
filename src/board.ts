@@ -78,6 +78,14 @@ class Board {
     this.board[id].item = item;
   };
 
+  removeItem = (id: string) => {
+    const isExistCoord = this.isExistCoord(id);
+
+    if (!isExistCoord) return;
+
+    this.board[id].item = null;
+  };
+
   selectItem = (id: string) => {
     const isExistCoord = this.isExistCoord(id);
 
