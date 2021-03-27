@@ -32,6 +32,16 @@ class CheckersItem extends Item implements CheckersItemType {
       this.movement.right = true;
     }
   }
+
+  // TODO: Write Test
+  setKing = () => {
+    this.movement = {
+      linear: true,
+      stepCount: 7,
+    };
+
+    this.king = true;
+  };
 }
 
 export default CheckersItem;
