@@ -1,6 +1,7 @@
 const Board = require("../dist/board").default;
 const Rules = require("../dist/rules/checkers-turkish").default;
 const CheckersItem = require("../dist/items/checkers-item").default;
+const useCoord = require("../dist/utils/useCoord").default;
 const anime = require("animejs").default;
 
 const board = new Board({
@@ -8,50 +9,44 @@ const board = new Board({
   y: 8,
 });
 
-const whiteItem = new CheckersItem({
-  color: "white",
-});
-
-const blackItem = new CheckersItem({
-  color: "black",
-});
-
 const items = {
-  "1|0": { ...whiteItem },
-  "1|1": { ...whiteItem },
-  "1|2": { ...whiteItem },
-  "1|3": { ...whiteItem },
-  "1|4": { ...whiteItem },
-  "1|5": { ...whiteItem },
-  "1|6": { ...whiteItem },
-  "1|7": { ...whiteItem },
-  "2|0": { ...whiteItem, king: true },
-  "2|1": { ...whiteItem },
-  "2|2": { ...whiteItem },
-  "2|3": { ...whiteItem },
-  "2|4": { ...whiteItem },
-  "2|5": { ...whiteItem },
-  "2|6": { ...whiteItem },
-  "2|7": { ...whiteItem },
-  "5|0": { ...blackItem, king: true },
-  "5|1": { ...blackItem },
-  "5|2": { ...blackItem },
-  "5|3": { ...blackItem },
-  "5|4": { ...blackItem },
-  "5|5": { ...blackItem },
-  "5|6": { ...blackItem },
-  "5|7": { ...blackItem },
-  "6|0": { ...blackItem },
-  "6|1": { ...blackItem },
-  "6|2": { ...blackItem },
-  "6|3": { ...blackItem },
-  "6|4": { ...blackItem },
-  "6|5": { ...blackItem },
-  "6|6": { ...blackItem },
-  "6|7": { ...blackItem },
+  "1|0": { color: "white" },
+  "1|1": { color: "white" },
+  "1|2": { color: "white" },
+  "1|3": { color: "white" },
+  "1|4": { color: "white" },
+  "1|5": { color: "white" },
+  "1|6": { color: "white" },
+  "1|7": { color: "white" },
+  "2|0": { color: "white" },
+  "2|1": { color: "white" },
+  "2|2": { color: "white" },
+  "2|3": { color: "white" },
+  "2|4": { color: "white" },
+  "2|5": { color: "white" },
+  "2|6": { color: "white" },
+  "2|7": { color: "white" },
+  "5|0": { color: "black" },
+  "5|1": { color: "black" },
+  "5|2": { color: "black" },
+  "5|3": { color: "black" },
+  "5|4": { color: "black" },
+  "5|5": { color: "black" },
+  "5|6": { color: "black" },
+  "5|7": { color: "black" },
+  "6|0": { color: "black" },
+  "6|1": { color: "black" },
+  "6|2": { color: "black" },
+  "6|3": { color: "black" },
+  "6|4": { color: "black" },
+  "6|5": { color: "black" },
+  "6|6": { color: "black" },
+  "6|7": { color: "black" },
 };
 
-Object.keys(items).forEach((coord) => board.setItem(coord, items[coord]));
+Object.keys(items).forEach((coord) =>
+  board.setItem(coord, new CheckersItem(items[coord]))
+);
 
 const rules = new Rules(board);
 
@@ -72,71 +67,7 @@ function createBoard() {
       const colEl = document.createElement("div");
       colEl.setAttribute("class", "column");
       colEl.setAttribute("data-coord", col.id);
-
-      colEl.addEventListener("click", function ({ target }) {
-        const toId = target.dataset.coord;
-        const itemEl = document.querySelector(".item[data-selected='true']");
-        if (target.classList.contains("available")) {
-          const distance = board.getDistanceBetweenTwoCoords(
-            itemEl.dataset.coord,
-            toId
-          );
-
-          const positions = {};
-          if (!!distance.x) {
-            positions.left = `calc(${distance.x * 54}px + 50%)`;
-          }
-          if (!!distance.y) {
-            positions.top = `calc(${distance.y * 54}px + 50%)`;
-          }
-
-          anime({
-            ...positions,
-            targets: itemEl,
-            easing: "easeInOutQuad",
-            duration: 350,
-          });
-
-          const switchDistance = board.getDistanceBetweenTwoCoords(
-            toId,
-            itemEl.dataset.coord
-          );
-
-          const switchPositions = {};
-          if (!!switchDistance.x) {
-            switchPositions.left = `calc(${switchDistance.x * 54}px + 50%)`;
-          }
-          if (!!switchDistance.y) {
-            switchPositions.top = `calc(${switchDistance.y * 54}px + 50%)`;
-          }
-
-          const switchMoveAnimation = anime({
-            ...switchPositions,
-            targets: document.querySelector('.item[data-coord="' + toId + '"]'),
-            easing: "easeInOutQuad",
-            duration: 350,
-          });
-
-          const coordsOfDestoryItems = rules.getItemsBetweenTwoCoords(
-            itemEl.dataset.coord,
-            toId
-          );
-
-          coordsOfDestoryItems.forEach((coord) => {
-            const destoryAniamtion = anime({
-              opacity: 0,
-              targets: document.querySelector(
-                '.item[data-coord="' + coord + '"]'
-              ),
-              easing: "easeInOutQuad",
-              duration: 350,
-            });
-            destoryAniamtion.finished.then(board.removeItem(coord));
-          });
-          board.moveItem(itemEl.dataset.coord, toId);
-          switchMoveAnimation.finished.then(update);
-        }
-      });
+      colEl.addEventListener("click", moveItem);
 
       if (col.item) {
         const itemEl = document.createElement("div");
@@ -162,7 +93,73 @@ function createBoard() {
   });
 }
 
-createBoard();
+function moveItem({ target }) {
+  const toId = target.dataset.coord;
+  const [toRowId] = useCoord(toId);
+  const itemEl = document.querySelector(".item[data-selected='true']");
+
+  if (toRowId === 0 || toRowId === 7) {
+    itemEl._props.setKing();
+  }
+  if (target.classList.contains("available")) {
+    const distance = board.getDistanceBetweenTwoCoords(
+      itemEl.dataset.coord,
+      toId
+    );
+
+    const positions = {};
+    if (!!distance.x) {
+      positions.left = `calc(${distance.x * 54}px + 50%)`;
+    }
+    if (!!distance.y) {
+      positions.top = `calc(${distance.y * 54}px + 50%)`;
+    }
+
+    anime({
+      ...positions,
+      targets: itemEl,
+      easing: "easeInOutQuad",
+      duration: 350,
+    });
+
+    const switchDistance = board.getDistanceBetweenTwoCoords(
+      toId,
+      itemEl.dataset.coord
+    );
+
+    const switchPositions = {};
+    if (!!switchDistance.x) {
+      switchPositions.left = `calc(${switchDistance.x * 54}px + 50%)`;
+    }
+    if (!!switchDistance.y) {
+      switchPositions.top = `calc(${switchDistance.y * 54}px + 50%)`;
+    }
+
+    const switchMoveAnimation = anime({
+      ...switchPositions,
+      targets: document.querySelector('.item[data-coord="' + toId + '"]'),
+      easing: "easeInOutQuad",
+      duration: 350,
+    });
+
+    const coordsOfDestoryItems = rules.getItemsBetweenTwoCoords(
+      itemEl.dataset.coord,
+      toId
+    );
+
+    coordsOfDestoryItems.forEach((coord) => {
+      const destoryAniamtion = anime({
+        opacity: 0,
+        targets: document.querySelector('.item[data-coord="' + coord + '"]'),
+        easing: "easeInOutQuad",
+        duration: 350,
+      });
+      destoryAniamtion.finished.then(board.removeItem(coord));
+    });
+    board.moveItem(itemEl.dataset.coord, toId);
+    switchMoveAnimation.finished.then(update);
+  }
+}
 
 function showAvailableCoords() {
   const itemEl = document.querySelector(".item[data-selected='true']");
@@ -190,9 +187,12 @@ function update() {
   showAvailableCoords();
 }
 
+createBoard();
+
 // For Debug
 window.board = board;
 window.rules = rules;
 window.update = update;
+window.CheckersItem = CheckersItem;
 window.anime = anime;
 // -
