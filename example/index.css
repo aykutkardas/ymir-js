@@ -79,3 +79,14 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+@media (max-width: 1025px) {
+  .app {
+    transform: scale(0.7);
+  }
+
+  .board {
+    padding: 0;
+    border: 0;
+  }
+}
