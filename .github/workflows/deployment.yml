@@ -11,8 +11,8 @@ jobs:
       - name: Install surge and fire deployment
         uses: actions/setup-node@v1
         with:
-          node-version: 8
+          node-version: 12
+      - run: yarn install
+      - run: yarn build
       - run: npm install -g surge
-      - run: npm install
-      - run: npm run build
       - run: surge ./example ${{ secrets.SURGE_DOMAIN }} --token ${{ secrets.SURGE_TOKEN }}
