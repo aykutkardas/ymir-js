@@ -13,4 +13,6 @@ jobs:
         with:
           node-version: 8
       - run: npm install -g surge
+      - run: npm install
+      - run: npm run build
       - run: surge ./example ${{ secrets.SURGE_DOMAIN }} --token ${{ secrets.SURGE_TOKEN }}
