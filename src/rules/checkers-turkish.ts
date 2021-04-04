@@ -13,7 +13,10 @@ class CheckersTurkishRules extends Rules {
   // TODO: Write Test
   getItemsBetweenTwoCoords = (fromId: string, toId: string) => {
     const direction = this.board.getDirection(fromId, toId);
-    const movement = { stepCount: 1 };
+    const distance = this.board.getDistanceBetweenTwoCoords(fromId, toId);
+    const convertDirection = { top: "y", bottom: "y", left: "x", right: "x" };
+    const stepCount = Math.abs(distance[convertDirection[direction]]) || 1;
+    const movement = { stepCount };
 
     movement[direction] = true;
 
