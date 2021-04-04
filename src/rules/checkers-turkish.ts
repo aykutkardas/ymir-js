@@ -24,12 +24,20 @@ class CheckersTurkishRules extends Rules {
 
   // TODO: Write Test
   getAvailableColumns = (id: string, movement: MovementType) => {
-    const avaiblableColumns = this.rules.getAvaiblableColumns(id, movement);
-    return avaiblableColumns
+    const availableColumns = this.rules.getAvaiblableColumns(id, movement);
+    const item = this.board.getItem(id);
+
+    return availableColumns
       .map((coord) => {
         if (this.board.isEmpty(coord)) {
           return coord;
         } else {
+          const nextItem = this.board.getItem(coord);
+
+          if (nextItem.color === item.color) {
+            return null;
+          }
+
           const direction = this.board.getDirection(id, coord);
           const movement = { stepCount: 1 };
 

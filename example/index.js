@@ -147,15 +147,17 @@ function moveItem({ target }) {
       toId
     );
 
-    coordsOfDestoryItems.forEach((coord) => {
-      const destoryAniamtion = anime({
-        opacity: 0,
-        targets: document.querySelector('.item[data-coord="' + coord + '"]'),
-        easing: "easeInOutQuad",
-        duration: 350,
+    coordsOfDestoryItems
+      .filter((coord) => board.getItem(coord)?.color !== itemEl._props.color)
+      .forEach((coord) => {
+        const destoryAniamtion = anime({
+          opacity: 0,
+          targets: document.querySelector('.item[data-coord="' + coord + '"]'),
+          easing: "easeInOutQuad",
+          duration: 350,
+        });
+        destoryAniamtion.finished.then(board.removeItem(coord));
       });
-      destoryAniamtion.finished.then(board.removeItem(coord));
-    });
     board.moveItem(itemEl.dataset.coord, toId);
     switchMoveAnimation.finished.then(update);
   }
