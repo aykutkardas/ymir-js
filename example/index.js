@@ -50,7 +50,7 @@ Object.keys(items).forEach((coord) =>
 
 const rules = new Rules(board);
 
-function createBoard() {
+function renderBoard() {
   const boardEl = document.createElement("div");
   boardEl.setAttribute("class", "board");
 
@@ -101,6 +101,7 @@ function moveItem({ target }) {
   if (toRowId === 0 || toRowId === 7) {
     itemEl._props.setKing();
   }
+
   if (target.classList.contains("available")) {
     const distance = board.getDistanceBetweenTwoCoords(
       itemEl.dataset.coord,
@@ -108,36 +109,18 @@ function moveItem({ target }) {
     );
 
     const positions = {};
+
     if (!!distance.x) {
       positions.left = `calc(${distance.x * 54}px + 50%)`;
     }
+
     if (!!distance.y) {
       positions.top = `calc(${distance.y * 54}px + 50%)`;
     }
 
-    anime({
+    const animation = anime({
       ...positions,
       targets: itemEl,
-      easing: "easeInOutQuad",
-      duration: 350,
-    });
-
-    const switchDistance = board.getDistanceBetweenTwoCoords(
-      toId,
-      itemEl.dataset.coord
-    );
-
-    const switchPositions = {};
-    if (!!switchDistance.x) {
-      switchPositions.left = `calc(${switchDistance.x * 54}px + 50%)`;
-    }
-    if (!!switchDistance.y) {
-      switchPositions.top = `calc(${switchDistance.y * 54}px + 50%)`;
-    }
-
-    const switchMoveAnimation = anime({
-      ...switchPositions,
-      targets: document.querySelector('.item[data-coord="' + toId + '"]'),
       easing: "easeInOutQuad",
       duration: 350,
     });
@@ -156,40 +139,37 @@ function moveItem({ target }) {
           easing: "easeInOutQuad",
           duration: 350,
         });
+
         destoryAniamtion.finished.then(board.removeItem(coord));
       });
+
     board.moveItem(itemEl.dataset.coord, toId);
-    switchMoveAnimation.finished.then(update);
+
+    animation.finished.then(update);
   }
 }
 
 function showAvailableCoords() {
   const itemEl = document.querySelector(".item[data-selected='true']");
   const colEls = document.querySelectorAll(".column");
-
-  for (colEl of colEls) {
-    colEl.classList.remove("available");
-  }
-
   const coord = itemEl.dataset.coord;
   const { movement } = itemEl._props;
   const availableColumns = rules.getAvailableColumns(coord, movement);
 
-  availableColumns.forEach((coord) => {
-    const availableColumn = document.querySelector(
-      '.column[data-coord="' + coord + '"]'
-    );
-
-    availableColumn.classList.add("available");
-  });
+  for (colEl of colEls) {
+    colEl.classList.remove("available");
+    if (availableColumns.includes(colEl.dataset.coord)) {
+      colEl.classList.add("available");
+    }
+  }
 }
 
 function update() {
-  createBoard();
+  renderBoard();
   showAvailableCoords();
 }
 
-createBoard();
+renderBoard();
 
 // For Debug
 window.board = board;
