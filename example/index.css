@@ -1,5 +1,5 @@
 body {
-  background-color: #b68e8e;
+  background-color: #333;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,6 +10,8 @@ body {
 }
 
 .board {
+  padding: 60px 140px;
+  border: 1px solid #222;
 }
 
 .row {
