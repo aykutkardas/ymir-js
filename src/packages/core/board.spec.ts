@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import "mocha";
 
-import Board from "../src/board";
-import Item from "../src/items/default-item";
+import Board from "./board";
+import Item from "./item";
 
 describe("Board Tests", () => {
   it("Square Board 3x3", () => {

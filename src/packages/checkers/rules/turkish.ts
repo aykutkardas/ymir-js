@@ -1,6 +1,6 @@
-import Board from "../board";
-import Rules from "../rules/default-rules";
-import { MovementType } from "../items/default-item";
+import Board from "../../core/board";
+import Rules from "../../core/rules";
+import { MovementType } from "../../core/item";
 
 class CheckersTurkishRules extends Rules {
   rules: Rules;

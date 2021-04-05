@@ -1,5 +1,5 @@
-import Board from "../board";
-import { CheckersItemType } from "../items/checkers-item";
+import Board from "../../core/board";
+import { CheckersItemType } from "../item";
 
 class CheckersInternationalRules {
   board: Board = null;

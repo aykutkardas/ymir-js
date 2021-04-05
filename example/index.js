@@ -1,6 +1,6 @@
-const Board = require("../dist/board").default;
-const Rules = require("../dist/rules/checkers-turkish").default;
-const CheckersItem = require("../dist/items/checkers-item").default;
+const Board = require("../dist/packages/core/board").default;
+const Rules = require("../dist/packages/checkers/rules/turkish").default;
+const CheckersItem = require("../dist/packages/checkers/item").default;
 const useCoord = require("../dist/utils/useCoord").default;
 const anime = require("animejs").default;
 

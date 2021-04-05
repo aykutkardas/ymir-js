@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import "mocha";
 
-import Board from "../src/board";
-import Rules from "../src/rules/default-rules";
+import Board from "./board";
+import Rules from "./rules";
 
 describe("Rules Tests", () => {
   it('getAvaiblableColumns -top for "1|1" on 3x3 Board', () => {

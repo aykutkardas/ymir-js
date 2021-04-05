@@ -1,6 +1,6 @@
-import useCoord from "./utils/useCoord";
-import { ItemType } from "./items/default-item";
-import { CheckersItemType } from "./items/checkers-item";
+import useCoord from "../../utils/useCoord";
+import { ItemType } from "./item";
+import { CheckersItemType } from "../checkers/item";
 
 export type DistanceType = {
   x: number;

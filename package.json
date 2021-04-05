@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env-file -p ./cross-env.json mocha -r ts-node/register test/**/*.spec.ts",
+    "test": "cross-env-file -p ./cross-env.json mocha -r ts-node/register src/**/*.spec.ts",
     "dev": "parcel watch example/index.js  --out-dir example/dist",
     "build": "tsc && parcel build example/index.js --out-dir example/dist",
     "lint": "eslint . --ext .ts --fix"

@@ -1,7 +1,7 @@
-import Board from "../board";
-import useCoord from "../utils/useCoord";
+import Board from "./board";
+import useCoord from "../../utils/useCoord";
 
-import { MovementType } from "../items/default-item";
+import { MovementType } from "./item";
 
 class Rules {
   board: Board = null;
