@@ -1,52 +1,15 @@
-const Board = require("../dist/packages/core/board").default;
+const CheckersBoard = require("../dist/packages/checkers/board").default;
 const Rules = require("../dist/packages/checkers/rules/turkish").default;
 const CheckersItem = require("../dist/packages/checkers/item").default;
 const useCoord = require("../dist/utils/useCoord").default;
 const anime = require("animejs").default;
 
-const board = new Board({
+const board = new CheckersBoard({
   x: 8,
   y: 8,
 });
 
-const items = {
-  "1|0": { color: "white" },
-  "1|1": { color: "white" },
-  "1|2": { color: "white" },
-  "1|3": { color: "white" },
-  "1|4": { color: "white" },
-  "1|5": { color: "white" },
-  "1|6": { color: "white" },
-  "1|7": { color: "white" },
-  "2|0": { color: "white" },
-  "2|1": { color: "white" },
-  "2|2": { color: "white" },
-  "2|3": { color: "white" },
-  "2|4": { color: "white" },
-  "2|5": { color: "white" },
-  "2|6": { color: "white" },
-  "2|7": { color: "white" },
-  "5|0": { color: "black" },
-  "5|1": { color: "black" },
-  "5|2": { color: "black" },
-  "5|3": { color: "black" },
-  "5|4": { color: "black" },
-  "5|5": { color: "black" },
-  "5|6": { color: "black" },
-  "5|7": { color: "black" },
-  "6|0": { color: "black" },
-  "6|1": { color: "black" },
-  "6|2": { color: "black" },
-  "6|3": { color: "black" },
-  "6|4": { color: "black" },
-  "6|5": { color: "black" },
-  "6|6": { color: "black" },
-  "6|7": { color: "black" },
-};
-
-Object.keys(items).forEach((coord) =>
-  board.setItem(coord, new CheckersItem(items[coord]))
-);
+board.resetBoard();
 
 const rules = new Rules(board);
 
