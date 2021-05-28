@@ -42,6 +42,7 @@ body {
   color: black;
   font-size: 11px;
   letter-spacing: 1px;
+  pointer-events: none;
 }
 
 .column.available {
@@ -71,8 +72,17 @@ body {
 }
 
 .item[data-selected="true"] {
-  border: 4px solid rgb(255, 231, 113);
+  border: 4px solid #ffdf20;
   z-index: 2;
+}
+
+.item[data-king="true"]::before {
+  content: "";
+  position: relative;
+  width: 10px;
+  height: 10px;
+  background: #ffdf20;
+  border-radius: 50%;
 }
 
 .control {

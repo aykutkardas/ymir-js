@@ -39,6 +39,7 @@ function renderBoard() {
         itemEl.setAttribute("data-color", col.item.color);
         itemEl.setAttribute("data-coord", col.id);
         itemEl.setAttribute("data-selected", col.item.selected);
+        itemEl.setAttribute("data-king", col.item.king);
         itemEl._props = col.item;
 
         itemEl.addEventListener("click", (e) => {
@@ -63,6 +64,7 @@ function moveItem({ target }) {
 
   if (toRowId === 0 || toRowId === 7) {
     itemEl._props.setKing();
+    itemEl.dataset.king = true;
   }
 
   if (target.classList.contains("available")) {
