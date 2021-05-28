@@ -52,7 +52,7 @@ describe("Rules Tests", () => {
       linear: true,
     });
 
-    expect(availableColumn).to.deep.equal(["0|1", "1|0", "1|2", "2|1"]);
+    expect(availableColumn).to.deep.equal(["0|1", "2|1", "1|0", "1|2"]);
   });
 
   it('getAvaiblableColumns -angular for "1|1" on 3x3 Board', () => {
