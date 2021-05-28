@@ -4,14 +4,10 @@ const CheckersItem = require("../dist/packages/checkers/item").default;
 const useCoord = require("../dist/utils/useCoord").default;
 const anime = require("animejs").default;
 
-const board = new CheckersBoard({
-  x: 8,
-  y: 8,
-});
+const board = new CheckersBoard({ x: 8, y: 8 });
+const rules = new Rules(board);
 
 board.resetBoard();
-
-const rules = new Rules(board);
 
 function renderBoard() {
   const boardEl = document.createElement("div");
