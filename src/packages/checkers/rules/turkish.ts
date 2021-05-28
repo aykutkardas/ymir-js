@@ -53,7 +53,6 @@ class CheckersTurkishRules extends Rules {
             this.rules.getAvaiblableColumns(currentId, movement)
           );
           avaiblableColumns.push(toCoord);
-          break;
         }
       }
     });
