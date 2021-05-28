@@ -22,36 +22,44 @@ class CheckersTurkishRules extends Rules {
 
     const betweenCoords = this.rules.getAvaiblableColumns(fromId, movement);
 
-    return betweenCoords.filter((coord) => !this.board.isEmpty(coord));
+    return (<string[]>betweenCoords).filter(
+      (coord) => !this.board.isEmpty(coord)
+    );
   };
 
   // TODO: Write Test
   getAvailableColumns = (id: string, movement: MovementType) => {
-    const availableColumns = this.rules.getAvaiblableColumns(id, movement);
+    const columns = this.rules.getAvaiblableColumns(id, movement, true);
+
     const item = this.board.getItem(id);
 
-    return availableColumns
-      .map((coord) => {
-        if (this.board.isEmpty(coord)) {
-          return coord;
-        } else {
-          const nextItem = this.board.getItem(coord);
+    const avaiblableColumns = [];
 
-          if (nextItem.color === item.color) {
-            return null;
-          }
+    Object.keys(columns).forEach((key) => {
+      for (let i = 0; i < columns[key].length; i++) {
+        const currentId = columns[key][i];
+        const nextCoordItem = this.board.getItem(currentId);
 
-          const direction = this.board.getDirection(id, coord);
-          const movement = { stepCount: 1 };
-
-          movement[direction] = true;
-
-          const [toCoord] = this.rules.getAvaiblableColumns(coord, movement);
-
-          return toCoord;
+        if (this.board.isEmpty(currentId)) {
+          avaiblableColumns.push(currentId);
         }
-      })
-      .filter((coord) => !!coord && this.board.isEmpty(coord));
+
+        if (nextCoordItem?.color === item.color) {
+          break;
+        } else if (nextCoordItem && nextCoordItem.color !== item.color) {
+          const direction = this.board.getDirection(id, currentId);
+          const movement = { stepCount: 1, [direction]: true };
+          const [toCoord] = <string[]>(
+            this.rules.getAvaiblableColumns(currentId, movement)
+          );
+          avaiblableColumns.push(toCoord);
+          break;
+        }
+      }
+    });
+    return avaiblableColumns.filter(
+      (coord) => !!coord && this.board.isEmpty(coord)
+    );
   };
 }
 
