@@ -36,23 +36,41 @@ class CheckersTurkishRules extends Rules {
     const avaiblableColumns = [];
 
     Object.keys(columns).forEach((key) => {
+      let isFoundAvailableEnemyItem = false;
       for (let i = 0; i < columns[key].length; i++) {
         const currentId = columns[key][i];
-        const nextCoordItem = this.board.getItem(currentId);
 
         if (this.board.isEmpty(currentId)) {
           avaiblableColumns.push(currentId);
+          continue;
+        } else if (isFoundAvailableEnemyItem) {
+          break;
         }
+
+        const nextCoordItem = this.board.getItem(currentId);
 
         if (nextCoordItem?.color === item.color) {
           break;
-        } else if (nextCoordItem && nextCoordItem.color !== item.color) {
+        } else if (
+          !isFoundAvailableEnemyItem &&
+          nextCoordItem &&
+          nextCoordItem.color !== item.color
+        ) {
           const direction = this.board.getDirection(id, currentId);
-          const movement = { stepCount: 1, [direction]: true };
+          const movement = {
+            stepCount: 1,
+            [direction]: true,
+          };
           const [toCoord] = <string[]>(
             this.rules.getAvaiblableColumns(currentId, movement)
           );
-          avaiblableColumns.push(toCoord);
+
+          if (this.board.isEmpty(toCoord)) {
+            avaiblableColumns.push(toCoord);
+            isFoundAvailableEnemyItem = true;
+          } else {
+            break;
+          }
         }
       }
     });
