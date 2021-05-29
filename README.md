@@ -1,5 +1,12 @@
 # match-3-game-engine
 
-It is a game engine for "Match 3 Puzzle Game" type.
+This toolkit is created to make it easier for you to develop games like chess, checkers, go, match 3 puzzle and more. It is still under development.
 
-It provides various APIs required for the game.
+## Roadmap
+
+- [Turkish Checkers - Demo](https://turkish-checkers-demo.surge.sh/)
+- International Checkers
+- Chess
+- Go
+- Match 3 Puzzle
+- etc.
