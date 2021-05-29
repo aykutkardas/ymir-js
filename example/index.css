@@ -51,11 +51,11 @@ body {
   pointer-events: none;
 }
 
-.column.available {
+.column[data-available="true"] {
   background-color: #cafcca;
 }
 
-.column.available:hover {
+.column[data-available="true"]:hover {
   background-color: #cafccacc;
 }
 
@@ -75,6 +75,10 @@ body {
   top: 50%;
   left: 50%;
   z-index: 1;
+}
+
+.item.black {
+  background-color: #000;
 }
 
 .item[data-selected="true"] {
@@ -97,7 +101,7 @@ body {
 }
 
 @media (max-width: 1025px) {
-  .app {
+  #app {
     transform: scale(0.7);
   }
 
