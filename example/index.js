@@ -14,7 +14,7 @@ function renderBoard() {
   boardEl.setAttribute("class", "board");
 
   const appEl = document.querySelector(".app");
-  appEl.innerHTML = "";
+  appEl.querySelector(".board")?.remove();
   appEl.append(boardEl);
 
   board.getBoardMatrix().forEach((row) => {
@@ -32,14 +32,13 @@ function renderBoard() {
         const itemEl = document.createElement("div");
         itemEl.classList.add("item");
         itemEl.style.background = col.item.color;
-        itemEl.setAttribute("data-color", col.item.color);
-        itemEl.setAttribute("data-coord", col.id);
-        itemEl.setAttribute("data-selected", col.item.selected);
-        itemEl.setAttribute("data-king", col.item.king);
+        itemEl.dataset.color = col.item.color;
+        itemEl.dataset.coord = col.id;
+        itemEl.dataset.selected = col.item.selected;
+        itemEl.dataset.king = col.item.king;
         itemEl._props = col.item;
 
         itemEl.addEventListener("click", (e) => {
-          console.log(e.target.dataset.coord);
           board.deselectAllItems();
           board.selectItem(e.target.dataset.coord);
           update();
