@@ -7,18 +7,13 @@ export type BoardConfig = {
 };
 
 class CheckersBoard extends Board {
-  constructor(config: BoardConfig) {
+  constructor(config: BoardConfig = { x: 8, y: 8 }) {
     super(config);
 
     return this;
   }
 
-  // TODO: Write test
-  resetBoard() {
-    Object.keys(this.board).forEach((coord) => {
-      this.board[coord].item = null;
-    });
-
+  initBoard() {
     const whiteItemCoords =
       "1|0 1|1 1|2 1|3 1|4 1|5 1|6 1|7 2|0 2|1 2|2 2|3 2|4 2|5 2|6 2|7";
     const blackItemCoords =
@@ -31,6 +26,15 @@ class CheckersBoard extends Board {
     blackItemCoords.split(" ").forEach((coord) => {
       this.setItem(coord, new CheckersItem({ color: "black" }));
     });
+  }
+
+  // TODO: Write test
+  resetBoard() {
+    Object.keys(this.board).forEach((coord) => {
+      this.board[coord].item = null;
+    });
+
+    this.initBoard();
   }
 }
 
