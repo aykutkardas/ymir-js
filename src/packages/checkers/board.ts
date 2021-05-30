@@ -7,7 +7,7 @@ export type BoardConfig = {
 };
 
 class CheckersBoard extends Board {
-  constructor(config: BoardConfig) {
+  constructor(config: BoardConfig = {x:8, y:8}) {
     super(config);
 
     return this;
