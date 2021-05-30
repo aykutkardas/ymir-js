@@ -8,6 +8,15 @@ function toBoolean(val) {
   return val === "true";
 }
 
+function animate(coord, options = {}) {
+  return anime({
+    ...options,
+    targets: document.querySelector(`.item[data-coord="${coord}"]`),
+    easing: "easeInOutQuad",
+    duration: 350,
+  });
+}
+
 const App = {
   data() {
     const board = new CheckersBoard({ x: 8, y: 8 });
@@ -21,7 +30,6 @@ const App = {
       activeItem: null,
       activeCoord: null,
       boardMatrix: board.getBoardMatrix(),
-      movePending: false,
     };
   },
   watch: {
@@ -47,7 +55,6 @@ const App = {
     },
     moveItem({ target }) {
       const { coord, available } = target.dataset;
-      this.movePending = true;
 
       if (!toBoolean(available)) return;
 
@@ -55,7 +62,6 @@ const App = {
 
       if (toRowId === 0 || toRowId === 7) {
         this.activeItem.setKing();
-        this.activeItem.king = true;
       }
 
       const distance = this.board.getDistanceBetweenTwoCoords(
@@ -73,14 +79,7 @@ const App = {
         positions.top = `calc(${distance.y * 54}px + 50%)`;
       }
 
-      const animation = anime({
-        ...positions,
-        targets: document.querySelector(
-          '.item[data-coord="' + this.activeCoord + '"]'
-        ),
-        easing: "easeInOutQuad",
-        duration: 350,
-      });
+      const animation = animate(this.activeCoord, positions);
 
       animation.finished.then(() => {
         this.board.moveItem(this.activeCoord, coord);
@@ -93,12 +92,7 @@ const App = {
       );
 
       coordsOfDestoryItems.forEach((coord) => {
-        const destoryAniamtion = anime({
-          opacity: 0,
-          targets: document.querySelector('.item[data-coord="' + coord + '"]'),
-          easing: "easeInOutQuad",
-          duration: 350,
-        });
+        const destoryAniamtion = animate(coord, { opacity: 0 });
 
         destoryAniamtion.finished.then(() => {
           this.board.removeItem(coord);
