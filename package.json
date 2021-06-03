@@ -1,6 +1,6 @@
 {
-  "name": "match-3-game-engine",
-  "version": "1.0.0",
+  "name": "ymir-js",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {

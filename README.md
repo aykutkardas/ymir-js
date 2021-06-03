@@ -1,4 +1,4 @@
-# match-3-game-engine
+# ymir-js
 
 This toolkit is created to make it easier for you to develop games like chess, checkers, go, match 3 puzzle and more. It is still under development.
 
