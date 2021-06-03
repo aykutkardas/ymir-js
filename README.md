@@ -4,7 +4,7 @@ This toolkit is created to make it easier for you to develop games like chess, c
 
 ## Roadmap
 
-- [Turkish Checkers - Demo](https://turkish-checkers-demo.surge.sh/)
+- Turkish Checkers - [Source](https://github.com/aykutkardas/turkish-checkers)
 - International Checkers
 - Chess
 - Go
