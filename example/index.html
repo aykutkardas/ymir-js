@@ -16,30 +16,16 @@
     <a href="https://twitter.com/aykutkardas?ref_src=twsrc%5Etfw" class="twitter-follow-button"
       data-show-count="false">Follow @aykutkardas</a>
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-    <a class="github-button" href="https://github.com/aykutkardas/match-3-game-engine" data-icon="octicon-star"
-      aria-label="Star aykutkardas/match-3-game-engine on GitHub">Star</a>
+    <a class="github-button" href="https://github.com/aykutkardas/ymir-js" data-icon="octicon-star"
+      aria-label="Star aykutkardas/ymir-js on GitHub">Star</a>
   </div>
   <div id="app">
     <div class="board">
-      <div
-        class="row" 
-        v-for="row in boardMatrix">
-        <div 
-          class="column" 
-          v-for="{ id, item } in row" 
-          :data-coord="id" 
-          :data-available="availableColumns.includes(id)"
+      <div class="row" v-for="row in boardMatrix">
+        <div class="column" v-for="{ id, item } in row" :data-coord="id" :data-available="availableColumns.includes(id)"
           @click="moveItem">
-          <div 
-            class="item" 
-            :class="{ black: item.color === 'black'}" 
-            v-if="item" 
-            @click="selectItem" 
-            :data-coord="id"
-            :data-color="item.color" 
-            :data-selected="item.selected" 
-            :data-king="item.king"
-          ></div>
+          <div class="item" :class="{ black: item.color === 'black'}" v-if="item" @click="selectItem" :data-coord="id"
+            :data-color="item.color" :data-selected="item.selected" :data-king="item.king"></div>
         </div>
       </div>
     </div>

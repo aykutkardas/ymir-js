@@ -2,12 +2,16 @@
   "name": "ymir-js",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "test": "cross-env-file -p ./cross-env.json mocha -r ts-node/register src/**/*.spec.ts",
     "dev": "parcel watch example/index.js  --out-dir example/dist",
     "build": "tsc && parcel build example/index.js --out-dir example/dist",
     "lint": "eslint . --ext .ts --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aykutkardas/ymir-js.git"
   },
   "keywords": [],
   "author": "",

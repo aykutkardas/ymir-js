@@ -1,7 +1,8 @@
-const CheckersBoard = require("../dist/packages/checkers/board").default;
-const CheckersRules =
-  require("../dist/packages/checkers/rules/turkish").default;
-const useCoord = require("../dist/utils/useCoord").default;
+import { Checkers, Utils } from "../dist";
+
+const { Board, TurkishRules } = Checkers;
+const { useCoord } = Utils;
+
 const anime = require("animejs").default;
 
 function toBoolean(val) {
@@ -19,8 +20,8 @@ function animate(coord, options = {}) {
 
 const App = {
   data() {
-    const board = new CheckersBoard({ x: 8, y: 8 });
-    const rules = new CheckersRules(board);
+    const board = new Board({ x: 8, y: 8 });
+    const rules = new TurkishRules(board);
 
     board.resetBoard();
 
