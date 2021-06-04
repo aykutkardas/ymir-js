@@ -5,7 +5,7 @@ This toolkit is created to make it easier for you to develop games like chess, c
 ## Roadmap
 
 - Turkish Checkers - [Source](https://github.com/aykutkardas/turkish-checkers)
-- International Checkers
+- International Checkers - [Source](https://github.com/aykutkardas/international-checkers)
 - Chess
 - Go
 - Match 3 Puzzle
