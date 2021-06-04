@@ -20,7 +20,7 @@ class CheckersTurkishRules extends Rules {
 
     movement[direction] = true;
 
-    const betweenCoords = this.rules.getAvaiblableColumns(fromId, movement);
+    const betweenCoords = this.rules.getAvailableColumns(fromId, movement);
 
     return (<string[]>betweenCoords).filter(
       (coord) => !this.board.isEmpty(coord)
@@ -29,7 +29,7 @@ class CheckersTurkishRules extends Rules {
 
   // TODO: Write Test
   getAvailableColumns = (id: string, movement: MovementType) => {
-    const columns = this.rules.getAvaiblableColumns(id, movement, true);
+    const columns = this.rules.getAvailableColumns(id, movement, true);
 
     const item = this.board.getItem(id);
 
@@ -62,7 +62,7 @@ class CheckersTurkishRules extends Rules {
             [direction]: true,
           };
           const [toCoord] = <string[]>(
-            this.rules.getAvaiblableColumns(currentId, movement)
+            this.rules.getAvailableColumns(currentId, movement)
           );
 
           if (this.board.isEmpty(toCoord)) {

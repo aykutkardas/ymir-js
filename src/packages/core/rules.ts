@@ -11,7 +11,7 @@ class Rules {
     return this;
   }
 
-  getAvaiblableColumns = (
+  getAvailableColumns = (
     id: string,
     movement: MovementType,
     columnsObj?: boolean
