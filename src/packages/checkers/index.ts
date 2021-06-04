@@ -1,5 +1,3 @@
-import Board from "./board";
-import TurkishRules from "./rules/turkish";
-import Item from "./item";
+import Turkish from "./turkish";
 
-export default { Board, TurkishRules, Item };
+export default { Turkish };

@@ -1,6 +1,5 @@
 import useCoord from "../../utils/useCoord";
 import { ItemType } from "./item";
-import { CheckersItemType } from "../checkers/item";
 
 export type DistanceType = {
   x: number;
@@ -13,7 +12,7 @@ export type BoardConfig = {
 };
 
 export type ColumnType = {
-  item: ItemType | CheckersItemType;
+  item: ItemType;
 };
 
 export type BoardType = {
@@ -62,7 +61,7 @@ class Board {
     return matrix;
   };
 
-  getItem = (id: string): ItemType | CheckersItemType => {
+  getItem = (id: string): ItemType => {
     const isExistCoord = this.isExistCoord(id);
 
     if (!isExistCoord) return;
@@ -70,7 +69,7 @@ class Board {
     return this.board[id].item;
   };
 
-  setItem = (id: string, item: ItemType | CheckersItemType) => {
+  setItem = (id: string, item: ItemType) => {
     const isExistCoord = this.isExistCoord(id);
 
     if (!isExistCoord) return;

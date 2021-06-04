@@ -1,5 +1,5 @@
-import Item, { ItemType, MovementType } from "../core/item";
-import { CHECKERS_WHITE, CHECKERS_BLACK } from "./constant";
+import Item, { ItemType, MovementType } from "../../core/item";
+import { CHECKERS_WHITE, CHECKERS_BLACK } from "../constant";
 
 export type CheckersColorType = typeof CHECKERS_BLACK | typeof CHECKERS_WHITE;
 

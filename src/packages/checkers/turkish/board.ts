@@ -1,5 +1,5 @@
-import Board from "../core/board";
-import CheckersItem from "../checkers/item";
+import Board from "../../core/board";
+import CheckersItem from "./item";
 
 export type BoardConfig = {
   x: number;
