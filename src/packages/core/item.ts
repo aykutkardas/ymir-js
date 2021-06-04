@@ -3,6 +3,10 @@ export type MovementType = {
   bottom?: boolean;
   left?: boolean;
   right?: boolean;
+  topLeft?: boolean;
+  topRight?: boolean;
+  bottomLeft?: boolean;
+  bottomRight?: boolean;
   angular?: boolean;
   linear?: boolean;
   stepCount?: number;

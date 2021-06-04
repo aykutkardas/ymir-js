@@ -45,6 +45,18 @@ class Rules {
       if (movement?.right) {
         columns.rights.push(`${rowId}|${colId + step}`);
       }
+      if (movement?.topRight) {
+        columns.topRights.push(`${rowId - step}|${colId + step}`);
+      }
+      if (movement?.topLeft) {
+        columns.topLefts.push(`${rowId - step}|${colId - step}`);
+      }
+      if (movement?.bottomRight) {
+        columns.bottomRights.push(`${rowId + step}|${colId + step}`);
+      }
+      if (movement?.bottomLeft) {
+        columns.bottomLefts.push(`${rowId + step}|${colId - step}`);
+      }
       if (movement?.linear) {
         columns.tops.push(`${rowId - step}|${colId}`);
         columns.bottoms.push(`${rowId + step}|${colId}`);
