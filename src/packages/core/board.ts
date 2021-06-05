@@ -118,6 +118,7 @@ class Board {
     });
   };
 
+  // [TODO]: Write Test
   getDirection = (fromId: string, toId: string): string => {
     const isExistFromCoord = this.isExistCoord(fromId);
     const isExistToCoord = this.isExistCoord(toId);
@@ -127,10 +128,10 @@ class Board {
     const [fromRowId, fromColId] = useCoord(fromId);
     const [toRowId, toColId] = useCoord(toId);
 
-    if (fromColId > toColId && fromRowId < toRowId) return "leftTop";
-    if (fromColId > toColId && fromRowId > toRowId) return "leftBottom";
-    if (fromColId < toColId && fromRowId < toRowId) return "rightTop";
-    if (fromColId < toColId && fromRowId > toRowId) return "rightBottom";
+    if (fromColId > toColId && fromRowId < toRowId) return "bottomLeft";
+    if (fromColId < toColId && fromRowId < toRowId) return "bottomRight";
+    if (fromColId > toColId && fromRowId > toRowId) return "topLeft";
+    if (fromColId < toColId && fromRowId > toRowId) return "topRight";
     if (fromColId < toColId && fromRowId == toRowId) return "right";
     if (fromColId > toColId && fromRowId == toRowId) return "left";
     if (fromColId == toColId && fromRowId > toRowId) return "top";
