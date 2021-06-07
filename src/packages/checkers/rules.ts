@@ -33,17 +33,20 @@ class CheckersTurkishRules extends Rules {
 
     const item = this.board.getItem(id);
 
-    const avaiblableColumns = [];
+    const availableColumns = {};
+    const captureAvailableColumns = {};
 
     Object.keys(columns).forEach((key) => {
-      let isFoundAvailableEnemyItem = false;
+      availableColumns[key] = [];
+
+      let isFoundCapture = false;
       for (let i = 0; i < columns[key].length; i++) {
         const currentId = columns[key][i];
 
         if (this.board.isEmpty(currentId)) {
-          avaiblableColumns.push(currentId);
+          availableColumns[key].push(currentId);
           continue;
-        } else if (isFoundAvailableEnemyItem) {
+        } else if (isFoundCapture) {
           break;
         }
 
@@ -52,7 +55,7 @@ class CheckersTurkishRules extends Rules {
         if (nextCoordItem?.color === item.color) {
           break;
         } else if (
-          !isFoundAvailableEnemyItem &&
+          !isFoundCapture &&
           nextCoordItem &&
           nextCoordItem.color !== item.color
         ) {
@@ -66,15 +69,35 @@ class CheckersTurkishRules extends Rules {
           );
 
           if (this.board.isEmpty(toCoord)) {
-            avaiblableColumns.push(toCoord);
-            isFoundAvailableEnemyItem = true;
+            availableColumns[key] = [toCoord];
+            captureAvailableColumns[key] = true;
+            isFoundCapture = true;
           } else {
             break;
           }
         }
       }
     });
-    return avaiblableColumns.filter(
+
+    const isFoundAnySuccessDirection = Object.values(
+      captureAvailableColumns
+    ).some((direction) => direction);
+
+    let newAvailableColumns = [];
+
+    if (isFoundAnySuccessDirection) {
+      Object.keys(captureAvailableColumns).forEach((direction) => {
+        if (captureAvailableColumns[direction]) {
+          newAvailableColumns.push(...availableColumns[direction]);
+        }
+      });
+    } else {
+      Object.keys(availableColumns).forEach((key) => {
+        newAvailableColumns.push(...availableColumns[key]);
+      });
+    }
+
+    return newAvailableColumns.filter(
       (coord) => !!coord && this.board.isEmpty(coord)
     );
   };
