@@ -41,16 +41,16 @@ class CheckersTurkishRules extends Rules {
 
       let isFoundCapture = false;
       for (let i = 0; i < columns[key].length; i++) {
-        const currentId = columns[key][i];
+        const currentCoord = columns[key][i];
 
-        if (this.board.isEmpty(currentId)) {
-          availableColumns[key].push(currentId);
+        if (this.board.isEmpty(currentCoord)) {
+          availableColumns[key].push(currentCoord);
           continue;
         } else if (isFoundCapture) {
           break;
         }
 
-        const nextCoordItem = this.board.getItem(currentId);
+        const nextCoordItem = this.board.getItem(currentCoord);
 
         if (nextCoordItem?.color === item.color) {
           break;
@@ -59,13 +59,13 @@ class CheckersTurkishRules extends Rules {
           nextCoordItem &&
           nextCoordItem.color !== item.color
         ) {
-          const direction = this.board.getDirection(coord, currentId);
+          const direction = this.board.getDirection(coord, currentCoord);
           const movement = {
             stepCount: 1,
             [direction]: true,
           };
           const [toCoord] = <string[]>(
-            this.rules.getAvailableColumns(currentId, movement)
+            this.rules.getAvailableColumns(currentCoord, movement)
           );
 
           if (this.board.isEmpty(toCoord)) {
