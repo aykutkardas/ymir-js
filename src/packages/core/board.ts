@@ -48,9 +48,9 @@ class Board {
 
   getBoardMatrix = () => {
     const matrix = [];
-    Object.entries(this.board).forEach(([id, data]) => {
-      const [rowId, colId] = useCoord(id);
-      const item = { id, ...data };
+    Object.entries(this.board).forEach(([coord, data]) => {
+      const [rowId, colId] = useCoord(coord);
+      const item = { coord, ...data };
       if (matrix[rowId]) {
         matrix[rowId][colId] = item;
       } else {
@@ -61,48 +61,48 @@ class Board {
     return matrix;
   };
 
-  getItem = (id: string): ItemType => {
-    const isExistCoord = this.isExistCoord(id);
+  getItem = (coord: string): ItemType => {
+    const isExistCoord = this.isExistCoord(coord);
 
     if (!isExistCoord) return;
 
-    return this.board[id].item;
+    return this.board[coord].item;
   };
 
-  setItem = (id: string, item: ItemType) => {
-    const isExistCoord = this.isExistCoord(id);
+  setItem = (coord: string, item: ItemType) => {
+    const isExistCoord = this.isExistCoord(coord);
 
     if (!isExistCoord) return;
 
-    this.board[id].item = item;
+    this.board[coord].item = item;
   };
 
-  removeItem = (id: string) => {
-    const isExistCoord = this.isExistCoord(id);
+  removeItem = (coord: string) => {
+    const isExistCoord = this.isExistCoord(coord);
 
     if (!isExistCoord) return;
 
-    this.board[id].item = null;
+    this.board[coord].item = null;
   };
 
-  selectItem = (id: string) => {
-    const isExistCoord = this.isExistCoord(id);
+  selectItem = (coord: string) => {
+    const isExistCoord = this.isExistCoord(coord);
 
     if (!isExistCoord) return;
 
-    const item = this.board[id].item;
+    const item = this.board[coord].item;
 
     if (item) {
       item.selected = true;
     }
   };
 
-  deselectItem = (id: string) => {
-    const isExistCoord = this.isExistCoord(id);
+  deselectItem = (coord: string) => {
+    const isExistCoord = this.isExistCoord(coord);
 
     if (!isExistCoord) return;
 
-    const item = this.board[id].item;
+    const item = this.board[coord].item;
 
     if (item) {
       item.selected = false;
@@ -119,14 +119,14 @@ class Board {
   };
 
   // [TODO]: Write Test
-  getDirection = (fromId: string, toId: string): string => {
-    const isExistFromCoord = this.isExistCoord(fromId);
-    const isExistToCoord = this.isExistCoord(toId);
+  getDirection = (fromCoord: string, toCoord: string): string => {
+    const isExistFromCoord = this.isExistCoord(fromCoord);
+    const isExistToCoord = this.isExistCoord(toCoord);
 
     if (!isExistFromCoord || !isExistToCoord) return;
 
-    const [fromRowId, fromColId] = useCoord(fromId);
-    const [toRowId, toColId] = useCoord(toId);
+    const [fromRowId, fromColId] = useCoord(fromCoord);
+    const [toRowId, toColId] = useCoord(toCoord);
 
     if (fromColId > toColId && fromRowId < toRowId) return "bottomLeft";
     if (fromColId < toColId && fromRowId < toRowId) return "bottomRight";
@@ -139,54 +139,54 @@ class Board {
   };
 
   getDistanceBetweenTwoCoords = (
-    fromId: string,
-    toId: string
+    fromCoord: string,
+    toCoord: string
   ): DistanceType => {
-    const isExistFromCoord = this.isExistCoord(fromId);
-    const isExistToCoord = this.isExistCoord(toId);
+    const isExistFromCoord = this.isExistCoord(fromCoord);
+    const isExistToCoord = this.isExistCoord(toCoord);
 
     if (!isExistFromCoord || !isExistToCoord) return;
 
-    const [fromRowId, fromColId] = useCoord(fromId);
-    const [toRowId, toColId] = useCoord(toId);
+    const [fromRowId, fromColId] = useCoord(fromCoord);
+    const [toRowId, toColId] = useCoord(toCoord);
 
     return { y: toRowId - fromRowId, x: toColId - fromColId };
   };
 
-  isEmpty = (id: string): boolean => {
-    const isExistCoord = this.isExistCoord(id);
+  isEmpty = (coord: string): boolean => {
+    const isExistCoord = this.isExistCoord(coord);
 
     if (!isExistCoord) return;
 
-    return !this.board[id].item;
+    return !this.board[coord].item;
   };
 
-  moveItem = (fromId: string, toId: string) => {
-    const isExistFromCoord = this.isExistCoord(fromId);
-    const isExistToCoord = this.isExistCoord(toId);
+  moveItem = (fromCoord: string, toCoord: string) => {
+    const isExistFromCoord = this.isExistCoord(fromCoord);
+    const isExistToCoord = this.isExistCoord(toCoord);
 
     if (!isExistFromCoord || !isExistToCoord) return;
 
-    const { item } = this.board[fromId];
-    this.board[fromId].item = null;
-    this.board[toId].item = item;
+    const { item } = this.board[fromCoord];
+    this.board[fromCoord].item = null;
+    this.board[toCoord].item = item;
   };
 
-  switchItem = (fromId: string, toId: string) => {
-    const isExistFromCoord = this.isExistCoord(fromId);
-    const isExistToCoord = this.isExistCoord(toId);
+  switchItem = (fromCoord: string, toCoord: string) => {
+    const isExistFromCoord = this.isExistCoord(fromCoord);
+    const isExistToCoord = this.isExistCoord(toCoord);
 
     if (!isExistFromCoord || !isExistToCoord) return;
 
-    const { item: fromItem } = this.board[fromId];
-    const { item: toItem } = this.board[toId];
+    const { item: fromItem } = this.board[fromCoord];
+    const { item: toItem } = this.board[toCoord];
 
-    this.board[fromId].item = toItem;
-    this.board[toId].item = fromItem;
+    this.board[fromCoord].item = toItem;
+    this.board[toCoord].item = fromItem;
   };
 
-  isExistCoord = (id: string): boolean => {
-    return !!this.board[id];
+  isExistCoord = (coord: string): boolean => {
+    return !!this.board[coord];
   };
 }
 

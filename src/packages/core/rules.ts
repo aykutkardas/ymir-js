@@ -12,11 +12,11 @@ class Rules {
   }
 
   getAvailableColumns = (
-    id: string,
+    coord: string,
     movement: MovementType,
     columnsObj?: boolean
   ): string[] | { [key: string]: string[] } => {
-    const [rowId, colId] = useCoord(id);
+    const [rowId, colId] = useCoord(coord);
 
     const avaiblableColumns = [];
     const columns = {

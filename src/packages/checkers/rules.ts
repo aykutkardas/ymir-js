@@ -11,16 +11,16 @@ class CheckersTurkishRules extends Rules {
   }
 
   // TODO: Write Test
-  getItemsBetweenTwoCoords = (fromId: string, toId: string) => {
-    const direction = this.board.getDirection(fromId, toId);
-    const distance = this.board.getDistanceBetweenTwoCoords(fromId, toId);
+  getItemsBetweenTwoCoords = (fromCoord: string, toCoord: string) => {
+    const direction = this.board.getDirection(fromCoord, toCoord);
+    const distance = this.board.getDistanceBetweenTwoCoords(fromCoord, toCoord);
     const convertDirection = { top: "y", bottom: "y", left: "x", right: "x" };
     const stepCount = Math.abs(distance[convertDirection[direction]]) || 1;
     const movement = { stepCount };
 
     movement[direction] = true;
 
-    const betweenCoords = this.rules.getAvailableColumns(fromId, movement);
+    const betweenCoords = this.rules.getAvailableColumns(fromCoord, movement);
 
     return (<string[]>betweenCoords).filter(
       (coord) => !this.board.isEmpty(coord)
@@ -28,10 +28,10 @@ class CheckersTurkishRules extends Rules {
   };
 
   // TODO: Write Test
-  getAvailableColumns = (id: string, movement: MovementType) => {
-    const columns = this.rules.getAvailableColumns(id, movement, true);
+  getAvailableColumns = (coord: string, movement: MovementType) => {
+    const columns = this.rules.getAvailableColumns(coord, movement, true);
 
-    const item = this.board.getItem(id);
+    const item = this.board.getItem(coord);
 
     const availableColumns = {};
     const captureAvailableColumns = {};
@@ -59,7 +59,7 @@ class CheckersTurkishRules extends Rules {
           nextCoordItem &&
           nextCoordItem.color !== item.color
         ) {
-          const direction = this.board.getDirection(id, currentId);
+          const direction = this.board.getDirection(coord, currentId);
           const movement = {
             stepCount: 1,
             [direction]: true,
