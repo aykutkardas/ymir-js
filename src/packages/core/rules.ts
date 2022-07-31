@@ -1,7 +1,7 @@
-import Board from "./board";
-import useCoord from "../../utils/useCoord";
+import Board from './board';
+import useCoord from '../../utils/useCoord';
 
-import { MovementType } from "./item";
+import { MovementType } from './item';
 
 class Rules {
   board: Board = null;
@@ -20,54 +20,54 @@ class Rules {
 
     const avaiblableColumns = [];
     const columns = {
-      tops: [],
-      bottoms: [],
-      lefts: [],
-      rights: [],
-      topLefts: [],
-      topRights: [],
-      bottomLefts: [],
-      bottomRights: [],
+      top: [],
+      bottom: [],
+      left: [],
+      right: [],
+      topLeft: [],
+      topRight: [],
+      bottomLeft: [],
+      bottomRight: [],
     };
 
     const stepCount = movement?.stepCount || 1;
 
-    for (let step = 1; step <= stepCount; step++) {
+    for (let step = 1; step <= stepCount; step += 1) {
       if (movement?.top) {
-        columns.tops.push(`${rowId - step}|${colId}`);
+        columns.top.push(`${rowId - step}|${colId}`);
       }
       if (movement?.bottom) {
-        columns.bottoms.push(`${rowId + step}|${colId}`);
+        columns.bottom.push(`${rowId + step}|${colId}`);
       }
       if (movement?.left) {
-        columns.lefts.push(`${rowId}|${colId - step}`);
+        columns.left.push(`${rowId}|${colId - step}`);
       }
       if (movement?.right) {
-        columns.rights.push(`${rowId}|${colId + step}`);
+        columns.right.push(`${rowId}|${colId + step}`);
       }
       if (movement?.topRight) {
-        columns.topRights.push(`${rowId - step}|${colId + step}`);
+        columns.topRight.push(`${rowId - step}|${colId + step}`);
       }
       if (movement?.topLeft) {
-        columns.topLefts.push(`${rowId - step}|${colId - step}`);
+        columns.topLeft.push(`${rowId - step}|${colId - step}`);
       }
       if (movement?.bottomRight) {
-        columns.bottomRights.push(`${rowId + step}|${colId + step}`);
+        columns.bottomRight.push(`${rowId + step}|${colId + step}`);
       }
       if (movement?.bottomLeft) {
-        columns.bottomLefts.push(`${rowId + step}|${colId - step}`);
+        columns.bottomLeft.push(`${rowId + step}|${colId - step}`);
       }
       if (movement?.linear) {
-        columns.tops.push(`${rowId - step}|${colId}`);
-        columns.bottoms.push(`${rowId + step}|${colId}`);
-        columns.lefts.push(`${rowId}|${colId - step}`);
-        columns.rights.push(`${rowId}|${colId + step}`);
+        columns.top.push(`${rowId - step}|${colId}`);
+        columns.bottom.push(`${rowId + step}|${colId}`);
+        columns.left.push(`${rowId}|${colId - step}`);
+        columns.right.push(`${rowId}|${colId + step}`);
       }
       if (movement?.angular) {
-        columns.topLefts.push(`${rowId - step}|${colId - step}`);
-        columns.topRights.push(`${rowId - step}|${colId + step}`);
-        columns.bottomLefts.push(`${rowId + step}|${colId - step}`);
-        columns.bottomRights.push(`${rowId + step}|${colId + step}`);
+        columns.topLeft.push(`${rowId - step}|${colId - step}`);
+        columns.topRight.push(`${rowId - step}|${colId + step}`);
+        columns.bottomLeft.push(`${rowId + step}|${colId - step}`);
+        columns.bottomRight.push(`${rowId + step}|${colId + step}`);
       }
     }
 
@@ -76,17 +76,8 @@ class Rules {
     }
 
     return avaiblableColumns
-      .concat(
-        columns.tops,
-        columns.bottoms,
-        columns.lefts,
-        columns.rights,
-        columns.topLefts,
-        columns.topRights,
-        columns.bottomLefts,
-        columns.bottomRights
-      )
-      .filter((coord) => this.board.isExistCoord(coord));
+      .concat(Object.values(columns))
+      .filter(this.board.isExistCoord);
   };
 }
 

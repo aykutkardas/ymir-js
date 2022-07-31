@@ -25,9 +25,9 @@ class Item {
 
   data: any;
 
-  lock: boolean = false;
+  lock = false;
 
-  selected: boolean = false;
+  selected = false;
 
   movement: MovementType = {};
 

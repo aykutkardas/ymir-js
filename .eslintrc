@@ -1,9 +1,7 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "plugins": ["@typescript-eslint"],
   "parserOptions": {
     "project": "./tsconfig.json"
   },
@@ -15,6 +13,10 @@
   ],
   "rules": {
     "no-console": 2,
-    "linebreak-style": "off"
+    "linebreak-style": "off",
+    "operator-linebreak": "off",
+    "no-continue": "off",
+    "comma-dangle": "off",
+    "consistent-return": "off"
   }
 }

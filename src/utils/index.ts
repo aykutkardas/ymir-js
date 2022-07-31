@@ -1,3 +1,3 @@
-import useCoord from "./useCoord";
+import useCoord from './useCoord';
 
 export default { useCoord };

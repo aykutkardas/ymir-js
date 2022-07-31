@@ -1,5 +1,5 @@
-import Board from "../../core/board";
-import Item from "./item";
+import Board from '../../core/board';
+import Item from './item';
 
 export type BoardConfig = {
   x: number;
@@ -13,23 +13,23 @@ class InternationalCheckersBoard extends Board {
     return this;
   }
 
-  init() {
+  init(): void {
     const whiteItemCoords =
-      "0|1 0|3 0|5 0|7 0|9 1|0 1|2 1|4 1|6 1|8 2|1 2|3 2|5 2|7 2|9 3|0 3|2 3|4 3|6 3|8";
+      '0|1 0|3 0|5 0|7 0|9 1|0 1|2 1|4 1|6 1|8 2|1 2|3 2|5 2|7 2|9 3|0 3|2 3|4 3|6 3|8';
     const blackItemCoords =
-      "6|1 6|3 6|5 6|7 6|9 7|0 7|2 7|4 7|6 7|8 8|1 8|3 8|5 8|7 8|9 9|0 9|2 9|4 9|6 9|8";
+      '6|1 6|3 6|5 6|7 6|9 7|0 7|2 7|4 7|6 7|8 8|1 8|3 8|5 8|7 8|9 9|0 9|2 9|4 9|6 9|8';
 
-    whiteItemCoords.split(" ").forEach((coord) => {
-      this.setItem(coord, new Item({ color: "white" }));
+    whiteItemCoords.split(' ').forEach((coord) => {
+      this.setItem(coord, new Item({ color: 'white' }));
     });
 
-    blackItemCoords.split(" ").forEach((coord) => {
-      this.setItem(coord, new Item({ color: "black" }));
+    blackItemCoords.split(' ').forEach((coord) => {
+      this.setItem(coord, new Item({ color: 'black' }));
     });
   }
 
   // TODO: Write test
-  reset() {
+  reset(): void {
     Object.keys(this.board).forEach((coord) => {
       this.board[coord].item = null;
     });

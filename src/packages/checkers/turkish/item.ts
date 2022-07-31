@@ -1,5 +1,5 @@
-import Item, { ItemType, MovementType } from "../../core/item";
-import { CHECKERS_WHITE, CHECKERS_BLACK } from "../constant";
+import Item, { ItemType, MovementType } from '../../core/item';
+import { CHECKERS_WHITE, CHECKERS_BLACK } from '../constant';
 
 export type CheckersColorType = typeof CHECKERS_BLACK | typeof CHECKERS_WHITE;
 
@@ -27,21 +27,21 @@ class CheckersItem extends Item implements CheckersItemType {
       this.movement.stepCount = 7;
     } else {
       const isBlack = this.color === CHECKERS_BLACK;
-      this.movement[isBlack ? "top" : "bottom"] = true;
+      this.movement[isBlack ? 'top' : 'bottom'] = true;
       this.movement.left = true;
       this.movement.right = true;
     }
   }
 
   // TODO: Write Test
-  setKing = () => {
+  setKing(): void {
     this.movement = {
       linear: true,
       stepCount: 7,
     };
 
     this.king = true;
-  };
+  }
 }
 
 export default CheckersItem;
