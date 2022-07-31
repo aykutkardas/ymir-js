@@ -76,7 +76,7 @@ class Rules {
     }
 
     return avaiblableColumns
-      .concat(Object.values(columns))
+      .concat(...Object.values(columns))
       .filter(this.board.isExistCoord);
   };
 }
