@@ -1,5 +1,6 @@
+import getAvailableColumns from '../../utils/getAvailableColumns';
 import useCoord from '../../utils/useCoord';
-import { ItemType } from './item';
+import { ItemType, MovementType } from './item';
 
 export type DistanceType = {
   x: number;
@@ -29,6 +30,11 @@ export type Direction =
   | 'top'
   | 'bottom';
 
+export type BoardMatrixItem = {
+  coord: string;
+  item: ItemType;
+};
+
 class Board {
   config: BoardConfig;
 
@@ -56,7 +62,7 @@ class Board {
     return board;
   };
 
-  getBoardMatrix = (): string[][] => {
+  getBoardMatrix = (): BoardMatrixItem[][] => {
     const matrix = [];
     Object.entries(this.board).forEach(([coord, data]) => {
       const [rowId, colId] = useCoord(coord);
@@ -198,6 +204,21 @@ class Board {
   };
 
   isExistCoord = (coord: string): boolean => !!this.board[coord];
+
+  getAvailableColumns = (
+    coord: string,
+    movement: MovementType,
+    columnsObj?: boolean
+  ): string[] | { [key: string]: string[] } => {
+    const avaiblableColumns = [];
+    const columns = getAvailableColumns(coord, movement);
+
+    if (columnsObj) return columns;
+
+    return avaiblableColumns
+      .concat(...Object.values(columns))
+      .filter(this.isExistCoord);
+  };
 }
 
 export default Board;
