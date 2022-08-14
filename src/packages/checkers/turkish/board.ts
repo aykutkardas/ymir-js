@@ -143,23 +143,32 @@ class TurkishCheckersBoard extends Board {
 
   // TODO: Write Test
   getAvailableColumns = (coord: string, movement: MovementType): string[] => {
-    const columns = getAvailableColumns(coord, movement);
-
     if (this.isEmpty(coord)) return [];
+
+    const columns = getAvailableColumns(coord, movement);
 
     const item = this.getItem(coord);
 
     const emptyColumns = [];
     let enemyColumns = [];
 
-    Object.values(columns)
-      .flat()
-      .forEach((columnCoord) => {
-        if (this.isEmpty(columnCoord)) emptyColumns.push(columnCoord);
-        const columnItem = this.getItem(columnCoord);
-        if (columnItem && columnItem.color !== item.color)
-          enemyColumns.push(columnCoord);
+    Object.values(columns).forEach((directionColumns) => {
+      let foundFriendlyItem = false;
+      directionColumns.forEach((columnCoord) => {
+        if (foundFriendlyItem) return;
+
+        if (this.isEmpty(columnCoord)) {
+          emptyColumns.push(columnCoord);
+        } else {
+          const columnItem = this.getItem(columnCoord);
+          if (columnItem?.color === item.color) {
+            foundFriendlyItem = true;
+          } else {
+            enemyColumns.push(columnCoord);
+          }
+        }
       });
+    });
 
     enemyColumns = enemyColumns
       .map((enemyCoord) => {
@@ -177,40 +186,6 @@ class TurkishCheckersBoard extends Board {
       .filter(Boolean);
 
     return enemyColumns.length ? enemyColumns : emptyColumns;
-  };
-
-  analyzeAvailableAttack = (
-    color: CheckersColorType
-  ): Record<string, string[]> => {
-    const availableAttack = {};
-    const coords = [];
-
-    Object.entries(this.board).forEach(([coord, col]) => {
-      if (col.item && col.item.color === color) {
-        coords.push(coord);
-      }
-    });
-
-    coords.forEach((coord) => {
-      const item = this.getItem(coord);
-      const availableColumns = this.getAvailableColumns(coord, item.movement);
-
-      availableColumns.forEach((availableColumn) => {
-        const betweenItems = this.getItemsBetweenTwoCoords(
-          coord,
-          availableColumn
-        );
-        if (betweenItems.length) {
-          if (availableAttack[coord]) {
-            availableAttack[coord].push(availableColumn);
-          } else {
-            availableAttack[coord] = [availableColumn];
-          }
-        }
-      });
-    });
-
-    return availableAttack;
   };
 
   autoPlay = (color: CheckersColorType, { onSelect, onMove }): void => {

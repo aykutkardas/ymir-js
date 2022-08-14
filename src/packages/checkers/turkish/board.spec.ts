@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
+import CheckersItem from '../turkish/item';
 
 import CheckersBoard from './board';
 
@@ -97,6 +98,22 @@ describe('Turkish Checkers', () => {
       '3|5': ['5|5'],
       '2|6': ['3|6', '2|5'],
       '2|7': ['3|7'],
+    });
+  });
+
+  it('getAvailableCoordsByColor with attack 2', () => {
+    const board = new CheckersBoard();
+    const firstWhiteItem = new CheckersItem({ color: 'white', king: true });
+    const secondWhiteItem = new CheckersItem({ color: 'white' });
+    const blackItem = new CheckersItem({ color: 'black' });
+
+    board.setItem('1|5', firstWhiteItem);
+    board.setItem('2|5', secondWhiteItem);
+    board.setItem('6|5', blackItem);
+
+    expect(board.getAvailableCoordsByColor('white')).to.deep.equal({
+      '1|5': ['0|5', '1|4', '1|3', '1|2', '1|1', '1|0', '1|6', '1|7'],
+      '2|5': ['3|5', '2|4', '2|6'],
     });
   });
 
