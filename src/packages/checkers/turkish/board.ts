@@ -76,6 +76,7 @@ class TurkishCheckersBoard extends Board {
         coord,
         item.movement
       );
+
       if (currentAvailableCoords.length) {
         availableCoords[coord] = currentAvailableCoords;
       }
@@ -116,27 +117,26 @@ class TurkishCheckersBoard extends Board {
     color: CheckersColorType
   ): Record<string, string[]> => {
     const defendCoords = {};
+
     const enemyColor = color === 'white' ? 'black' : 'white';
     const availableCoords = this.getAvailableCoordsByColor(color);
     const enemyAttackCoords = this.getAttackCoordsByColor(enemyColor);
 
-    Object.entries(enemyAttackCoords).forEach(
-      ([enemyOriginn, enemyAttackCoords]) => {
-        Object.entries(availableCoords).forEach(
-          ([originn, currentAvailableCoords]) => {
-            currentAvailableCoords.forEach((currentAvailableCoord) => {
-              if (enemyAttackCoords.includes(currentAvailableCoord)) {
-                if (defendCoords[originn]) {
-                  defendCoords[originn].push(currentAvailableCoord);
-                } else {
-                  defendCoords[originn] = [currentAvailableCoord];
-                }
+    Object.entries(enemyAttackCoords).forEach(([, enemyAttackCoords]) => {
+      Object.entries(availableCoords).forEach(
+        ([originn, currentAvailableCoords]) => {
+          currentAvailableCoords.forEach((currentAvailableCoord) => {
+            if (enemyAttackCoords.includes(currentAvailableCoord)) {
+              if (defendCoords[originn]) {
+                defendCoords[originn].push(currentAvailableCoord);
+              } else {
+                defendCoords[originn] = [currentAvailableCoord];
               }
-            });
-          }
-        );
-      }
-    );
+            }
+          });
+        }
+      );
+    });
 
     return defendCoords;
   };
@@ -145,74 +145,38 @@ class TurkishCheckersBoard extends Board {
   getAvailableColumns = (coord: string, movement: MovementType): string[] => {
     const columns = getAvailableColumns(coord, movement);
 
+    if (this.isEmpty(coord)) return [];
+
     const item = this.getItem(coord);
 
-    const availableColumns = {};
-    const captureAvailableColumns = {};
+    const emptyColumns = [];
+    let enemyColumns = [];
 
-    Object.keys(columns).forEach((key) => {
-      availableColumns[key] = [];
-
-      let isFoundCapture = false;
-      for (let i = 0; i < columns[key].length; i += 1) {
-        const currentCoord = columns[key][i];
-
-        if (this.isEmpty(currentCoord)) {
-          availableColumns[key].push(currentCoord);
-          continue;
-        } else if (isFoundCapture) {
-          break;
-        }
-
-        const nextCoordItem = this.getItem(currentCoord);
-
-        if (nextCoordItem?.color === item.color) {
-          break;
-        } else if (
-          !isFoundCapture &&
-          nextCoordItem &&
-          nextCoordItem.color !== item.color
-        ) {
-          const direction = this.getDirection(coord, currentCoord);
-          const movementRule = {
-            stepCount: 1,
-            [direction]: true,
-          };
-          const [toCoord] = this.getAvailableColumns(
-            currentCoord,
-            movementRule
-          ) as string[];
-
-          if (this.isEmpty(toCoord)) {
-            availableColumns[key] = [toCoord];
-            captureAvailableColumns[key] = true;
-            isFoundCapture = true;
-          } else {
-            break;
-          }
-        }
-      }
-    });
-
-    const isFoundAnySuccessDirection = Object.values(
-      captureAvailableColumns
-    ).some((direction) => direction);
-
-    const newAvailableColumns = [];
-
-    if (isFoundAnySuccessDirection) {
-      Object.keys(captureAvailableColumns).forEach((direction) => {
-        if (captureAvailableColumns[direction]) {
-          newAvailableColumns.push(...availableColumns[direction]);
-        }
+    Object.values(columns)
+      .flat()
+      .forEach((columnCoord) => {
+        if (this.isEmpty(columnCoord)) emptyColumns.push(columnCoord);
+        const columnItem = this.getItem(columnCoord);
+        if (columnItem && columnItem.color !== item.color)
+          enemyColumns.push(columnCoord);
       });
-    } else {
-      Object.keys(availableColumns).forEach((key) => {
-        newAvailableColumns.push(...availableColumns[key]);
-      });
-    }
 
-    return newAvailableColumns.filter(this.isEmpty);
+    enemyColumns = enemyColumns
+      .map((enemyCoord) => {
+        const direction = this.getDirection(coord, enemyCoord);
+        const movementRule = {
+          stepCount: 1,
+          [direction]: true,
+        };
+        const [toCoord] = Object.values(
+          getAvailableColumns(enemyCoord, movementRule)
+        ).flat();
+
+        return this.isEmpty(toCoord) ? toCoord : false;
+      })
+      .filter(Boolean);
+
+    return enemyColumns.length ? enemyColumns : emptyColumns;
   };
 
   analyzeAvailableAttack = (
