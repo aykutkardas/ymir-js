@@ -277,46 +277,42 @@ class TurkishCheckersBoard extends Board {
     }
 
     // AVAILABLE NORMAL MOVES
-    const availableNormalMoves = {};
-    Object.keys(this.board).forEach((coord) => {
-      const item = this.getItem(coord);
-      if (item && item.color === color) {
-        const availableColumns = this.getAvailableColumns(
-          coord,
-          item.movement
-        ).filter((availableCoord) => {
-          const prevCoord = coord;
-          const nextCoord = availableCoord;
-          this.moveItem(prevCoord, nextCoord);
-
-          const availableSuccessMoves = this.analyzeAvailableAttack(
-            color === 'white' ? 'black' : 'white'
-          );
-
-          let safeMove = true;
-
-          Object.values(availableSuccessMoves).forEach((successMoves) => {
-            if (successMoves.includes(nextCoord)) {
-              safeMove = false;
-            }
-          });
-
-          this.moveItem(nextCoord, prevCoord);
-          return safeMove;
-        });
-        if (availableColumns.length) {
-          availableNormalMoves[coord] = availableColumns;
-        }
-      }
-    });
-
+    const availableNormalMoves = this.getAvailableCoordsByColor(color);
     const availableCoords = Object.keys(availableNormalMoves);
 
-    const randomIndex = Math.floor(Math.random() * availableCoords.length);
-    const selectedCoord = availableCoords[randomIndex];
+    const availableEnemyNormalMoves = Object.values(
+      this.getAvailableCoordsByColor(color === 'white' ? 'black' : 'white')
+    ).flat();
+
+    const safeMoves = {};
+
+    Object.values(availableNormalMoves).filter((moves, index) => {
+      moves.forEach((move) => {
+        if (!availableEnemyNormalMoves.includes(move)) {
+          if (safeMoves[move]) {
+            safeMoves[availableCoords[index]].push(move);
+          } else {
+            safeMoves[availableCoords[index]] = [move];
+          }
+        }
+      });
+    });
+
+    const safeCoords = Object.keys(safeMoves);
+
+    let currentCoords = availableCoords;
+    let currentMoves = availableNormalMoves;
+
+    if (safeCoords.length) {
+      currentCoords = safeCoords;
+      currentMoves = safeMoves;
+    }
+
+    const randomIndex = Math.floor(Math.random() * currentCoords.length);
+    const selectedCoord = currentCoords[randomIndex];
 
     onSelect?.(selectedCoord);
-    onMove?.(selectedCoord, availableNormalMoves[selectedCoord][0]);
+    onMove?.(selectedCoord, currentMoves[selectedCoord][0]);
   };
 }
 
