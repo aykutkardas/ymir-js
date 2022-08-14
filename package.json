@@ -2,6 +2,7 @@
   "name": "ymir-js",
   "version": "0.4.1",
   "description": "This toolkit is created to make it easier for you to develop games like chess, checkers, go, match 3 puzzle and more. It is still under development.",
+  "main": "dist/index.js",
   "scripts": {
     "test": "cross-env-file -p ./cross-env.json mocha -r ts-node/register src/**/*.spec.ts",
     "build": "tsc",
@@ -10,13 +11,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/aykutkardas/ymir-js.git"
-  },
-  "exports": {
-    ".": "./dist/index.js",
-    "./utils": "./dist/utils/index.js",
-    "./core/": "./dist/core/index.js",
-    "./checkers/turkish": "./dist/packages/checkers/turkish/index.js",
-    "./checkers/international": "./dist/packages/checkers/international/index.js"
   },
   "keywords": [
     "board",
