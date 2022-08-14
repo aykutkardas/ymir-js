@@ -1,6 +1,6 @@
 {
   "name": "ymir-js",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "This toolkit is created to make it easier for you to develop games like chess, checkers, go, match 3 puzzle and more. It is still under development.",
   "scripts": {
     "test": "cross-env-file -p ./cross-env.json mocha -r ts-node/register src/**/*.spec.ts",
