@@ -12,7 +12,14 @@
     "type": "git",
     "url": "https://github.com/aykutkardas/ymir-js.git"
   },
-  "keywords": [],
+  "exports": {
+    ".": "./dist/index.js",
+    "./utils": "./dist/utils/index.js",
+    "./core/": "./dist/core/index.js",
+    "./checkers/turkish": "./dist/packages/checkers/turkish/index.js",
+    "./checkers/international": "./dist/packages/checkers/international/index.js"
+  },
+  "keywords": ["board", "game", "toolkit", "checkers"],
   "author": "",
   "license": "ISC",
   "devDependencies": {
