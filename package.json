@@ -1,6 +1,6 @@
 {
   "name": "ymir-js",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "This toolkit is created to make it easier for you to develop games like chess, checkers, go, match 3 puzzle and more. It is still under development.",
   "main": "dist/index.js",
   "scripts": {
@@ -19,7 +19,12 @@
     "./checkers/turkish": "./dist/packages/checkers/turkish/index.js",
     "./checkers/international": "./dist/packages/checkers/international/index.js"
   },
-  "keywords": ["board", "game", "toolkit", "checkers"],
+  "keywords": [
+    "board",
+    "game",
+    "toolkit",
+    "checkers"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
