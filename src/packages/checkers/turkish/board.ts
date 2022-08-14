@@ -32,14 +32,11 @@ class TurkishCheckersBoard extends Board {
 
   // TODO: Write test
   reset(): void {
-    Object.keys(this).forEach((coord) => {
-      this[coord].item = null;
-    });
+    Object.keys(this.board).forEach(this.removeItem);
 
     this.init();
   }
 
-  // TODO: Write Test
   getItemsBetweenTwoCoords(fromCoord: string, toCoord: string): string[] {
     const direction = this.getDirection(fromCoord, toCoord);
     const distance = this.getDistanceBetweenTwoCoords(fromCoord, toCoord);
@@ -60,6 +57,89 @@ class TurkishCheckersBoard extends Board {
       .concat(...Object.values(getAvailableColumns(fromCoord, movement)))
       .filter((coord) => !this.isEmpty(coord));
   }
+
+  getAvailableCoordsByColor = (
+    color: CheckersColorType
+  ): Record<string, string[]> => {
+    const currentItems = [];
+    const availableCoords = {};
+
+    Object.entries(this.board).forEach(([coord, col]) => {
+      if (col.item && col.item.color === color) {
+        currentItems.push(coord);
+      }
+    });
+
+    currentItems.forEach((coord) => {
+      const item = this.getItem(coord);
+      const currentAvailableCoords = this.getAvailableColumns(
+        coord,
+        item.movement
+      );
+      if (currentAvailableCoords.length) {
+        availableCoords[coord] = currentAvailableCoords;
+      }
+    });
+
+    return availableCoords;
+  };
+
+  getAttackCoordsByColor = (
+    color: CheckersColorType
+  ): Record<string, string[]> => {
+    const availableCoords = this.getAvailableCoordsByColor(color);
+    const attackCoords = {};
+
+    Object.entries(availableCoords).forEach(
+      ([coord, currentAvailableCoords]) => {
+        currentAvailableCoords.forEach((currentAvailableCoord) => {
+          const itemWillDestroyList = this.getItemsBetweenTwoCoords(
+            coord,
+            currentAvailableCoord
+          );
+
+          if (itemWillDestroyList.length) {
+            if (attackCoords[coord]) {
+              attackCoords[coord].push(currentAvailableCoord);
+            } else {
+              attackCoords[coord] = [currentAvailableCoord];
+            }
+          }
+        });
+      }
+    );
+
+    return attackCoords;
+  };
+
+  getDefendCoordsByColor = (
+    color: CheckersColorType
+  ): Record<string, string[]> => {
+    const defendCoords = {};
+    const enemyColor = color === 'white' ? 'black' : 'white';
+    const availableCoords = this.getAvailableCoordsByColor(color);
+    const enemyAttackCoords = this.getAttackCoordsByColor(enemyColor);
+
+    Object.entries(enemyAttackCoords).forEach(
+      ([enemyOriginn, enemyAttackCoords]) => {
+        Object.entries(availableCoords).forEach(
+          ([originn, currentAvailableCoords]) => {
+            currentAvailableCoords.forEach((currentAvailableCoord) => {
+              if (enemyAttackCoords.includes(currentAvailableCoord)) {
+                if (defendCoords[originn]) {
+                  defendCoords[originn].push(currentAvailableCoord);
+                } else {
+                  defendCoords[originn] = [currentAvailableCoord];
+                }
+              }
+            });
+          }
+        );
+      }
+    );
+
+    return defendCoords;
+  };
 
   // TODO: Write Test
   getAvailableColumns = (coord: string, movement: MovementType): string[] => {
@@ -135,18 +215,16 @@ class TurkishCheckersBoard extends Board {
     return newAvailableColumns.filter(this.isEmpty);
   };
 
-  analyzeBoardForAvailableSuccessMoves = (
+  analyzeAvailableAttack = (
     color: CheckersColorType
-  ): string[] => {
-    const availableSuccessMoves = [];
+  ): Record<string, string[]> => {
+    const availableAttack = {};
     const coords = [];
 
-    this.getBoardMatrix().forEach((row) => {
-      row.forEach((col) => {
-        if (col.item && col.item.color === color) {
-          coords.push(col.coord);
-        }
-      });
+    Object.entries(this.board).forEach(([coord, col]) => {
+      if (col.item && col.item.color === color) {
+        coords.push(coord);
+      }
     });
 
     coords.forEach((coord) => {
@@ -159,12 +237,86 @@ class TurkishCheckersBoard extends Board {
           availableColumn
         );
         if (betweenItems.length) {
-          availableSuccessMoves.push(coord);
+          if (availableAttack[coord]) {
+            availableAttack[coord].push(availableColumn);
+          } else {
+            availableAttack[coord] = [availableColumn];
+          }
         }
       });
     });
 
-    return availableSuccessMoves;
+    return availableAttack;
+  };
+
+  autoPlay = (color: CheckersColorType, { onSelect, onMove }): void => {
+    // AVAILABLE SUCCESS MOVES
+    const availableAttacks = this.getAttackCoordsByColor(color);
+    const availableAttacksOriginn = Object.keys(availableAttacks);
+
+    if (availableAttacksOriginn.length) {
+      const [attackOriginn] = availableAttacksOriginn;
+      const [availableAttackColumn] = availableAttacks[attackOriginn];
+
+      onSelect?.(attackOriginn);
+      onMove?.(attackOriginn, availableAttackColumn);
+      return;
+    }
+
+    // AVAILABLE DEFEND MOVES
+    const availableDefends = this.getDefendCoordsByColor(color);
+    const availableDefendsOriginn = Object.keys(availableDefends);
+
+    if (availableDefendsOriginn.length) {
+      const [defendOriginn] = availableDefendsOriginn;
+      const [availableDefendColumn] = availableDefends[defendOriginn];
+
+      onSelect?.(defendOriginn);
+      onMove?.(defendOriginn, availableDefendColumn);
+      return;
+    }
+
+    // AVAILABLE NORMAL MOVES
+    const availableNormalMoves = {};
+    Object.keys(this.board).forEach((coord) => {
+      const item = this.getItem(coord);
+      if (item && item.color === color) {
+        const availableColumns = this.getAvailableColumns(
+          coord,
+          item.movement
+        ).filter((availableCoord) => {
+          const prevCoord = coord;
+          const nextCoord = availableCoord;
+          this.moveItem(prevCoord, nextCoord);
+
+          const availableSuccessMoves = this.analyzeAvailableAttack(
+            color === 'white' ? 'black' : 'white'
+          );
+
+          let safeMove = true;
+
+          Object.values(availableSuccessMoves).forEach((successMoves) => {
+            if (successMoves.includes(nextCoord)) {
+              safeMove = false;
+            }
+          });
+
+          this.moveItem(nextCoord, prevCoord);
+          return safeMove;
+        });
+        if (availableColumns.length) {
+          availableNormalMoves[coord] = availableColumns;
+        }
+      }
+    });
+
+    const availableCoords = Object.keys(availableNormalMoves);
+
+    const randomIndex = Math.floor(Math.random() * availableCoords.length);
+    const selectedCoord = availableCoords[randomIndex];
+
+    onSelect?.(selectedCoord);
+    onMove?.(selectedCoord, availableNormalMoves[selectedCoord][0]);
   };
 }
 
