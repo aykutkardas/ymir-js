@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 import getAvailableColumns from '../../../utils/getAvailableColumns';
 import Board from '../../core/board';
 import { MovementType } from '../../core/item';
@@ -141,51 +143,81 @@ class TurkishCheckersBoard extends Board {
     return defendCoords;
   };
 
-  // TODO: Write Test
+  // [BUG]: Fix king movement when has available attack
   getAvailableColumns = (coord: string, movement: MovementType): string[] => {
     if (this.isEmpty(coord)) return [];
 
     const columns = getAvailableColumns(coord, movement);
-
+    const availableColumns: Record<string, string[]> = {};
+    const captureAvailableColumns = {};
     const item = this.getItem(coord);
 
-    const emptyColumns = [];
-    let enemyColumns = [];
+    Object.keys(columns).forEach((key) => {
+      availableColumns[key] = [];
+      let isFoundCapture = false;
 
-    Object.values(columns).forEach((directionColumns) => {
-      let foundFriendlyItem = false;
-      directionColumns.forEach((columnCoord) => {
-        if (foundFriendlyItem) return;
+      for (let i = 0; i < columns[key].length; i += 1) {
+        const currentCoord = columns[key][i];
 
-        if (this.isEmpty(columnCoord)) {
-          emptyColumns.push(columnCoord);
-        } else {
-          const columnItem = this.getItem(columnCoord);
-          if (columnItem?.color === item.color) {
-            foundFriendlyItem = true;
+        if (!this.isExistCoord(currentCoord)) continue;
+        if (this.isEmpty(currentCoord)) {
+          availableColumns[key].push(currentCoord);
+          continue;
+        } else if (isFoundCapture) {
+          break;
+        }
+
+        const nextCoordItem = this.getItem(currentCoord);
+
+        if (nextCoordItem?.color === item.color) {
+          break;
+        } else if (
+          !isFoundCapture &&
+          nextCoordItem &&
+          nextCoordItem.color !== item.color
+        ) {
+          const direction = this.getDirection(coord, currentCoord);
+          const movementRule = {
+            stepCount: 1,
+            [direction]: true,
+          };
+
+          const [afterCoord] = Object.values(
+            getAvailableColumns(currentCoord, movementRule)
+          )
+            .filter((arr) => arr.length)
+            .flat();
+
+          const afterItem = this.getItem(afterCoord);
+
+          if (afterItem) break;
+
+          if (this.isEmpty(afterCoord)) {
+            availableColumns[key] = [afterCoord];
+            captureAvailableColumns[key] = true;
+            isFoundCapture = true;
           } else {
-            enemyColumns.push(columnCoord);
+            break;
           }
         }
-      });
+      }
     });
 
-    enemyColumns = enemyColumns
-      .map((enemyCoord) => {
-        const direction = this.getDirection(coord, enemyCoord);
-        const movementRule = {
-          stepCount: 1,
-          [direction]: true,
-        };
-        const [toCoord] = Object.values(
-          getAvailableColumns(enemyCoord, movementRule)
-        ).flat();
+    const resultCoords: Record<string, string[]> = {};
 
-        return this.isEmpty(toCoord) ? toCoord : false;
-      })
-      .filter(Boolean);
+    const isFoundAnySuccessDirection = Object.values(
+      captureAvailableColumns
+    ).some((direction) => direction);
 
-    return enemyColumns.length ? enemyColumns : emptyColumns;
+    Object.keys(availableColumns).forEach((key) => {
+      if (!isFoundAnySuccessDirection) {
+        resultCoords[key] = _.uniq(availableColumns[key]);
+      } else if (captureAvailableColumns[key]) {
+        resultCoords[key] = _.uniq(availableColumns[key]);
+      }
+    });
+
+    return Object.values(resultCoords).flat();
   };
 
   autoPlay = (color: CheckersColorType, { onSelect, onMove }): void => {

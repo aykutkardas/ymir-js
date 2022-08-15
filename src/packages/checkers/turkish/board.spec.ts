@@ -56,6 +56,34 @@ describe('Turkish Checkers', () => {
     ]);
   });
 
+  it('getAvailableColumns king', () => {
+    const board = new CheckersBoard();
+    board.init();
+
+    const item = board.getItem('2|7');
+    item.setKing();
+
+    expect(board.getAvailableColumns('2|7', item.movement)).to.deep.equal([
+      '3|7',
+      '4|7',
+    ]);
+  });
+
+  it('getAvailableColumns king with attack', () => {
+    const board = new CheckersBoard();
+    board.init();
+
+    board.moveItem('5|7', '3|7');
+
+    const item = board.getItem('2|7');
+    item.setKing();
+
+    expect(board.getAvailableColumns('2|7', item.movement)).to.deep.equal([
+      '4|7',
+      '5|7',
+    ]);
+  });
+
   it('getItemsBetweenTwoCoords', () => {
     const board = new CheckersBoard();
     board.init();
@@ -104,6 +132,20 @@ describe('Turkish Checkers', () => {
   it('getAvailableCoordsByColor with attack 2', () => {
     const board = new CheckersBoard();
     const firstWhiteItem = new CheckersItem({ color: 'white', king: true });
+    const blackItem = new CheckersItem({ color: 'black' });
+
+    board.setItem('1|5', firstWhiteItem);
+    board.setItem('2|5', blackItem);
+    board.setItem('3|5', blackItem);
+
+    expect(board.getAvailableCoordsByColor('white')).to.deep.equal({
+      '1|5': ['0|5', '1|4', '1|3', '1|2', '1|1', '1|0', '1|6', '1|7'],
+    });
+  });
+
+  it('getAvailableCoordsByColor with attack 3', () => {
+    const board = new CheckersBoard();
+    const firstWhiteItem = new CheckersItem({ color: 'white', king: true });
     const secondWhiteItem = new CheckersItem({ color: 'white' });
     const blackItem = new CheckersItem({ color: 'black' });
 
@@ -114,6 +156,22 @@ describe('Turkish Checkers', () => {
     expect(board.getAvailableCoordsByColor('white')).to.deep.equal({
       '1|5': ['0|5', '1|4', '1|3', '1|2', '1|1', '1|0', '1|6', '1|7'],
       '2|5': ['3|5', '2|4', '2|6'],
+    });
+  });
+
+  it('getAvailableCoordsByColor with attack 4', () => {
+    const board = new CheckersBoard();
+    const firstWhiteItem = new CheckersItem({ color: 'white' });
+    const secondWhiteItem = new CheckersItem({ color: 'white' });
+    const blackItem = new CheckersItem({ color: 'black', king: true });
+
+    board.setItem('1|5', firstWhiteItem);
+    board.setItem('4|5', secondWhiteItem);
+    board.setItem('5|5', blackItem);
+    board.getItem('5|5').setKing();
+
+    expect(board.getAvailableCoordsByColor('black')).to.deep.equal({
+      '5|5': ['3|5', '2|5'],
     });
   });
 
