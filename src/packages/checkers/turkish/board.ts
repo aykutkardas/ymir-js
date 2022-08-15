@@ -32,7 +32,6 @@ class TurkishCheckersBoard extends Board {
     });
   }
 
-  // TODO: Write test
   reset(): void {
     Object.keys(this.board).forEach(this.removeItem);
 
@@ -143,7 +142,6 @@ class TurkishCheckersBoard extends Board {
     return defendCoords;
   };
 
-  // [BUG]: Fix king movement when has available attack
   getAvailableColumns = (coord: string, movement: MovementType): string[] => {
     if (this.isEmpty(coord)) return [];
 

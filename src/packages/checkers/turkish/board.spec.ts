@@ -26,64 +26,6 @@ describe('Turkish Checkers', () => {
     expect(board.board).to.deep.equal(defaultBoard.board);
   });
 
-  it('getAvailableColumns', () => {
-    const board = new CheckersBoard();
-    board.init();
-    board.moveItem('2|3', '3|3');
-    board.moveItem('1|3', '2|3');
-    board.moveItem('5|3', '4|3');
-
-    const item = board.getItem('4|3');
-
-    expect(board.getAvailableColumns('4|3', item.movement)).to.deep.equal([
-      '4|2',
-      '4|4',
-    ]);
-  });
-
-  it('getAvailableColumns horizontal', () => {
-    const board = new CheckersBoard();
-    board.init();
-    board.moveItem('2|3', '3|3');
-    board.moveItem('1|3', '2|3');
-    board.moveItem('5|3', '2|6');
-    board.removeItem('2|4');
-
-    const item = board.getItem('2|7');
-
-    expect(board.getAvailableColumns('2|7', item.movement)).to.deep.equal([
-      '3|7',
-    ]);
-  });
-
-  it('getAvailableColumns king', () => {
-    const board = new CheckersBoard();
-    board.init();
-
-    const item = board.getItem('2|7');
-    item.setKing();
-
-    expect(board.getAvailableColumns('2|7', item.movement)).to.deep.equal([
-      '3|7',
-      '4|7',
-    ]);
-  });
-
-  it('getAvailableColumns king with attack', () => {
-    const board = new CheckersBoard();
-    board.init();
-
-    board.moveItem('5|7', '3|7');
-
-    const item = board.getItem('2|7');
-    item.setKing();
-
-    expect(board.getAvailableColumns('2|7', item.movement)).to.deep.equal([
-      '4|7',
-      '5|7',
-    ]);
-  });
-
   it('getItemsBetweenTwoCoords', () => {
     const board = new CheckersBoard();
     board.init();
@@ -210,5 +152,65 @@ describe('Turkish Checkers', () => {
     expect(board.getDefendCoordsByColor('white')).to.deep.equal({
       '2|0': ['3|0'],
     });
+  });
+});
+
+describe('Turkish Checkers Available Columns', () => {
+  it('getAvailableColumns', () => {
+    const board = new CheckersBoard();
+    board.init();
+    board.moveItem('2|3', '3|3');
+    board.moveItem('1|3', '2|3');
+    board.moveItem('5|3', '4|3');
+
+    const item = board.getItem('4|3');
+
+    expect(board.getAvailableColumns('4|3', item.movement)).to.deep.equal([
+      '4|2',
+      '4|4',
+    ]);
+  });
+
+  it('getAvailableColumns horizontal', () => {
+    const board = new CheckersBoard();
+    board.init();
+    board.moveItem('2|3', '3|3');
+    board.moveItem('1|3', '2|3');
+    board.moveItem('5|3', '2|6');
+    board.removeItem('2|4');
+
+    const item = board.getItem('2|7');
+
+    expect(board.getAvailableColumns('2|7', item.movement)).to.deep.equal([
+      '3|7',
+    ]);
+  });
+
+  it('getAvailableColumns king', () => {
+    const board = new CheckersBoard();
+    board.init();
+
+    const item = board.getItem('2|7');
+    item.setKing();
+
+    expect(board.getAvailableColumns('2|7', item.movement)).to.deep.equal([
+      '3|7',
+      '4|7',
+    ]);
+  });
+
+  it('getAvailableColumns king with attack', () => {
+    const board = new CheckersBoard();
+    board.init();
+
+    board.moveItem('5|7', '3|7');
+
+    const item = board.getItem('2|7');
+    item.setKing();
+
+    expect(board.getAvailableColumns('2|7', item.movement)).to.deep.equal([
+      '4|7',
+      '5|7',
+    ]);
   });
 });

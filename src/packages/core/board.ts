@@ -64,9 +64,11 @@ class Board {
 
   getBoardMatrix = (): BoardMatrixItem[][] => {
     const matrix = [];
+
     Object.entries(this.board).forEach(([coord, data]) => {
       const [rowId, colId] = useCoord(coord);
       const item = { coord, ...data };
+
       if (matrix[rowId]) {
         matrix[rowId][colId] = item;
       } else {
@@ -99,6 +101,30 @@ class Board {
     if (!isExistCoord) return;
 
     this.board[coord].item = null;
+  };
+
+  moveItem = (fromCoord: string, toCoord: string): void => {
+    const isExistFromCoord = this.isExistCoord(fromCoord);
+    const isExistToCoord = this.isExistCoord(toCoord);
+
+    if (!isExistFromCoord || !isExistToCoord) return;
+
+    const { item } = this.board[fromCoord];
+    this.board[fromCoord].item = null;
+    this.board[toCoord].item = item;
+  };
+
+  switchItem = (fromCoord: string, toCoord: string): void => {
+    const isExistFromCoord = this.isExistCoord(fromCoord);
+    const isExistToCoord = this.isExistCoord(toCoord);
+
+    if (!isExistFromCoord || !isExistToCoord) return;
+
+    const { item: fromItem } = this.board[fromCoord];
+    const { item: toItem } = this.board[toCoord];
+
+    this.board[fromCoord].item = toItem;
+    this.board[toCoord].item = fromItem;
   };
 
   selectItem = (coord: string): void => {
@@ -134,7 +160,31 @@ class Board {
     });
   };
 
-  // [TODO]: Write Test
+  isEmpty = (coord: string): boolean => {
+    const isExistCoord = this.isExistCoord(coord);
+
+    if (!isExistCoord) return;
+
+    return !this.board[coord].item;
+  };
+
+  isExistCoord = (coord: string): boolean => !!this.board[coord];
+
+  getDistanceBetweenTwoCoords = (
+    fromCoord: string,
+    toCoord: string
+  ): DistanceType => {
+    const isExistFromCoord = this.isExistCoord(fromCoord);
+    const isExistToCoord = this.isExistCoord(toCoord);
+
+    if (!isExistFromCoord || !isExistToCoord) return;
+
+    const [fromRowId, fromColId] = useCoord(fromCoord);
+    const [toRowId, toColId] = useCoord(toCoord);
+
+    return { y: toRowId - fromRowId, x: toColId - fromColId };
+  };
+
   getDirection = (fromCoord: string, toCoord: string): Direction => {
     const isExistFromCoord = this.isExistCoord(fromCoord);
     const isExistToCoord = this.isExistCoord(toCoord);
@@ -155,55 +205,6 @@ class Board {
 
     return null;
   };
-
-  getDistanceBetweenTwoCoords = (
-    fromCoord: string,
-    toCoord: string
-  ): DistanceType => {
-    const isExistFromCoord = this.isExistCoord(fromCoord);
-    const isExistToCoord = this.isExistCoord(toCoord);
-
-    if (!isExistFromCoord || !isExistToCoord) return;
-
-    const [fromRowId, fromColId] = useCoord(fromCoord);
-    const [toRowId, toColId] = useCoord(toCoord);
-
-    return { y: toRowId - fromRowId, x: toColId - fromColId };
-  };
-
-  isEmpty = (coord: string): boolean => {
-    const isExistCoord = this.isExistCoord(coord);
-
-    if (!isExistCoord) return;
-
-    return !this.board[coord].item;
-  };
-
-  moveItem = (fromCoord: string, toCoord: string): void => {
-    const isExistFromCoord = this.isExistCoord(fromCoord);
-    const isExistToCoord = this.isExistCoord(toCoord);
-
-    if (!isExistFromCoord || !isExistToCoord) return;
-
-    const { item } = this.board[fromCoord];
-    this.board[fromCoord].item = null;
-    this.board[toCoord].item = item;
-  };
-
-  switchItem = (fromCoord: string, toCoord: string): void => {
-    const isExistFromCoord = this.isExistCoord(fromCoord);
-    const isExistToCoord = this.isExistCoord(toCoord);
-
-    if (!isExistFromCoord || !isExistToCoord) return;
-
-    const { item: fromItem } = this.board[fromCoord];
-    const { item: toItem } = this.board[toCoord];
-
-    this.board[fromCoord].item = toItem;
-    this.board[toCoord].item = fromItem;
-  };
-
-  isExistCoord = (coord: string): boolean => !!this.board[coord];
 
   getAvailableColumns = (
     coord: string,

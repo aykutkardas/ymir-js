@@ -4,8 +4,8 @@ import 'mocha';
 import Board from './board';
 import Item from './item';
 
-describe('Board Tests', () => {
-  it('Square Board 3x3', () => {
+describe('Core Board', () => {
+  it('Board 3x3', () => {
     const { board } = new Board({ x: 3, y: 3 });
 
     expect(board).to.deep.equal({
@@ -21,7 +21,7 @@ describe('Board Tests', () => {
     });
   });
 
-  it('Rectangle Board 3x5', () => {
+  it('Board 3x5', () => {
     const { board } = new Board({ x: 3, y: 5 });
 
     expect(board).to.deep.equal({
@@ -43,7 +43,7 @@ describe('Board Tests', () => {
     });
   });
 
-  it('Rectangle Board 5x3', () => {
+  it('Board 5x3', () => {
     const { board } = new Board({ x: 5, y: 3 });
 
     expect(board).to.deep.equal({
@@ -65,7 +65,7 @@ describe('Board Tests', () => {
     });
   });
 
-  it('setItem Method', () => {
+  it('setItem', () => {
     const board = new Board({ x: 3, y: 3 });
     const item = new Item({
       rules: {
@@ -92,7 +92,7 @@ describe('Board Tests', () => {
     });
   });
 
-  it('getItem Method', () => {
+  it('getItem', () => {
     const board = new Board({ x: 3, y: 3 });
     const item = new Item({
       rules: {
@@ -110,7 +110,7 @@ describe('Board Tests', () => {
     expect(result).to.deep.equal(item);
   });
 
-  it('removeItem Method', () => {
+  it('removeItem', () => {
     const board = new Board({ x: 3, y: 3 });
     const item = new Item({
       rules: {
@@ -129,7 +129,7 @@ describe('Board Tests', () => {
     expect(result).to.deep.equal(null);
   });
 
-  it('moveItem Method', () => {
+  it('moveItem', () => {
     const board = new Board({ x: 3, y: 3 });
     const item = new Item({
       rules: {
@@ -157,7 +157,7 @@ describe('Board Tests', () => {
     });
   });
 
-  it('switchItem Method', () => {
+  it('switchItem', () => {
     const board = new Board({ x: 3, y: 3 });
     const firstItem = new Item({
       data: {
@@ -202,35 +202,7 @@ describe('Board Tests', () => {
     });
   });
 
-  it('getDistanceBetweenTwoCoords Method', () => {
-    const board = new Board({ x: 3, y: 3 });
-    const distance = board.getDistanceBetweenTwoCoords('0|0', '1|1');
-
-    expect(distance).to.deep.equal({ x: 1, y: 1 });
-  });
-
-  it('isEmpty Method', () => {
-    const board = new Board({ x: 3, y: 3 });
-    const item = new Item({
-      rules: {
-        movement: {
-          angular: true,
-          linear: true,
-          stepCount: 4,
-        },
-      },
-    });
-
-    board.setItem('0|1', item);
-
-    const firstIsEmpty = board.isEmpty('0|1');
-    const secondIsEmpty = board.isEmpty('1|1');
-
-    expect(firstIsEmpty).to.equal(false);
-    expect(secondIsEmpty).to.equal(true);
-  });
-
-  it('selectItem Method', () => {
+  it('selectItem', () => {
     const board = new Board({ x: 3, y: 3 });
     const item = new Item({
       rules: {
@@ -258,7 +230,7 @@ describe('Board Tests', () => {
     });
   });
 
-  it('deselectItem Method', () => {
+  it('deselectItem', () => {
     const board = new Board({ x: 3, y: 3 });
     const item = new Item({
       rules: {
@@ -287,7 +259,7 @@ describe('Board Tests', () => {
     });
   });
 
-  it('deselectAllItems Method', () => {
+  it('deselectAllItems', () => {
     const board = new Board({ x: 3, y: 3 });
     const item = new Item({
       rules: {
@@ -315,9 +287,80 @@ describe('Board Tests', () => {
       '2|2': { item: null },
     });
   });
+
+  it('getDistanceBetweenTwoCoords', () => {
+    const board = new Board({ x: 3, y: 3 });
+    const distance = board.getDistanceBetweenTwoCoords('0|0', '1|1');
+
+    expect(distance).to.deep.equal({ x: 1, y: 1 });
+  });
+
+  it('isEmpty', () => {
+    const board = new Board({ x: 3, y: 3 });
+    const item = new Item({
+      rules: {
+        movement: {
+          angular: true,
+          linear: true,
+          stepCount: 4,
+        },
+      },
+    });
+
+    board.setItem('0|1', item);
+
+    const firstIsEmpty = board.isEmpty('0|1');
+    const secondIsEmpty = board.isEmpty('1|1');
+
+    expect(firstIsEmpty).to.equal(false);
+    expect(secondIsEmpty).to.equal(true);
+  });
+
+  it('isExistCoord', () => {
+    const board = new Board({ x: 3, y: 3 });
+
+    expect(board.isExistCoord('0|0')).to.equal(true);
+    expect(board.isExistCoord('4|4')).to.equal(false);
+  });
+
+  it('getDistanceBetweenTwoCoords', () => {
+    const board = new Board({ x: 3, y: 3 });
+
+    expect(board.getDistanceBetweenTwoCoords('0|0', '0|1')).to.deep.equal({
+      y: 0,
+      x: 1,
+    });
+
+    expect(board.getDistanceBetweenTwoCoords('0|0', '1|0')).to.deep.equal({
+      y: 1,
+      x: 0,
+    });
+
+    expect(board.getDistanceBetweenTwoCoords('0|0', '1|1')).to.deep.equal({
+      y: 1,
+      x: 1,
+    });
+
+    expect(board.getDistanceBetweenTwoCoords('1|1', '0|0')).to.deep.equal({
+      y: -1,
+      x: -1,
+    });
+  });
+
+  it('getDirection', () => {
+    const board = new Board({ x: 3, y: 3 });
+
+    expect(board.getDirection('0|0', '0|1')).to.equal('right');
+
+    expect(board.getDirection('0|0', '1|0')).to.equal('bottom');
+
+    expect(board.getDirection('0|0', '1|1')).to.equal('bottomRight');
+
+    expect(board.getDirection('1|1', '0|0')).to.equal('topLeft');
+  });
 });
 
-describe('Board Tests', () => {
+describe('Core Board Available Columns', () => {
   it('getAvailableColumns -top for "1|1" on 3x3 Board', () => {
     const availableColumn = new Board({ x: 3, y: 3 }).getAvailableColumns(
       '1|1',
