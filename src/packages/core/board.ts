@@ -62,6 +62,11 @@ class Board {
     return board;
   };
 
+  updateBoard = (board: BoardType) => {
+    this.board = board;
+    return this;
+  };
+
   getBoardMatrix = (): BoardMatrixItem[][] => {
     const matrix = [];
 
