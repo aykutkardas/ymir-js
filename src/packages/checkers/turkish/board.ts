@@ -3,14 +3,18 @@ import * as _ from 'lodash';
 import getAvailableColumns from '../../../utils/getAvailableColumns';
 import Board from '../../core/board';
 import { MovementType } from '../../core/item';
-import Item, { CheckersColorType } from './item';
+import Item, { CheckersColorType, CheckersItemType } from './item';
 
 export type BoardConfig = {
   x: number;
   y: number;
 };
 
+export type CheckersBoardType = { [key: string]: { item: CheckersItemType } };
+
 class TurkishCheckersBoard extends Board {
+  board: CheckersBoardType;
+
   constructor(config: BoardConfig = { x: 8, y: 8 }) {
     super(config);
 
