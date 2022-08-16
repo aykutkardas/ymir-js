@@ -21,7 +21,7 @@ class TurkishCheckersBoard extends Board {
     return this;
   }
 
-  init(): void {
+  init() {
     const whiteItemCoords =
       '1|0 1|1 1|2 1|3 1|4 1|5 1|6 1|7 2|0 2|1 2|2 2|3 2|4 2|5 2|6 2|7';
     const blackItemCoords =
@@ -34,6 +34,8 @@ class TurkishCheckersBoard extends Board {
     blackItemCoords.split(' ').forEach((coord) => {
       this.setItem(coord, new Item({ color: 'black' }));
     });
+
+    return this;
   }
 
   reset(): void {
@@ -287,11 +289,38 @@ class TurkishCheckersBoard extends Board {
       currentMoves = safeMoves;
     }
 
+    // RISK ESTIMATION
+    currentCoords.forEach((currentCoord) => {
+      currentMoves[currentCoord].forEach((move) => {
+        const riskEstimationBoard = new TurkishCheckersBoard().updateBoard(
+          JSON.parse(JSON.stringify(this.board))
+        );
+
+        riskEstimationBoard.moveItem(currentCoord, move);
+
+        const potentialDefendColumns =
+          riskEstimationBoard.getDefendCoordsByColor(color);
+
+        if (Object.values(potentialDefendColumns).flat().length) {
+          currentMoves[currentCoord] = currentMoves[currentCoord].filter(
+            (mv) => mv !== move
+          );
+        }
+      });
+
+      if (!currentMoves[currentCoord].length) {
+        currentCoords = currentCoords.filter((c) => c !== currentCoord);
+        delete currentMoves[currentCoord];
+      }
+    });
+
     const randomIndex = Math.floor(Math.random() * currentCoords.length);
     const selectedCoord = currentCoords[randomIndex];
 
+    const moveCoord = currentMoves[selectedCoord]?.[0];
+
     onSelect?.(selectedCoord);
-    onMove?.(selectedCoord, currentMoves[selectedCoord][0]);
+    onMove?.(selectedCoord, moveCoord);
   };
 }
 
