@@ -153,6 +153,13 @@ describe('Turkish Checkers', () => {
       '2|0': ['3|0'],
     });
   });
+
+  it('getItemsByColor ', () => {
+    const board = new CheckersBoard();
+    board.init();
+
+    expect(board.getItemsByColor('white').length).to.equal(16);
+  });
 });
 
 describe('Turkish Checkers Available Columns', () => {

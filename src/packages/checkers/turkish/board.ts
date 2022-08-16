@@ -146,6 +146,12 @@ class TurkishCheckersBoard extends Board {
     return defendCoords;
   };
 
+  getItemsByColor = (color: CheckersColorType): CheckersItemType[] => {
+    return Object.values(this.board)
+      .filter(({ item }) => item?.color === color)
+      .map(({ item }) => item);
+  };
+
   getAvailableColumns = (coord: string, movement: MovementType): string[] => {
     if (this.isEmpty(coord)) return [];
 
