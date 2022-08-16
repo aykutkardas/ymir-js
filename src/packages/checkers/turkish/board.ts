@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 
 import getAvailableColumns from '../../../utils/getAvailableColumns';
+import useCoord from '../../../utils/useCoord';
 import Board from '../../core/board';
 import { MovementType } from '../../core/item';
 import Item, { CheckersColorType, CheckersItemType } from './item';
@@ -270,7 +271,7 @@ class TurkishCheckersBoard extends Board {
     Object.values(availableNormalMoves).filter((moves, index) => {
       moves.forEach((move) => {
         if (!availableEnemyNormalMoves.includes(move)) {
-          if (safeMoves[move]) {
+          if (safeMoves[availableCoords[index]]) {
             safeMoves[availableCoords[index]].push(move);
           } else {
             safeMoves[availableCoords[index]] = [move];
@@ -279,10 +280,34 @@ class TurkishCheckersBoard extends Board {
       });
     });
 
-    const safeCoords = Object.keys(safeMoves);
-
     let currentCoords = availableCoords;
     let currentMoves = availableNormalMoves;
+
+    // KING POTENTIAL
+    const kingRowId = color === 'white' ? 7 : 0;
+    let potentialKingItemCoord;
+    let potentialAvailableCoord;
+
+    Object.keys(currentMoves).forEach((coord) => {
+      const availableColumns = currentMoves[coord];
+
+      availableColumns.forEach((columnCoord) => {
+        const [rowId] = useCoord(coord);
+        const [moveRowId] = useCoord(columnCoord);
+        if (rowId !== moveRowId && moveRowId === kingRowId) {
+          potentialKingItemCoord = coord;
+          potentialAvailableCoord = columnCoord;
+        }
+      });
+    });
+
+    if (potentialKingItemCoord && potentialAvailableCoord) {
+      onSelect?.(potentialKingItemCoord);
+      onMove?.(potentialKingItemCoord, potentialAvailableCoord);
+      return;
+    }
+
+    const safeCoords = Object.keys(safeMoves);
 
     if (safeCoords.length) {
       currentCoords = safeCoords;
@@ -314,6 +339,23 @@ class TurkishCheckersBoard extends Board {
       }
     });
 
+    // PROPENSITY TO MOVE FORWARD
+    currentCoords.forEach((currentCoord) => {
+      currentMoves[currentCoord].sort((first, second) => {
+        const [firstRowId] = useCoord(first);
+        const [secondRowId] = useCoord(second);
+
+        if (firstRowId > secondRowId) {
+          return -1;
+        } else if (firstRowId < secondRowId) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+    });
+
+    // [TODO]: No random, use foward move
     const randomIndex = Math.floor(Math.random() * currentCoords.length);
     const selectedCoord = currentCoords[randomIndex];
 
