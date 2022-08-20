@@ -125,8 +125,11 @@ describe('Turkish Checkers', () => {
     board.moveItem('5|4', '3|4');
 
     expect(board.getAttackCoordsByColor('white')).to.deep.equal({
-      '3|5': ['5|5', '3|3'],
-      '2|4': ['4|4'],
+      '3|5': [
+        { coord: '5|5', destroyItemCoord: '4|5' },
+        { coord: '3|3', destroyItemCoord: '3|4' },
+      ],
+      '2|4': [{ coord: '4|4', destroyItemCoord: '3|4' }],
     });
   });
 
@@ -137,9 +140,9 @@ describe('Turkish Checkers', () => {
     board.moveItem('2|1', '3|1');
 
     expect(board.getDefendCoordsByColor('white')).to.deep.equal({
-      '1|1': ['2|1'],
-      '2|0': ['2|1'],
-      '2|2': ['2|1'],
+      '1|1': [{ coord: '2|1', inDangerCoord: '3|1' }],
+      '2|0': [{ coord: '2|1', inDangerCoord: '3|1' }],
+      '2|2': [{ coord: '2|1', inDangerCoord: '3|1' }],
     });
   });
 
@@ -150,7 +153,7 @@ describe('Turkish Checkers', () => {
     board.moveItem('5|2', '3|2');
 
     expect(board.getDefendCoordsByColor('white')).to.deep.equal({
-      '2|0': ['3|0'],
+      '2|0': [{ coord: '3|0', inDangerCoord: '3|1' }],
     });
   });
 

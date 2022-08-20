@@ -13,6 +13,10 @@ export type BoardConfig = {
 
 export type CheckersBoardType = { [key: string]: { item: CheckersItemType } };
 
+export type AttactCoord = { coord: string; destroyItemCoord: string };
+
+export type DefendCoord = { coord: string; inDangerItemCoord: string };
+
 class TurkishCheckersBoard extends Board {
   board: CheckersBoardType;
 
@@ -95,23 +99,28 @@ class TurkishCheckersBoard extends Board {
 
   getAttackCoordsByColor = (
     color: CheckersColorType
-  ): Record<string, string[]> => {
+  ): { [coord: string]: AttactCoord[] } => {
     const availableCoords = this.getAvailableCoordsByColor(color);
     const attackCoords = {};
 
     Object.entries(availableCoords).forEach(
       ([coord, currentAvailableCoords]) => {
         currentAvailableCoords.forEach((currentAvailableCoord) => {
-          const itemWillDestroyList = this.getItemsBetweenTwoCoords(
+          const [destroyItemCoord] = this.getItemsBetweenTwoCoords(
             coord,
             currentAvailableCoord
           );
 
-          if (itemWillDestroyList.length) {
+          if (destroyItemCoord) {
             if (attackCoords[coord]) {
-              attackCoords[coord].push(currentAvailableCoord);
+              attackCoords[coord].push({
+                coord: currentAvailableCoord,
+                destroyItemCoord,
+              });
             } else {
-              attackCoords[coord] = [currentAvailableCoord];
+              attackCoords[coord] = [
+                { coord: currentAvailableCoord, destroyItemCoord },
+              ];
             }
           }
         });
@@ -123,27 +132,35 @@ class TurkishCheckersBoard extends Board {
 
   getDefendCoordsByColor = (
     color: CheckersColorType
-  ): Record<string, string[]> => {
+  ): { [coord: string]: DefendCoord[] } => {
     const defendCoords = {};
 
     const enemyColor = color === 'white' ? 'black' : 'white';
     const availableCoords = this.getAvailableCoordsByColor(color);
     const enemyAttackCoords = this.getAttackCoordsByColor(enemyColor);
 
-    Object.entries(enemyAttackCoords).forEach(([, enemyAttackCoords]) => {
-      Object.entries(availableCoords).forEach(
-        ([originn, currentAvailableCoords]) => {
-          currentAvailableCoords.forEach((currentAvailableCoord) => {
-            if (enemyAttackCoords.includes(currentAvailableCoord)) {
-              if (defendCoords[originn]) {
-                defendCoords[originn].push(currentAvailableCoord);
-              } else {
-                defendCoords[originn] = [currentAvailableCoord];
-              }
+    Object.entries(enemyAttackCoords).forEach(([, enemyAttack]) => {
+      Object.values(enemyAttack).forEach((enemyAttackCoord) => {
+        Object.keys(availableCoords).forEach((availableItemOrigin) => {
+          const availableColumnCoords = availableCoords[availableItemOrigin];
+
+          if (
+            availableColumnCoords.includes(enemyAttackCoord.coord) &&
+            availableItemOrigin !== enemyAttackCoord.destroyItemCoord
+          ) {
+            const defendCoordItem = {
+              coord: enemyAttackCoord.coord,
+              inDangerCoord: enemyAttackCoord.destroyItemCoord,
+            };
+
+            if (defendCoords[availableItemOrigin]) {
+              defendCoords[availableItemOrigin].push(defendCoordItem);
+            } else {
+              defendCoords[availableItemOrigin] = [defendCoordItem];
             }
-          });
-        }
-      );
+          }
+        });
+      });
     });
 
     return defendCoords;
@@ -241,17 +258,19 @@ class TurkishCheckersBoard extends Board {
       const [availableAttackColumn] = availableAttacks[attackOriginn];
 
       onSelect?.(attackOriginn);
-      onMove?.(attackOriginn, availableAttackColumn);
+      onMove?.(attackOriginn, availableAttackColumn.coord);
       return;
     }
 
     // AVAILABLE DEFEND MOVES
-    const availableDefends = this.getDefendCoordsByColor(color);
-    const availableDefendsOriginn = Object.keys(availableDefends);
+    const potentialDefendsMoves = this.getDefendCoordsByColor(color);
+    const potentialDefendsItem = Object.keys(potentialDefendsMoves);
 
-    if (availableDefendsOriginn.length) {
-      const [defendOriginn] = availableDefendsOriginn;
-      const [availableDefendColumn] = availableDefends[defendOriginn];
+    if (potentialDefendsItem.length) {
+      const [defendOriginn] = potentialDefendsItem;
+      const [availableDefendColumn] = potentialDefendsMoves[defendOriginn].map(
+        (item) => item.coord
+      );
 
       onSelect?.(defendOriginn);
       onMove?.(defendOriginn, availableDefendColumn);
