@@ -1,10 +1,15 @@
+import getAvailableColumns from '../../../utils/getAvailableColumns';
 import Board from '../../core/board';
-import Item from './item';
+import Item, { CheckersColorType, CheckersItemType } from './item';
 
 export type BoardConfig = {
   x: number;
   y: number;
 };
+
+export type AttactCoord = { coord: string; destroyItemCoord: string };
+
+export type DefendCoord = { coord: string; inDangerItemCoord: string };
 
 class InternationalCheckersBoard extends Board {
   constructor(config: BoardConfig = { x: 10, y: 10 }) {
@@ -36,6 +41,94 @@ class InternationalCheckersBoard extends Board {
 
     this.init();
   }
+
+  getItemsBetweenTwoCoords(fromCoord: string, toCoord: string): string[] {
+    const direction = this.getDirection(fromCoord, toCoord);
+    const distance = this.getDistanceBetweenTwoCoords(fromCoord, toCoord);
+    const convertDirection = {
+      top: 'y',
+      bottom: 'y',
+      left: 'x',
+      right: 'x',
+    };
+    const stepCount = Math.abs(distance[convertDirection[direction]]) || 1;
+    const movement = { stepCount };
+
+    movement[direction] = true;
+
+    const betweenCoords = [];
+
+    return betweenCoords
+      .concat(...Object.values(getAvailableColumns(fromCoord, movement)))
+      .filter((coord) => !this.isEmpty(coord));
+  }
+
+  getAvailableCoordsByColor = (
+    color: CheckersColorType
+  ): Record<string, string[]> => {
+    const currentItems = [];
+    const availableCoords = {};
+
+    Object.entries(this.board).forEach(([coord, col]) => {
+      if (col.item && col.item.color === color) {
+        currentItems.push(coord);
+      }
+    });
+
+    currentItems.forEach((coord) => {
+      const item = this.getItem(coord);
+      const currentAvailableCoords = this.getAvailableColumns(
+        coord,
+        item.movement
+      );
+
+      if (currentAvailableCoords.length) {
+        availableCoords[coord] = currentAvailableCoords;
+      }
+    });
+
+    return availableCoords;
+  };
+
+  getAttackCoordsByColor = (
+    color: CheckersColorType
+  ): { [coord: string]: AttactCoord[] } => {
+    const availableCoords = this.getAvailableCoordsByColor(color);
+    const attackCoords = {};
+
+    Object.entries(availableCoords).forEach(
+      ([coord, currentAvailableCoords]) => {
+        currentAvailableCoords.forEach((currentAvailableCoord) => {
+          const [destroyItemCoord] = this.getItemsBetweenTwoCoords(
+            coord,
+            currentAvailableCoord
+          );
+
+          if (destroyItemCoord) {
+            if (attackCoords[coord]) {
+              attackCoords[coord].push({
+                coord: currentAvailableCoord,
+                destroyItemCoord,
+              });
+            } else {
+              attackCoords[coord] = [
+                { coord: currentAvailableCoord, destroyItemCoord },
+              ];
+            }
+          }
+        });
+      }
+    );
+
+    return attackCoords;
+  };
+
+  getItemsByColor = (color: CheckersColorType): CheckersItemType[] => {
+    // @ts-expect-error
+    return Object.values(this.board)
+      .filter(({ item }) => item?.color === color)
+      .map(({ item }) => item);
+  };
 }
 
 export default InternationalCheckersBoard;
