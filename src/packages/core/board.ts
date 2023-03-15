@@ -1,5 +1,5 @@
 import getAvailableColumns from '../../utils/getAvailableColumns';
-import useCoord from '../../utils/useCoord';
+import parseCoord from '../../utils/parseCoord';
 import { ItemType, MovementType } from './item';
 
 export type DistanceType = {
@@ -71,7 +71,7 @@ class Board {
     const matrix = [];
 
     Object.entries(this.board).forEach(([coord, data]) => {
-      const [rowId, colId] = useCoord(coord);
+      const [rowId, colId] = parseCoord(coord);
       const item = { coord, ...data };
 
       if (matrix[rowId]) {
@@ -184,8 +184,8 @@ class Board {
 
     if (!isExistFromCoord || !isExistToCoord) return;
 
-    const [fromRowId, fromColId] = useCoord(fromCoord);
-    const [toRowId, toColId] = useCoord(toCoord);
+    const [fromRowId, fromColId] = parseCoord(fromCoord);
+    const [toRowId, toColId] = parseCoord(toCoord);
 
     return { y: toRowId - fromRowId, x: toColId - fromColId };
   };
@@ -196,8 +196,8 @@ class Board {
 
     if (!isExistFromCoord || !isExistToCoord) return;
 
-    const [fromRowId, fromColId] = useCoord(fromCoord);
-    const [toRowId, toColId] = useCoord(toCoord);
+    const [fromRowId, fromColId] = parseCoord(fromCoord);
+    const [toRowId, toColId] = parseCoord(toCoord);
 
     if (fromColId > toColId && fromRowId < toRowId) return 'bottomLeft';
     if (fromColId < toColId && fromRowId < toRowId) return 'bottomRight';

@@ -1,11 +1,11 @@
 import { MovementType } from '../packages/core/item';
-import useCoord from './useCoord';
+import parseCoord from './parseCoord';
 
 const getAvailableColumns = (
   coord: string,
   movement: MovementType
 ): { [key: string]: string[] } => {
-  const [rowId, colId] = useCoord(coord);
+  const [rowId, colId] = parseCoord(coord);
 
   const columns = {
     top: [],

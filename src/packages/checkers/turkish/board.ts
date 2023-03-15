@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 
 import getAvailableColumns from '../../../utils/getAvailableColumns';
-import useCoord from '../../../utils/useCoord';
+import parseCoord from '../../../utils/parseCoord';
 import Board from '../../core/board';
 import { MovementType } from '../../core/item';
 import Item, { CheckersColorType, CheckersItemType } from './item';
@@ -311,8 +311,8 @@ class TurkishCheckersBoard extends Board {
       const availableColumns = currentMoves[coord];
 
       availableColumns.forEach((columnCoord) => {
-        const [rowId] = useCoord(coord);
-        const [moveRowId] = useCoord(columnCoord);
+        const [rowId] = parseCoord(coord);
+        const [moveRowId] = parseCoord(columnCoord);
         if (rowId !== moveRowId && moveRowId === kingRowId) {
           potentialKingItemCoord = coord;
           potentialAvailableCoord = columnCoord;
@@ -361,8 +361,8 @@ class TurkishCheckersBoard extends Board {
     // PROPENSITY TO MOVE FORWARD
     currentCoords.forEach((currentCoord) => {
       currentMoves[currentCoord].sort((first, second) => {
-        const [firstRowId] = useCoord(first);
-        const [secondRowId] = useCoord(second);
+        const [firstRowId] = parseCoord(first);
+        const [secondRowId] = parseCoord(second);
 
         if (firstRowId > secondRowId) {
           return -1;

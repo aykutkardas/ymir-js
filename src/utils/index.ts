@@ -1,3 +1,3 @@
-import useCoord from './useCoord';
+import parseCoord from './parseCoord';
 
-export default { useCoord };
+export default { parseCoord };
