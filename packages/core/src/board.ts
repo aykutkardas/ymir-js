@@ -1,4 +1,5 @@
 import { stepCoord, toCoord } from './coords.js';
+import cloneItem from './utils/cloneItem.js';
 import getAvailableColumns from './utils/getAvailableColumns.js';
 import parseCoord from './utils/parseCoord.js';
 import Item, { ItemType, MovementType } from './item.js';
@@ -119,6 +120,45 @@ class Board<T extends ItemType = ItemType> {
 
   updateBoard(board: BoardType<T>): this {
     this.board = board;
+    return this;
+  }
+
+  /**
+   * A copy of the board, of the same class, that shares nothing with it:
+   * every item is copied with `cloneItem`. The constructor is not run; the
+   * subclass's other fields are copied shallowly, so override `clone` (and
+   * call `super.clone()`) if one of them must not be shared.
+   */
+  clone(): this {
+    const copy: this = Object.create(Object.getPrototypeOf(this));
+    bindMethods(copy);
+    Object.assign(copy, this);
+
+    copy.config = { ...this.config };
+    copy.board = {};
+    for (const [coord, { item }] of Object.entries(this.board)) {
+      copy.board[coord] = { item: item && cloneItem(item) };
+    }
+
+    return copy;
+  }
+
+  /** A copy of every item and where it stands, to put back with `restore`. */
+  snapshot(): BoardSnapshot<T> {
+    const snapshot = new Map<string, T>();
+
+    for (const [coord, { item }] of Object.entries(this.board)) {
+      if (item) snapshot.set(coord, cloneItem(item));
+    }
+
+    return snapshot;
+  }
+
+  /** Puts the items back as they were in `snapshot`. A snapshot can be restored any number of times. */
+  restore(snapshot: BoardSnapshot<T>): this {
+    for (const square of Object.values(this.board)) square.item = null;
+    snapshot.forEach((item, coord) => this.setItem(coord, cloneItem(item)));
+
     return this;
   }
 
@@ -464,6 +504,9 @@ export type Square<T extends ItemType = ItemType> = {
 
 /** Called with each item on the board (empty squares are skipped) and its coord. */
 export type ItemPredicate<T extends ItemType = ItemType> = (item: T, coord: string) => boolean;
+
+/** Copies of the items on a board by coord, from `snapshot`, for `restore`. */
+export type BoardSnapshot<T extends ItemType = ItemType> = ReadonlyMap<string, T>;
 
 export type PathOptions = {
   /** The most steps to take. Unlimited by default. */

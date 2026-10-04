@@ -2,6 +2,7 @@
 // holding items, with movement patterns, directions and pathfinding.
 export { default as Board } from './board.js';
 export { default as Item } from './item.js';
+export { default as cloneItem } from './utils/cloneItem.js';
 export { default as parseCoord } from './utils/parseCoord.js';
 export {
   ANGULAR_DIRECTIONS,
@@ -16,6 +17,7 @@ export {
 export type {
   BoardConfig,
   BoardMatrixItem,
+  BoardSnapshot,
   BoardSize,
   BoardType,
   ColumnsByDirection,
