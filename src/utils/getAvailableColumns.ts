@@ -7,7 +7,7 @@ const getAvailableColumns = (
 ): { [key: string]: string[] } => {
   const [rowId, colId] = parseCoord(coord);
 
-  const columns = {
+  const columns: Record<string, string[]> = {
     top: [],
     bottom: [],
     left: [],

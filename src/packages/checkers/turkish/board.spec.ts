@@ -109,7 +109,7 @@ describe('Turkish Checkers', () => {
     board.setItem('1|5', firstWhiteItem);
     board.setItem('4|5', secondWhiteItem);
     board.setItem('5|5', blackItem);
-    board.getItem('5|5').setKing();
+    board.getItem('5|5')!.setKing();
 
     expect(board.getAvailableCoordsByColor('black')).to.deep.equal({
       '5|5': ['3|5', '2|5'],
@@ -174,7 +174,7 @@ describe('Turkish Checkers Available Columns', () => {
 
     const item = board.getItem('4|3');
 
-    expect(board.getAvailableColumns('4|3', item.movement)).to.deep.equal([
+    expect(board.getAvailableColumns('4|3', item!.movement)).to.deep.equal([
       '4|2',
       '4|4',
     ]);
@@ -190,7 +190,7 @@ describe('Turkish Checkers Available Columns', () => {
 
     const item = board.getItem('2|7');
 
-    expect(board.getAvailableColumns('2|7', item.movement)).to.deep.equal([
+    expect(board.getAvailableColumns('2|7', item!.movement)).to.deep.equal([
       '3|7',
     ]);
   });
@@ -200,9 +200,9 @@ describe('Turkish Checkers Available Columns', () => {
     board.init();
 
     const item = board.getItem('2|7');
-    item.setKing();
+    item!.setKing();
 
-    expect(board.getAvailableColumns('2|7', item.movement)).to.deep.equal([
+    expect(board.getAvailableColumns('2|7', item!.movement)).to.deep.equal([
       '3|7',
       '4|7',
     ]);
@@ -215,9 +215,9 @@ describe('Turkish Checkers Available Columns', () => {
     board.moveItem('5|7', '3|7');
 
     const item = board.getItem('2|7');
-    item.setKing();
+    item!.setKing();
 
-    expect(board.getAvailableColumns('2|7', item.movement)).to.deep.equal([
+    expect(board.getAvailableColumns('2|7', item!.movement)).to.deep.equal([
       '4|7',
       '5|7',
     ]);

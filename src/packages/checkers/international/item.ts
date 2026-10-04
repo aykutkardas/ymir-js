@@ -1,12 +1,8 @@
-import Item, { ItemType, MovementType } from '../../core/item.js';
-import { CHECKERS_WHITE, CHECKERS_BLACK } from '../constant.js';
+import Item, { MovementType } from '../../core/item.js';
+import type { CheckersColorType, CheckersItemType } from '../board.js';
+import { CHECKERS_BLACK } from '../constant.js';
 
-export type CheckersColorType = typeof CHECKERS_BLACK | typeof CHECKERS_WHITE;
-
-export interface CheckersItemType extends ItemType {
-  color: CheckersColorType;
-  king: boolean;
-}
+export type { CheckersColorType, CheckersItemType };
 
 class CheckersItem extends Item implements CheckersItemType {
   color: CheckersColorType;
@@ -15,7 +11,7 @@ class CheckersItem extends Item implements CheckersItemType {
 
   movement: MovementType = {};
 
-  constructor(item) {
+  constructor(item: Partial<CheckersItemType> & { data?: any }) {
     super(item);
 
     this.color = item.color || CHECKERS_BLACK;
