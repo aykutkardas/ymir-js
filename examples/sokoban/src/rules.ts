@@ -1,6 +1,6 @@
 // Sokoban, written on top of ymir-js's core Board and Item. Walls, boxes and
 // the player are items on the board; goals are marks on the floor.
-import { Board, Item, LINEAR_DIRECTIONS, stepCoord, type Direction } from 'ymir-js';
+import { Board, Item, LINEAR_DIRECTIONS, stepCoord } from 'ymir-js';
 
 export type Kind = 'wall' | 'box' | 'player';
 export type Move = 'top' | 'bottom' | 'left' | 'right';
@@ -36,15 +36,13 @@ export class SokobanBoard extends Board<Tile> {
     super({ rows, cols });
 
     this.goals = new Set();
-    level.map.forEach((line, r) =>
-      [...line].forEach((ch, c) => {
-        const coord = `${r}|${c}`;
-        if (ch === '#') this.setItem(coord, new Tile('wall'));
-        if (ch === '$' || ch === '*') this.setItem(coord, new Tile('box'));
-        if (ch === '@' || ch === '+') this.setItem(coord, new Tile('player'));
-        if (ch === '.' || ch === '*' || ch === '+') this.goals.add(coord);
-      })
-    );
+    this.loadRows(level.map, (ch, coord) => {
+      if ('.*+'.includes(ch)) this.goals.add(coord);
+      if (ch === '#') return new Tile('wall');
+      if ('$*'.includes(ch)) return new Tile('box');
+      if ('@+'.includes(ch)) return new Tile('player');
+      return null;
+    });
 
     this.floor = this.findFloor();
   }
@@ -68,10 +66,8 @@ export class SokobanBoard extends Board<Tile> {
   step(direction: Move): 'walk' | 'push' | null {
     const player = this.findPlayer();
     // The next square, and the one after it, in that direction.
-    const [next, beyond] = this.getColumnsByDirection(player, {
-      [direction]: true,
-      stepCount: 2,
-    })[direction as Direction];
+    const next = stepCoord(player, direction);
+    const beyond = stepCoord(player, direction, 2);
 
     const blocker = this.getItem(next);
 

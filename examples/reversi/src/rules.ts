@@ -1,5 +1,5 @@
 // Reversi, written on top of ymir-js's core Board and Item. A disc is an item;
-// the eight lines out of a square come from the core's getColumnsByDirection.
+// the eight lines out of a square come from the core's ray.
 import { Board, DIRECTIONS, Item } from 'ymir-js';
 
 export type Color = 'black' | 'white';
@@ -31,12 +31,7 @@ export class ReversiBoard extends Board<Disc> {
 
   /** The standard start: two discs of each colour in the centre, crossed. */
   setup(): this {
-    Object.keys(this.board).forEach(this.removeItem);
-    this.setItem('3|3', new Disc('white'));
-    this.setItem('4|4', new Disc('white'));
-    this.setItem('3|4', new Disc('black'));
-    this.setItem('4|3', new Disc('black'));
-    return this;
+    return this.load(['', '', '', '...wb', '...bw']);
   }
 
   /**
@@ -46,13 +41,12 @@ export class ReversiBoard extends Board<Disc> {
   flipsFor(coord: string, color: Color): string[] {
     if (!this.isEmpty(coord)) return [];
 
-    const lines = this.getColumnsByDirection(coord, { linear: true, angular: true, stepCount: SIZE - 1 });
     const flips: string[] = [];
 
     for (const direction of DIRECTIONS) {
       const run: string[] = [];
 
-      for (const square of lines[direction]) {
+      for (const square of this.ray(coord, direction)) {
         const disc = this.getItem(square);
         if (!disc) break; // an empty square or the edge: nothing closes the run
         if (disc.color === color) {
@@ -85,21 +79,12 @@ export class ReversiBoard extends Board<Disc> {
 
   /** The position as rows of b / w / . */
   toString(): string {
-    return this.getBoardMatrix()
-      .map((row) => row.map(({ item }) => (item ? item.color[0] : '.')).join(''))
-      .join('\n');
+    return this.toRows((disc) => (disc ? disc.color[0] : '.')).join('\n');
   }
 
   /** Sets up a position from rows of b / w / . */
   load(rows: string[]): this {
-    Object.keys(this.board).forEach(this.removeItem);
-    rows.forEach((row, r) =>
-      [...row].forEach((ch, c) => {
-        if (ch === 'b') this.setItem(`${r}|${c}`, new Disc('black'));
-        if (ch === 'w') this.setItem(`${r}|${c}`, new Disc('white'));
-      })
-    );
-    return this;
+    return this.loadRows(rows, (ch) => (ch === 'b' ? new Disc('black') : ch === 'w' ? new Disc('white') : null));
   }
 }
 

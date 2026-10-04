@@ -121,6 +121,14 @@ describe('captures', () => {
     });
     expect(corner.play({ from: '7|3', to: '10|3' }).sort()).toEqual(['10|1', '10|2']);
   });
+
+  it('shieldwall: an open end or a gap in the facing row takes nothing', () => {
+    const open = board({ '10|4': 'defender', '10|5': 'defender', '9|4': 'attacker', '9|5': 'attacker', '7|6': 'attacker' });
+    expect(open.play({ from: '7|6', to: '10|6' })).toEqual([]);
+
+    const gap = board({ '10|4': 'defender', '10|5': 'defender', '9|5': 'attacker', '10|3': 'attacker', '7|6': 'attacker' });
+    expect(gap.play({ from: '7|6', to: '10|6' })).toEqual([]);
+  });
 });
 
 describe('winning', () => {
