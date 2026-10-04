@@ -9,4 +9,4 @@ pnpm install --ignore-workspace
 pnpm dev
 ```
 
-The app imports ymir-js from `../../src` (see `vite.config.ts`), so it always runs against the code in this repo.
+The app imports ymir-js from the package sources in `../../packages` (see `vite.config.ts`), so it always runs against the code in this repo.

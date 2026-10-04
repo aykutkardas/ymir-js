@@ -15,7 +15,7 @@ import gifenc from 'gifenc';
 import { chromium } from 'playwright-core';
 import { PNG } from 'pngjs';
 
-import { GoGame } from '../../dist/index.js';
+import { GoGame } from '../../packages/go/dist/index.js';
 
 const { GIFEncoder, quantize, applyPalette } = gifenc;
 

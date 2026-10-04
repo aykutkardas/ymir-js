@@ -179,6 +179,50 @@ importers:
         specifier: ^5.0.3
         version: 5.0.3(@types/node@24.19.1)(vite@8.3.2(@types/node@24.19.1))
 
+  packages/checkers:
+    dependencies:
+      '@ymir-js/core':
+        specifier: workspace:^
+        version: link:../core
+
+  packages/chess:
+    dependencies:
+      '@ymir-js/core':
+        specifier: workspace:^
+        version: link:../core
+
+  packages/core: {}
+
+  packages/go:
+    dependencies:
+      '@ymir-js/core':
+        specifier: workspace:^
+        version: link:../core
+
+  packages/match3:
+    dependencies:
+      '@ymir-js/core':
+        specifier: workspace:^
+        version: link:../core
+
+  packages/ymir-js:
+    dependencies:
+      '@ymir-js/checkers':
+        specifier: workspace:^
+        version: link:../checkers
+      '@ymir-js/chess':
+        specifier: workspace:^
+        version: link:../chess
+      '@ymir-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@ymir-js/go':
+        specifier: workspace:^
+        version: link:../go
+      '@ymir-js/match3':
+        specifier: workspace:^
+        version: link:../match3
+
 packages:
 
   '@jridgewell/resolve-uri@3.1.2':
