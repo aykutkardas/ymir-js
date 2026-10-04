@@ -6,1102 +6,275 @@
     <title>ymir-js</title>
     <meta
       name="description"
-      content="A TypeScript toolkit for board games: checkers, chess, Go and match-3 with their full rules, on a small board core you can build your own games on."
+      content="A TypeScript toolkit for board games: checkers, chess, Go and match-3 with their full rules, on a small board core you can build your own games on. Learn it in puzzles."
     />
     <link rel="alternate" type="text/plain" href="llms.txt" title="llms.txt" />
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231c1917'/><rect x='6' y='6' width='9' height='9' rx='2' fill='%23fafaf9'/><rect x='17' y='17' width='9' height='9' rx='2' fill='%23fafaf9'/><circle cx='21.5' cy='10.5' r='4' fill='%23f97316'/></svg>"
     />
-    <style>
-      :root {
-        --bg: #fafaf9;
-        --text: #1c1917;
-        --muted: #6b6762;
-        --line: #e7e5e1;
-        --surface: #ffffff;
-        --code: #f3f2ef;
-        --accent: #c2410c;
-
-        color-scheme: light;
-        font-family:
-          Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #141312;
-          --text: #f5f4f1;
-          --muted: #a29e98;
-          --line: #2b2926;
-          --surface: #1c1b19;
-          --code: #22201e;
-          --accent: #fb923c;
-
-          color-scheme: dark;
-        }
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        background: var(--bg);
-        color: var(--text);
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-      }
-
-      a {
-        color: inherit;
-        text-underline-offset: 3px;
-      }
-
-      main {
-        max-width: 880px;
-        margin: 0 auto;
-        padding: 56px 16px 80px;
-      }
-
-      header {
-        display: grid;
-        gap: 16px;
-        margin-bottom: 48px;
-      }
-
-      h1 {
-        margin: 0;
-        font-size: clamp(36px, 7vw, 56px);
-        letter-spacing: -0.035em;
-        line-height: 1.05;
-      }
-
-      .lede {
-        margin: 0;
-        max-width: 620px;
-        font-size: 18px;
-        color: var(--muted);
-      }
-
-      .links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      .links a {
-        padding: 7px 14px;
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        background: var(--surface);
-        font-size: 14px;
-        text-decoration: none;
-      }
-
-      .links a:hover {
-        background: var(--line);
-      }
-
-      .links a.primary {
-        background: var(--text);
-        border-color: var(--text);
-        color: var(--bg);
-      }
-
-      h2 {
-        margin: 56px 0 16px;
-        font-size: 22px;
-        letter-spacing: -0.01em;
-      }
-
-      pre {
-        margin: 0;
-        padding: 16px 18px;
-        border-radius: 12px;
-        background: var(--code);
-        overflow-x: auto;
-        font-size: 13.5px;
-        line-height: 1.6;
-      }
-
-      code {
-        font-family: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, monospace;
-      }
-
-      p code,
-      li code {
-        padding: 1px 5px;
-        border-radius: 5px;
-        background: var(--code);
-        font-size: 0.9em;
-      }
-
-      .games {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
-        gap: 16px;
-      }
-
-      .game {
-        display: grid;
-        grid-template-rows: auto 1fr auto;
-        gap: 12px;
-        padding: 20px;
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        background: var(--surface);
-      }
-
-      .game-head {
-        display: flex;
-        gap: 14px;
-        align-items: center;
-      }
-
-      .game-head svg {
-        flex: none;
-        width: 48px;
-        height: 48px;
-        border-radius: 10px;
-      }
-
-      .game h3 {
-        margin: 0;
-        font-size: 18px;
-      }
-
-      .game h3 + p {
-        margin: 0;
-        font-size: 14px;
-        color: var(--muted);
-      }
-
-      .game ul {
-        margin: 0;
-        padding-left: 18px;
-        font-size: 14px;
-        color: var(--muted);
-      }
-
-      .game .links a {
-        padding: 6px 12px;
-        font-size: 13px;
-      }
-
-      .facts {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
-        gap: 12px;
-        padding: 0;
-        margin: 0;
-        list-style: none;
-      }
-
-      .facts li {
-        padding: 14px 16px;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        background: var(--surface);
-        font-size: 14px;
-        color: var(--muted);
-      }
-
-      .facts strong {
-        display: block;
-        color: var(--text);
-        font-size: 15px;
-      }
-
-      .tabs {
-        display: inline-flex;
-        gap: 4px;
-        padding: 4px;
-        margin: 0 0 32px;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        background: var(--surface);
-      }
-
-      .tabs button {
-        border: 0;
-        border-radius: 9px;
-        padding: 8px 18px;
-        background: none;
-        color: var(--muted);
-        font: inherit;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-      }
-
-      .tabs button[aria-selected='true'] {
-        background: var(--text);
-        color: var(--bg);
-      }
-
-      .tabs button:not([aria-selected='true']):hover {
-        background: var(--line);
-        color: var(--text);
-      }
-
-      .section-lede {
-        margin: -4px 0 20px;
-        color: var(--muted);
-      }
-
-      /* The tutorial */
-
-      .learn {
-        display: grid;
-        gap: 16px;
-        /* Wider than the text column on large screens: code needs the room. */
-        margin-inline: calc((100% - min(1120px, 100vw - 32px)) / 2);
-      }
-
-      .learn-steps {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-      }
-
-      .learn-steps button {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 5px 11px 5px 5px;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        background: var(--surface);
-        color: var(--muted);
-        font: inherit;
-        font-size: 13px;
-        cursor: pointer;
-      }
-
-      .learn-steps button span {
-        display: grid;
-        place-items: center;
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-        background: var(--code);
-        font-size: 12px;
-        font-weight: 700;
-      }
-
-      .learn-steps button.active {
-        border-color: var(--text);
-        color: var(--text);
-      }
-
-      .learn-steps button.active span {
-        background: var(--accent);
-        color: #fff;
-      }
-
-      .learn-lesson {
-        padding: 20px;
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        background: var(--surface);
-      }
-
-      .learn-title {
-        margin: 0 0 6px;
-        font-size: 18px;
-      }
-
-      .learn-text {
-        margin: 0 0 16px;
-        color: var(--muted);
-        font-size: 15px;
-      }
-
-      .learn-text code {
-        padding: 1px 5px;
-        border-radius: 5px;
-        background: var(--code);
-        color: var(--text);
-        font-size: 0.9em;
-      }
-
-      .learn-work {
-        display: grid;
-        grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-        gap: 16px;
-        align-items: start;
-      }
-
-      .learn-code {
-        display: grid;
-        border-radius: 12px;
-        background: var(--code);
-        overflow: hidden;
-      }
-
-      .learn-bar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 6px 8px 6px 14px;
-        border-bottom: 1px solid var(--line);
-        font-size: 13px;
-        font-weight: 600;
-      }
-
-      .learn-bar small {
-        margin-left: 6px;
-        color: var(--muted);
-        font-weight: 400;
-      }
-
-      .learn-bar button,
-      .learn-nav button,
-      .copy {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        padding: 4px 10px;
-        background: var(--surface);
-        color: var(--text);
-        font: inherit;
-        font-size: 13px;
-        cursor: pointer;
-      }
-
-      .learn-bar button:hover,
-      .learn-nav button:hover:not(:disabled),
-      .copy:hover {
-        background: var(--line);
-      }
-
-      .learn-editor {
-        width: 100%;
-        min-height: 380px;
-        padding: 14px;
-        border: 0;
-        outline: none;
-        resize: vertical;
-        background: transparent;
-        color: var(--text);
-        font-family: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, monospace;
-        font-size: 13px;
-        line-height: 1.6;
-        tab-size: 2;
-        white-space: pre;
-      }
-
-      .learn-editor:focus-visible {
-        box-shadow: inset 0 0 0 2px var(--accent);
-      }
-
-      .learn-out {
-        display: grid;
-        gap: 8px;
-      }
-
-      .learn-board {
-        display: grid;
-        grid-template-columns: repeat(var(--cols, 8), minmax(0, 1fr));
-        aspect-ratio: var(--cols, 8) / var(--rows, 8);
-        border: 6px solid #44403c;
-        border-radius: 10px;
-        overflow: hidden;
-        background: #e7e0d2;
-      }
-
-      .learn-board .sq {
-        position: relative;
-        display: grid;
-        place-items: center;
-        min-width: 0;
-        min-height: 0;
-        background: #efe8da;
-        container-type: size;
-      }
-
-      .learn-board .sq.odd {
-        background: #e2d8c4;
-      }
-
-      .learn-board .sq:hover {
-        outline: 2px solid var(--accent);
-        outline-offset: -2px;
-        z-index: 1;
-      }
-
-      .learn-board .sq.mark {
-        background: #fcd9b6;
-      }
-
-      .learn-board .sq.mark.odd {
-        background: #f9c896;
-      }
-
-      .learn-board .sq.step {
-        background: #bfdbfe;
-      }
-
-      .learn-board .sq.block {
-        background: #57534e;
-        box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.15);
-      }
-
-      .learn-board .piece {
-        display: grid;
-        place-items: center;
-        width: 78%;
-        height: 78%;
-        border-radius: 50%;
-        background: var(--piece);
-        color: #fff;
-        font-weight: 700;
-        font-size: 48cqmin;
-        line-height: 1;
-        box-shadow: 0 2px 3px rgb(0 0 0 / 0.3);
-      }
-
-      .learn-board .tag {
-        position: absolute;
-        right: 3px;
-        bottom: 1px;
-        font-size: 30cqmin;
-        font-weight: 700;
-        color: #9a3412;
-      }
-
-      .learn-board .sq.step .tag {
-        color: #1d4ed8;
-      }
-
-      .learn-empty {
-        grid-column: 1 / -1;
-        place-self: center;
-        margin: 0;
-        padding: 24px;
-        color: #57534e;
-        font-size: 14px;
-        text-align: center;
-      }
-
-      .learn-hover {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        font-size: 12px;
-        color: var(--muted);
-      }
-
-      .learn-log {
-        min-height: 60px;
-        max-height: 200px;
-        overflow: auto;
-        padding: 10px 12px;
-        border-radius: 10px;
-        background: var(--code);
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        font-size: 12.5px;
-        line-height: 1.6;
-        white-space: pre-wrap;
-        word-break: break-word;
-      }
-
-      .learn-log .quiet {
-        color: var(--muted);
-      }
-
-      .learn-log .err {
-        color: #dc2626;
-      }
-
-      .learn-checks {
-        display: grid;
-        gap: 2px;
-        padding: 10px 12px;
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        font-size: 13.5px;
-      }
-
-      .learn-checks[hidden] {
-        display: none;
-      }
-
-      .learn-checks .ok {
-        color: #15803d;
-      }
-
-      .learn-checks .no {
-        color: #b91c1c;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        .learn-checks .ok {
-          color: #4ade80;
-        }
-
-        .learn-checks .no,
-        .learn-log .err {
-          color: #f87171;
-        }
-      }
-
-      .learn-nav {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 16px;
-      }
-
-      .learn-nav button:disabled {
-        opacity: 0.4;
-        cursor: default;
-      }
-
-      @media (max-width: 720px) {
-        .learn-work {
-          grid-template-columns: 1fr;
-        }
-
-        .learn-editor {
-          min-height: 300px;
-        }
-
-        .learn-lesson {
-          padding: 14px;
-        }
-      }
-
-      /* For agents */
-
-      .agent-files {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
-        gap: 16px;
-      }
-
-      .agent-file {
-        display: grid;
-        gap: 8px;
-        padding: 20px;
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        background: var(--surface);
-      }
-
-      .agent-file h3 {
-        margin: 0;
-        font-size: 18px;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      }
-
-      .agent-file p {
-        margin: 0;
-        color: var(--muted);
-        font-size: 14px;
-      }
-
-      .copy-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 6px 6px 12px;
-        border-radius: 10px;
-        background: var(--code);
-      }
-
-      .copy-row .url {
-        flex: 1;
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-size: 12.5px;
-      }
-
-      .prompt {
-        position: relative;
-      }
-
-      .prompt .copy {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-      }
-
-      .prompt pre {
-        padding-right: 80px;
-        white-space: pre-wrap;
-      }
-
-      .plain {
-        margin: 0;
-        padding-left: 18px;
-        color: var(--muted);
-      }
-
-
-      footer {
-        margin-top: 64px;
-        padding-top: 24px;
-        border-top: 1px solid var(--line);
-        font-size: 14px;
-        color: var(--muted);
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <main>
-      <header>
-        <h1>ymir-js</h1>
-        <p class="lede">
-          A TypeScript toolkit for board games. Checkers, chess, Go and match-3 come with
-          their full rules, built on a small board core you can use for your own games.
-        </p>
-        <nav class="links" aria-label="Project links">
-          <a class="primary" href="#games">Play the examples</a>
+    <header class="top">
+      <div class="wrap top-row">
+        <a class="brand" href="./">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="currentColor" /><rect x="6" y="6" width="9" height="9" rx="2" fill="var(--bg)" /><rect x="17" y="17" width="9" height="9" rx="2" fill="var(--bg)" /><circle cx="21.5" cy="10.5" r="4" fill="var(--accent)" /></svg>
+          ymir-js
+        </a>
+        <nav aria-label="Project links">
           <a href="https://github.com/aykutkardas/ymir-js">GitHub</a>
           <a href="https://www.npmjs.com/package/ymir-js">npm</a>
           <a href="https://github.com/aykutkardas/ymir-js#readme">Docs</a>
-          <a href="#agents">For agents</a>
         </nav>
-      </header>
-
-      <div class="tabs" role="tablist" aria-label="Who is reading">
-        <button type="button" role="tab" id="tab-humans" aria-controls="humans" aria-selected="true">For humans</button>
-        <button type="button" role="tab" id="tab-agents" aria-controls="agents" aria-selected="false" tabindex="-1">For agents</button>
       </div>
+    </header>
 
-      <section id="humans" role="tabpanel" aria-labelledby="tab-humans">
-      <pre><code>npm install ymir-js</code></pre>
-
-      <h2 id="learn-the-core">Learn the core, live</h2>
-      <p class="section-lede">
-        Every game here stands on two classes, <code>Board</code> and <code>Item</code>. These lessons
-        run as you type: change the code and the board on the right redraws.
-      </p>
-      <div id="learn" class="learn">
-        <nav class="learn-steps" aria-label="Lessons"></nav>
-        <div class="learn-lesson">
-          <h3 class="learn-title"></h3>
-          <p class="learn-text"></p>
-          <div class="learn-work">
-            <div class="learn-code">
-              <div class="learn-bar">
-                <span>Code <small>runs as you type</small></span>
-                <button type="button" class="learn-reset">Reset</button>
-              </div>
-              <textarea class="learn-editor" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Lesson code"></textarea>
-            </div>
-            <div class="learn-out">
-              <div class="learn-board" aria-label="Board preview"></div>
-              <div class="learn-hover">Hover a square to see its coord</div>
-              <div class="learn-checks" hidden></div>
-              <div class="learn-log" aria-live="polite"></div>
-            </div>
-          </div>
-          <div class="learn-nav">
-            <button type="button" class="learn-prev">&larr; Previous</button>
-            <button type="button" class="learn-next">Next &rarr;</button>
-          </div>
+    <main>
+      <section class="hero wrap">
+        <h1>Board games,<br />as plain TypeScript.</h1>
+        <p class="lede">
+          Checkers, chess, Go and match-3 with their full rules, on a small <code>Board</code> and
+          <code>Item</code> core you can build your own games on. No framework, no dependencies.
+        </p>
+        <div class="install">
+          <code>npm install ymir-js</code>
+          <button type="button" class="copy" data-copy="npm install ymir-js">Copy</button>
         </div>
-        <noscript>The lessons need JavaScript.</noscript>
-      </div>
 
-      <h2 id="games">Games</h2>
-      <div class="games">
-        <article class="game">
-          <div class="game-head">
-            <svg viewBox="0 0 4 4" aria-hidden="true">
-              <rect width="4" height="4" fill="#e9cfa7" />
-              <rect x="1" width="1" height="1" fill="#b9875a" /><rect x="3" width="1" height="1" fill="#b9875a" />
-              <rect y="1" width="1" height="1" fill="#b9875a" /><rect x="2" y="1" width="1" height="1" fill="#b9875a" />
-              <rect x="1" y="2" width="1" height="1" fill="#b9875a" /><rect x="3" y="2" width="1" height="1" fill="#b9875a" />
-              <rect y="3" width="1" height="1" fill="#b9875a" /><rect x="2" y="3" width="1" height="1" fill="#b9875a" />
-              <circle cx="1.5" cy="0.5" r="0.36" fill="#fbf8f3" /><circle cx="0.5" cy="3.5" r="0.36" fill="#2a2522" /><circle cx="2.5" cy="1.5" r="0.36" fill="#2a2522" />
-            </svg>
-            <div>
-              <h3>Checkers</h3>
-              <p>Turkish and International, against the computer</p>
+        <div class="tabs" role="tablist" aria-label="Who is reading">
+          <button type="button" role="tab" id="tab-humans" aria-controls="humans" aria-selected="true">
+            <strong>For humans</strong><span>Puzzles and games</span>
+          </button>
+          <button type="button" role="tab" id="tab-agents" aria-controls="agents" aria-selected="false" tabindex="-1">
+            <strong>For agents</strong><span>llms.txt and a prompt</span>
+          </button>
+        </div>
+      </section>
+
+      <div id="humans" role="tabpanel" aria-labelledby="tab-humans">
+        <section id="puzzles" class="wrap block">
+          <div class="block-head">
+            <h2>Learn the core in 11 puzzles</h2>
+            <p>
+              Each puzzle is a small board and a goal. Change a line or two, press Run, and watch
+              your code play out on the board. No setup, nothing to install.
+            </p>
+          </div>
+
+          <div id="puzzle" class="pz">
+            <aside class="pz-side">
+              <p class="pz-progress"></p>
+              <ol class="pz-list"></ol>
+            </aside>
+
+            <div class="pz-main">
+              <div class="pz-task">
+                <p class="pz-step"></p>
+                <h3 class="pz-title"></h3>
+                <p class="pz-goal"></p>
+                <p class="pz-text"></p>
+              </div>
+
+              <div class="pz-play">
+                <div class="pz-code">
+                  <div class="pz-api" aria-label="Methods for this puzzle; click to insert"></div>
+                  <div class="pz-editor">
+                    <pre class="pz-highlight" aria-hidden="true"><code></code></pre>
+                    <textarea class="pz-input" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Your code"></textarea>
+                  </div>
+                  <div class="pz-actions">
+                    <button type="button" class="pz-run">▶ Run</button>
+                    <button type="button" class="pz-solution">Show solution</button>
+                    <button type="button" class="pz-reset">Reset</button>
+                  </div>
+                </div>
+
+                <div class="pz-view">
+                  <div class="pz-board" aria-label="Puzzle board"></div>
+                  <p class="pz-status" aria-live="polite"></p>
+                  <div class="pz-result" aria-live="polite"></div>
+                </div>
+              </div>
             </div>
           </div>
-          <ul>
-            <li>Mandatory and maximum capture, full capture chains, flying kings</li>
-            <li><code>CheckersGame</code> with undo, save/load and FMJD / Turkish draw rules</li>
-            <li>PDN FEN and move notation for International</li>
-          </ul>
-          <div class="links">
-            <a class="primary" href="examples/checkers/">Play</a>
-            <a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/checkers">Source</a>
-            <a href="https://github.com/aykutkardas/ymir-js#checkers">API</a>
-          </div>
-        </article>
+          <noscript><p>The puzzles need JavaScript.</p></noscript>
+        </section>
 
-        <article class="game">
-          <div class="game-head">
-            <svg viewBox="0 0 4 4" aria-hidden="true">
-              <rect width="4" height="4" fill="#ebecd0" />
-              <rect x="1" width="1" height="1" fill="#779556" /><rect x="3" width="1" height="1" fill="#779556" />
-              <rect y="1" width="1" height="1" fill="#779556" /><rect x="2" y="1" width="1" height="1" fill="#779556" />
-              <rect x="1" y="2" width="1" height="1" fill="#779556" /><rect x="3" y="2" width="1" height="1" fill="#779556" />
-              <rect y="3" width="1" height="1" fill="#779556" /><rect x="2" y="3" width="1" height="1" fill="#779556" />
-              <text x="2" y="2.95" font-size="2.6" text-anchor="middle" fill="#1c1917">♞</text>
-            </svg>
-            <div>
-              <h3>Chess</h3>
-              <p>Against a built-in engine, or two players</p>
-            </div>
+        <section id="games" class="wrap block">
+          <div class="block-head">
+            <h2>Games</h2>
+            <p>Every one runs on the same <code>Board</code> and <code>Item</code>. Play them, then read the source.</p>
           </div>
-          <ul>
-            <li>Every rule: castling, en passant, promotion, mate, stalemate, draws</li>
-            <li>Move generation verified with perft (4.8M positions from the start)</li>
-            <li>FEN, SAN, UCI, PGN, and <code>getBestMove({ depth })</code></li>
-          </ul>
-          <div class="links">
-            <a class="primary" href="examples/chess/">Play</a>
-            <a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/chess">Source</a>
-            <a href="https://github.com/aykutkardas/ymir-js#chess">API</a>
-          </div>
-        </article>
 
-        <article class="game">
-          <div class="game-head">
-            <svg viewBox="0 0 4 4" aria-hidden="true">
-              <rect width="4" height="4" fill="#dcb35c" />
-              <path d="M0.5 0.5H3.5M0.5 1.5H3.5M0.5 2.5H3.5M0.5 3.5H3.5M0.5 0.5V3.5M1.5 0.5V3.5M2.5 0.5V3.5M3.5 0.5V3.5" stroke="#3d2e16" stroke-width="0.06" />
-              <circle cx="1.5" cy="1.5" r="0.45" fill="#1a1a1a" /><circle cx="2.5" cy="1.5" r="0.45" fill="#f5f5f4" stroke="#2b2b2b" stroke-width="0.04" />
-              <circle cx="1.5" cy="2.5" r="0.45" fill="#f5f5f4" stroke="#2b2b2b" stroke-width="0.04" /><circle cx="2.5" cy="2.5" r="0.45" fill="#1a1a1a" />
-            </svg>
-            <div>
-              <h3>Go</h3>
-              <p>9×9, 13×13 or 19×19, with scoring</p>
-            </div>
+          <h3 class="group">In the library <span>full rules, tested, ready to use</span></h3>
+          <div class="cards">
+            <article class="card">
+              <a class="shot" href="examples/checkers/"><img src="media/checkers.gif" alt="Turkish checkers: a capture chain and a new king" loading="lazy" /></a>
+              <h4>Checkers</h4>
+              <p>Turkish and International, against the computer.</p>
+              <div class="card-links"><a class="play" href="examples/checkers/">Play</a><a href="https://github.com/aykutkardas/ymir-js#checkers">API</a></div>
+            </article>
+            <article class="card">
+              <a class="shot" href="examples/chess/"><img src="media/chess.gif" alt="Chess: Morphy's Opera Game" loading="lazy" /></a>
+              <h4>Chess</h4>
+              <p>Every rule, PGN and FEN, and a built-in engine.</p>
+              <div class="card-links"><a class="play" href="examples/chess/">Play</a><a href="https://github.com/aykutkardas/ymir-js#chess">API</a></div>
+            </article>
+            <article class="card">
+              <a class="shot" href="examples/go/"><img src="media/go.gif" alt="Go on 9x9, ending with the score" loading="lazy" /></a>
+              <h4>Go</h4>
+              <p>9×9 to 19×19, ko and superko, scoring.</p>
+              <div class="card-links"><a class="play" href="examples/go/">Play</a><a href="https://github.com/aykutkardas/ymir-js#go">API</a></div>
+            </article>
+            <article class="card">
+              <a class="shot" href="examples/match3/"><img src="media/match3.gif" alt="Match 3: swaps and cascades" loading="lazy" /></a>
+              <h4>Match 3</h4>
+              <p>Swaps, cascades step by step, hints.</p>
+              <div class="card-links"><a class="play" href="examples/match3/">Play</a><a href="https://github.com/aykutkardas/ymir-js#match-3">API</a></div>
+            </article>
           </div>
-          <ul>
-            <li>Groups, liberties, captures, suicide, simple ko and superko</li>
-            <li>Pass, resign, dead stones, area or territory scoring with komi</li>
-            <li>GTP coordinates, handicap setup, undo, save/load</li>
-          </ul>
-          <div class="links">
-            <a class="primary" href="examples/go/">Play</a>
-            <a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/go">Source</a>
-            <a href="https://github.com/aykutkardas/ymir-js#go">API</a>
-          </div>
-        </article>
 
-        <article class="game">
-          <div class="game-head">
-            <svg viewBox="0 0 4 4" aria-hidden="true">
-              <rect width="4" height="4" fill="#ebe7f5" />
-              <circle cx="0.75" cy="0.75" r="0.42" fill="#e11d48" /><rect x="1.85" y="0.35" width="0.8" height="0.8" rx="0.18" fill="#f97316" /><circle cx="3.25" cy="0.75" r="0.42" fill="#e11d48" />
-              <path d="M0.75 1.6L1.2 2.45H0.3Z" fill="#eab308" /><path d="M2 1.55L2.45 2L2 2.45L1.55 2Z" fill="#16a34a" /><path d="M3.25 1.6L3.7 2.45H2.8Z" fill="#eab308" />
-              <circle cx="0.75" cy="3.25" r="0.42" fill="#2563eb" /><circle cx="2" cy="3.25" r="0.42" fill="#2563eb" /><circle cx="3.25" cy="3.25" r="0.42" fill="#2563eb" />
-            </svg>
-            <div>
-              <h3>Match 3</h3>
-              <p>A 20-move puzzle with cascades</p>
-            </div>
+          <h3 class="group">Built on the core <span>example apps with their own rules, to read as tutorials</span></h3>
+          <div class="cards">
+            <article class="card">
+              <a class="shot" href="examples/hnefatafl/"><img src="media/hnefatafl.gif" alt="Hnefatafl: the king escapes to a corner" loading="lazy" /></a>
+              <h4>Hnefatafl</h4>
+              <p>Viking chess: get the king to a corner.</p>
+              <div class="card-links"><a class="play" href="examples/hnefatafl/">Play</a><a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/hnefatafl">Source</a></div>
+            </article>
+            <article class="card">
+              <a class="shot" href="examples/reversi/"><img src="media/reversi.gif" alt="Reversi: discs flipping" loading="lazy" /></a>
+              <h4>Reversi</h4>
+              <p>Flips along eight lines from one core call.</p>
+              <div class="card-links"><a class="play" href="examples/reversi/">Play</a><a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/reversi">Source</a></div>
+            </article>
+            <article class="card">
+              <a class="shot" href="examples/sokoban/"><img src="media/sokoban.gif" alt="Sokoban: a level solved" loading="lazy" /></a>
+              <h4>Sokoban</h4>
+              <p>Push boxes; undo and a solver.</p>
+              <div class="card-links"><a class="play" href="examples/sokoban/">Play</a><a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/sokoban">Source</a></div>
+            </article>
+            <article class="card">
+              <a class="shot" href="examples/tactics/"><img src="media/tactics.gif" alt="Tactics: units move and attack" loading="lazy" /></a>
+              <h4>Tactics</h4>
+              <p>Turn-based battle with ranges and paths.</p>
+              <div class="card-links"><a class="play" href="examples/tactics/">Play</a><a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/tactics">Source</a></div>
+            </article>
+            <article class="card">
+              <a class="shot" href="examples/bomberman/"><img src="media/bomberman.gif" alt="Bomberman: bombs and crates" loading="lazy" /></a>
+              <h4>Bomberman</h4>
+              <p>Real time: bombs, chains, power-ups.</p>
+              <div class="card-links"><a class="play" href="examples/bomberman/">Play</a><a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/bomberman">Source</a></div>
+            </article>
+            <article class="card">
+              <a class="shot" href="examples/invaders/"><img src="media/invaders.gif" alt="Invaders: a wave shot down" loading="lazy" /></a>
+              <h4>Invaders</h4>
+              <p>Real time: a marching formation, shields.</p>
+              <div class="card-links"><a class="play" href="examples/invaders/">Play</a><a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/invaders">Source</a></div>
+            </article>
           </div>
-          <ul>
-            <li>Swap, match, gravity, refill and chain reactions in one call</li>
-            <li>Every cascade step reported, ready to animate</li>
-            <li>Hints, automatic shuffle, seedable boards</li>
-          </ul>
-          <div class="links">
-            <a class="primary" href="examples/match3/">Play</a>
-            <a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/match3">Source</a>
-            <a href="https://github.com/aykutkardas/ymir-js#match-3">API</a>
-          </div>
-        </article>
-      </div>
+        </section>
 
-      <h2 id="custom">Custom games</h2>
-      <p>
-        These aren't in the library. Each is an example app that writes its own rules on the core
-        <code>Board</code> and <code>Item</code>, to show what you can build with it.
-      </p>
-      <div class="games">
-        <article class="game">
-          <div class="game-head">
-            <svg viewBox="0 0 5 5" aria-hidden="true">
-              <rect width="5" height="5" fill="#d9c9a5" />
-              <rect width="1" height="1" fill="#a88a59" /><rect x="4" width="1" height="1" fill="#a88a59" />
-              <rect y="4" width="1" height="1" fill="#a88a59" /><rect x="4" y="4" width="1" height="1" fill="#a88a59" />
-              <rect x="2" y="2" width="1" height="1" fill="#a88a59" />
-              <circle cx="2.5" cy="2.5" r="0.42" fill="#f7f2e7" stroke="#c9971c" stroke-width="0.12" />
-              <circle cx="1.5" cy="2.5" r="0.36" fill="#f7f2e7" /><circle cx="3.5" cy="2.5" r="0.36" fill="#f7f2e7" />
-              <circle cx="2.5" cy="0.5" r="0.36" fill="#2d2a26" /><circle cx="0.5" cy="2.5" r="0.36" fill="#2d2a26" /><circle cx="2.5" cy="4.5" r="0.36" fill="#2d2a26" />
-            </svg>
-            <div>
-              <h3>Hnefatafl</h3>
-              <p>Viking chess: get the king to a corner</p>
-            </div>
+        <section class="wrap block">
+          <div class="block-head">
+            <h2>Using it</h2>
+            <p>Plain classes: read the state, call a method, draw it however you like.</p>
           </div>
-          <ul>
-            <li>Copenhagen rules: shieldwalls, exit forts, encirclement</li>
-            <li>About 400 lines of rules on <code>Board</code> and <code>Item</code>, with tests</li>
-            <li>A small alpha-beta player for either side</li>
-          </ul>
-          <div class="links">
-            <a class="primary" href="examples/hnefatafl/">Play</a>
-            <a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/hnefatafl">Source</a>
-            <a href="https://github.com/aykutkardas/ymir-js#custom-games">How it's built</a>
-          </div>
-        </article>
-
-        <article class="game">
-          <div class="game-head">
-            <svg viewBox="0 0 5 5" aria-hidden="true">
-              <rect width="5" height="5" fill="#5b5f63" />
-              <rect x="1" y="1" width="3" height="3" fill="#e9e4d6" />
-              <circle cx="3.5" cy="1.5" r="0.28" fill="none" stroke="#0f766e" stroke-width="0.1" />
-              <rect x="2.12" y="1.12" width="0.76" height="0.76" rx="0.12" fill="#c2853f" stroke="#8a5a24" stroke-width="0.08" />
-              <rect x="1.12" y="3.12" width="0.76" height="0.76" rx="0.12" fill="#0f766e" />
-              <circle cx="2.5" cy="2.5" r="0.3" fill="#1d4ed8" />
-            </svg>
-            <div>
-              <h3>Sokoban</h3>
-              <p>Push every box onto a goal</p>
-            </div>
-          </div>
-          <ul>
-            <li>Three levels, each proven solvable by a built-in solver</li>
-            <li>Keyboard, swipe or on-screen arrows; undo and restart</li>
-            <li><em>Show solution</em> plays the shortest one</li>
-          </ul>
-          <div class="links">
-            <a class="primary" href="examples/sokoban/">Play</a>
-            <a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/sokoban">Source</a>
-            <a href="https://github.com/aykutkardas/ymir-js#sokoban">How it's built</a>
-          </div>
-        </article>
-
-        <article class="game">
-          <div class="game-head">
-            <svg viewBox="0 0 5 5" aria-hidden="true">
-              <rect width="5" height="5" fill="#b9d39a" />
-              <rect x="1" y="1" width="3" height="1" fill="rgb(37 99 235 / 0.35)" />
-              <circle cx="3.5" cy="3.5" r="0.45" fill="#8b8f8a" />
-              <rect x="0.6" y="0.6" width="0.9" height="0.9" rx="0.2" fill="#dc2626" />
-              <rect x="2.05" y="2.05" width="0.9" height="0.9" rx="0.2" fill="#2563eb" />
-              <path d="M2.5 2.25l0.25 0.1v0.18c0 0.18-0.11 0.3-0.25 0.36-0.14-0.06-0.25-0.18-0.25-0.36v-0.18z" fill="#fff" />
-            </svg>
-            <div>
-              <h3>Tactics</h3>
-              <p>A small turn-based battle</p>
-            </div>
-          </div>
-          <ul>
-            <li>Knights, archers and scouts; forests and rocks; strike-backs</li>
-            <li>Stats in a typed <code>item.data</code>; moves from <code>getReachable</code></li>
-            <li>A computer player for the red side</li>
-          </ul>
-          <div class="links">
-            <a class="primary" href="examples/tactics/">Play</a>
-            <a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/tactics">Source</a>
-            <a href="https://github.com/aykutkardas/ymir-js#tactics">How it's built</a>
-          </div>
-        </article>
-
-        <article class="game">
-          <div class="game-head">
-            <svg viewBox="0 0 4 4" aria-hidden="true">
-              <rect width="4" height="4" fill="#2f7d4f" />
-              <path d="M1 0V4M2 0V4M3 0V4M0 1H4M0 2H4M0 3H4" stroke="#1f5537" stroke-width="0.06" />
-              <circle cx="1.5" cy="1.5" r="0.4" fill="#f6f6f2" /><circle cx="2.5" cy="1.5" r="0.4" fill="#1b1b1b" />
-              <circle cx="1.5" cy="2.5" r="0.4" fill="#1b1b1b" /><circle cx="2.5" cy="2.5" r="0.4" fill="#f6f6f2" />
-            </svg>
-            <div>
-              <h3>Reversi</h3>
-              <p>Trap and flip the other colour</p>
-            </div>
-          </div>
-          <ul>
-            <li>Flipping along all eight lines with one core call</li>
-            <li>Passing, game end, undo; animated flips</li>
-            <li>A computer player at three levels</li>
-          </ul>
-          <div class="links">
-            <a class="primary" href="examples/reversi/">Play</a>
-            <a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/reversi">Source</a>
-            <a href="https://github.com/aykutkardas/ymir-js#reversi">How it's built</a>
-          </div>
-        </article>
-
-        <article class="game">
-          <div class="game-head">
-            <svg viewBox="0 0 4 4" aria-hidden="true">
-              <rect width="4" height="4" fill="#4f9a5c" />
-              <rect x="0" y="0" width="1" height="1" fill="#5f6b70" /><rect x="2" y="0" width="1" height="1" fill="#5f6b70" />
-              <rect x="0" y="2" width="1" height="1" fill="#5f6b70" /><rect x="2" y="2" width="1" height="1" fill="#5f6b70" />
-              <rect x="3.1" y="0.1" width="0.8" height="0.8" fill="#b9783f" />
-              <circle cx="1.5" cy="2.6" r="0.36" fill="#161616" />
-              <circle cx="3.5" cy="3.5" r="0.38" fill="#db2777" />
-            </svg>
-            <div>
-              <h3>Bomberman</h3>
-              <p>Bombs, crates and power-ups, in real time</p>
-            </div>
-          </div>
-          <ul>
-            <li>Blasts along the core's lines, with chain reactions</li>
-            <li>Enemies that chase you with <code>findPath</code></li>
-            <li>Keyboard and touch; seeded maps</li>
-          </ul>
-          <div class="links">
-            <a class="primary" href="examples/bomberman/">Play</a>
-            <a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/bomberman">Source</a>
-            <a href="https://github.com/aykutkardas/ymir-js#bomberman">How it's built</a>
-          </div>
-        </article>
-
-        <article class="game">
-          <div class="game-head">
-            <svg viewBox="-2 -3 12 12" aria-hidden="true">
-              <rect x="-2" y="-3" width="12" height="12" fill="#0b0f24" />
-              <path fill="#a78bfa" d="M2 0h1v1H2zM5 0h1v1H5zM1 1h6v1H1zM0 2h2v1H0zM3 2h2v1H3zM6 2h2v1H6zM0 3h8v1H0zM1 4h1v1H1zM6 4h1v1H6zM0 5h1v1H0zM7 5h1v1H7z" />
-            </svg>
-            <div>
-              <h3>Invaders</h3>
-              <p>Shoot the formation before it lands</p>
-            </div>
-          </div>
-          <ul>
-            <li>A formation that marches with <code>moveItem</code></li>
-            <li>Shooters found by looking down each column</li>
-            <li>Shields, a mystery ship, waves; keyboard and touch</li>
-          </ul>
-          <div class="links">
-            <a class="primary" href="examples/invaders/">Play</a>
-            <a href="https://github.com/aykutkardas/ymir-js/tree/main/examples/invaders">Source</a>
-            <a href="https://github.com/aykutkardas/ymir-js#invaders">How it's built</a>
-          </div>
-        </article>
-      </div>
-
-      <h2>A taste of the API</h2>
-      <pre><code>import { ChessGame, GoGame, CheckersGame, Match3Board } from 'ymir-js';
+          <div class="split">
+            <pre class="code"><code data-lang="js">import { ChessGame, GoGame, CheckersGame } from 'ymir-js';
 
 const chess = new ChessGame();
 chess.move('e4');
-chess.getBestMove({ depth: 3 });   // e.g. { san: 'Nf6', from: 'g8', to: 'f6', ... }
+chess.getBestMove({ depth: 3 }); // { san: 'Nf6', ... }
 
 const go = new GoGame({ size: 9 });
 go.play('4|4');
-go.getStatus();                    // { state: 'playing' }
+go.getStatus(); // { state: 'playing' }
 
 const checkers = CheckersGame.create('turkish');
-checkers.getLegalMoves();          // [{ from: '2|0', path: ['3|0'], captured: [] }, ...]
+checkers.getLegalMoves(); // [{ from, path, captured }, ...]</code></pre>
+            <ul class="facts">
+              <li><strong>Rules you can trust</strong>Tested against the official rules: perft for chess, FMJD and Turkish federation rules for checkers.</li>
+              <li><strong>Any UI</strong>No rendering, no framework. The examples use Preact; use what you like.</li>
+              <li><strong>Typed, zero dependencies</strong>TypeScript, an ES module with types, nothing else installed.</li>
+              <li><strong>Your own games</strong>The puzzles above are the whole core. The custom games show where it goes.</li>
+            </ul>
+          </div>
+        </section>
+      </div>
 
-const match3 = new Match3Board().init();
-const { from, to } = match3.getPossibleMoves()[0];
-match3.swap(from, to);             // e.g. { valid: true, points: 30, steps: [...] }</code></pre>
+      <div id="agents" role="tabpanel" aria-labelledby="tab-agents" hidden>
+        <section class="wrap block">
+          <div class="block-head">
+            <h2>Point your agent here</h2>
+            <p>
+              Plain-text files in the <a href="https://llmstxt.org">llms.txt</a> format, rebuilt with
+              this site. Give your coding agent the link and it has what it needs.
+            </p>
+          </div>
 
-      <h2>Why use it</h2>
-      <ul class="facts">
-        <li><strong>Rules you can trust</strong>Each game is tested against its official rules: perft for chess, FMJD and Turkish federation rules for checkers.</li>
-        <li><strong>UI-agnostic</strong>Plain classes and plain data. Use any framework, or none; the examples use Preact.</li>
-        <li><strong>Typed, zero dependencies</strong>Written in TypeScript, published as an ES module with types, no runtime dependencies.</li>
-        <li><strong>Built for your own games</strong>The same <code>Board</code> and <code>Item</code> core runs every game here. Start from it for a new one.</li>
-      </ul>
+          <div class="agent-files">
+            <article class="agent-file">
+              <h3><a href="llms.txt">llms.txt</a></h3>
+              <p>The short version: what the library is, the conventions to know before writing code, and where each API lives.</p>
+              <div class="copy-row">
+                <code>https://aykutkardas.github.io/ymir-js/llms.txt</code>
+                <button type="button" class="copy" data-copy="https://aykutkardas.github.io/ymir-js/llms.txt">Copy</button>
+              </div>
+            </article>
+            <article class="agent-file">
+              <h3><a href="llms-full.txt">llms-full.txt</a></h3>
+              <p>Everything in one file: llms.txt, the whole README, and the public type declarations of every package.</p>
+              <div class="copy-row">
+                <code>https://aykutkardas.github.io/ymir-js/llms-full.txt</code>
+                <button type="button" class="copy" data-copy="https://aykutkardas.github.io/ymir-js/llms-full.txt">Copy</button>
+              </div>
+            </article>
+          </div>
+        </section>
 
-      </section>
-
-      <section id="agents" role="tabpanel" aria-labelledby="tab-agents" hidden>
-        <p class="section-lede">
-          Building with a coding agent? Point it at these plain-text files. They follow the
-          <a href="https://llmstxt.org">llms.txt</a> convention and are rebuilt with the site.
-        </p>
-
-        <div class="agent-files">
-          <article class="agent-file">
-            <h3><a href="llms.txt">llms.txt</a></h3>
-            <p>The short version: what the library is, the conventions to know before writing code, and where each API lives, with links.</p>
-            <div class="copy-row"><code class="url">https://aykutkardas.github.io/ymir-js/llms.txt</code><button type="button" class="copy" data-copy="https://aykutkardas.github.io/ymir-js/llms.txt">Copy</button></div>
-          </article>
-          <article class="agent-file">
-            <h3><a href="llms-full.txt">llms-full.txt</a></h3>
-            <p>Everything in one file: llms.txt, the whole README, and every public type declaration of every package.</p>
-            <div class="copy-row"><code class="url">https://aykutkardas.github.io/ymir-js/llms-full.txt</code><button type="button" class="copy" data-copy="https://aykutkardas.github.io/ymir-js/llms-full.txt">Copy</button></div>
-          </article>
-        </div>
-
-        <h2>A prompt to start from</h2>
-        <div class="prompt">
-          <button type="button" class="copy" data-copy-from="#agent-prompt">Copy</button>
-          <pre><code id="agent-prompt">Use the ymir-js library (npm install ymir-js) for the board and the rules.
+        <section class="wrap block">
+          <div class="block-head">
+            <h2>A prompt to start from</h2>
+            <p>Paste it into your agent, then describe the game you want.</p>
+          </div>
+          <div class="prompt">
+            <pre><code id="agent-prompt">Use the ymir-js library (npm install ymir-js) for the board and the rules.
 Before writing code, read https://aykutkardas.github.io/ymir-js/llms.txt,
 and https://aykutkardas.github.io/ymir-js/llms-full.txt for exact types.
 Coordinates are "row|col" strings. Use the built-in game classes
 (CheckersGame, ChessGame, GoGame, Match3Board) when they fit; for a new
 game, build on Board and Item from the core, as the custom games do.</code></pre>
-        </div>
+            <button type="button" class="copy" data-copy-from="#agent-prompt">Copy prompt</button>
+          </div>
+        </section>
 
-        <h2>Good to know</h2>
-        <ul class="facts">
-          <li><strong>Coordinates</strong>Strings <code>"row|col"</code>, zero-based, row 0 at the top. Chess also takes <code>"e4"</code>.</li>
-          <li><strong>Validated moves</strong><code>play</code> / <code>move</code> throw on illegal moves; ask <code>getLegalMoves()</code> first.</li>
-          <li><strong>State</strong>Games report <code>getStatus()</code> and save with <code>toJSON()</code> / <code>fromJSON()</code>.</li>
-          <li><strong>Packages</strong><code>ymir-js</code> re-exports <code>@ymir-js/core</code>, <code>checkers</code>, <code>chess</code>, <code>go</code> and <code>match3</code>.</li>
-        </ul>
-
-        <h2>Source of truth</h2>
-        <ul class="plain">
-          <li><a href="https://github.com/aykutkardas/ymir-js/blob/main/README.md">README</a>: the API by example, a section per game</li>
-          <li><a href="https://github.com/aykutkardas/ymir-js/tree/main/packages">packages/</a>: the source, with tests next to it</li>
-          <li><a href="https://github.com/aykutkardas/ymir-js/tree/main/examples">examples/</a>: complete apps, including custom games written on the core</li>
-        </ul>
-      </section>
-
-      <footer>
-        MIT License · Made by <a href="https://aykutkardas.com">Aykut Kardaş</a> ·
-        <a href="https://github.com/aykutkardas/ymir-js">Source on GitHub</a>
-      </footer>
+        <section class="wrap block">
+          <div class="block-head">
+            <h2>Good to know</h2>
+          </div>
+          <ul class="facts four">
+            <li><strong>Coordinates</strong>Strings <code>"row|col"</code>, from 0, row 0 at the top. Chess also takes <code>"e4"</code>.</li>
+            <li><strong>Validated moves</strong><code>play</code> and <code>move</code> throw on an illegal move; ask <code>getLegalMoves()</code> first.</li>
+            <li><strong>State</strong>Games report <code>getStatus()</code> and save with <code>toJSON()</code> / <code>fromJSON()</code>.</li>
+            <li><strong>Packages</strong><code>ymir-js</code> re-exports <code>@ymir-js/core</code>, <code>checkers</code>, <code>chess</code>, <code>go</code> and <code>match3</code>.</li>
+          </ul>
+          <p class="sources">
+            Source of truth: the <a href="https://github.com/aykutkardas/ymir-js/blob/main/README.md">README</a>,
+            <a href="https://github.com/aykutkardas/ymir-js/tree/main/packages">packages/</a> with tests next to the code, and
+            <a href="https://github.com/aykutkardas/ymir-js/tree/main/examples">examples/</a>.
+          </p>
+        </section>
+      </div>
     </main>
-    <script>
-      // Two audiences, two tabs; the URL hash (#agents) picks one.
-      const tabs = [...document.querySelectorAll('[role="tab"]')];
-      const select = (id) => {
-        tabs.forEach((tab) => {
-          const on = tab.getAttribute('aria-controls') === id;
-          tab.setAttribute('aria-selected', String(on));
-          tab.tabIndex = on ? 0 : -1;
-          document.getElementById(tab.getAttribute('aria-controls')).hidden = !on;
-        });
-      };
-      tabs.forEach((tab, i) => {
-        tab.addEventListener('click', () => {
-          const id = tab.getAttribute('aria-controls');
-          history.replaceState(null, '', id === 'agents' ? '#agents' : location.pathname);
-          select(id);
-        });
-        tab.addEventListener('keydown', (e) => {
-          if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-          const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
-          next.click();
-          next.focus();
-        });
-      });
-      // A link to something inside a hidden tab (#games) opens that tab first.
-      const fromHash = () => {
-        select(location.hash === '#agents' ? 'agents' : 'humans');
-        const target = location.hash.length > 1 && document.getElementById(location.hash.slice(1));
-        if (target && location.hash !== '#agents') target.scrollIntoView();
-      };
-      window.addEventListener('hashchange', fromHash);
-      fromHash();
 
-      document.querySelectorAll('.copy').forEach((button) =>
-        button.addEventListener('click', async () => {
-          const text = button.dataset.copy ?? document.querySelector(button.dataset.copyFrom).textContent;
-          try {
-            await navigator.clipboard.writeText(text);
-            button.textContent = 'Copied';
-          } catch {
-            button.textContent = 'Copy failed';
-          }
-          setTimeout(() => (button.textContent = 'Copy'), 1500);
-        })
-      );
-    </script>
-    <script type="module" src="learn.js"></script>
+    <footer class="wrap">
+      MIT License · Made by <a href="https://aykutkardas.com">Aykut Kardaş</a> ·
+      <a href="https://github.com/aykutkardas/ymir-js">Source on GitHub</a>
+    </footer>
+
+    <script type="module" src="main.js"></script>
+    <script type="module" src="puzzles.js"></script>
   </body>
 </html>

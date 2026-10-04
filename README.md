@@ -6,7 +6,7 @@
 
 A TypeScript toolkit for board games. Checkers, chess, Go and match-3 come with their full rules; underneath is a small board core you can use for your own games.
 
-**[Play the examples →](https://aykutkardas.github.io/ymir-js/)** · **[Learn the core, live →](https://aykutkardas.github.io/ymir-js/#learn-the-core)** · **[For agents →](https://aykutkardas.github.io/ymir-js/#agents)**
+**[Play the examples →](https://aykutkardas.github.io/ymir-js/)** · **[Learn the core in puzzles →](https://aykutkardas.github.io/ymir-js/#puzzles)** · **[For agents →](https://aykutkardas.github.io/ymir-js/#agents)**
 
 <table>
   <tr>
