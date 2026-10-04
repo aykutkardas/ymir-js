@@ -8,6 +8,15 @@ A TypeScript toolkit for board games. Checkers, chess, Go and match-3 come with 
 
 **[Play the examples →](https://aykutkardas.github.io/ymir-js/)**
 
+<table>
+  <tr>
+    <td align="center"><a href="https://aykutkardas.github.io/ymir-js/examples/checkers/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/checkers.gif" width="200" alt="Turkish checkers: a capture chain and a new king" /></a><br />Checkers</td>
+    <td align="center"><a href="https://aykutkardas.github.io/ymir-js/examples/chess/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/chess.gif" width="200" alt="Chess: Morphy's Opera Game, ending in checkmate" /></a><br />Chess</td>
+    <td align="center"><a href="https://aykutkardas.github.io/ymir-js/examples/go/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/go.gif" width="200" alt="Go on 9x9, ending with the score" /></a><br />Go</td>
+    <td align="center"><a href="https://aykutkardas.github.io/ymir-js/examples/match3/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/match3.gif" width="200" alt="Match 3: swaps and cascades" /></a><br />Match 3</td>
+  </tr>
+</table>
+
 - **Rules you can trust.** Each game follows its official rules and is tested against them: chess move generation matches the standard perft counts, checkers follows FMJD and Turkish draughts rules.
 - **Plain classes, any UI.** No framework, no rendering. Read the state, call a method, draw it however you like.
 - **Typed, zero dependencies.** Written in TypeScript and published as an ES module with types.
@@ -303,6 +312,8 @@ pnpm test        # vitest
 pnpm typecheck
 pnpm build
 ```
+
+The GIFs above are recorded from the example apps with `pnpm build && node scripts/build-site.mjs`, then `pnpm record` in [`scripts/media`](scripts/media) (uses an installed Edge or Chrome).
 
 Releases are published from CI: bump the version and push the tag, and GitHub Actions publishes to npm with provenance and creates a GitHub release.
 
