@@ -30,6 +30,10 @@ jobs:
   example:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        example: [checkers, match3]
+
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -37,8 +41,8 @@ jobs:
         with:
           node-version: 24.x
           cache: pnpm
-          cache-dependency-path: examples/checkers/pnpm-lock.yaml
+          cache-dependency-path: examples/${{ matrix.example }}/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile --ignore-workspace
-        working-directory: examples/checkers
+        working-directory: examples/${{ matrix.example }}
       - run: pnpm build
-        working-directory: examples/checkers
+        working-directory: examples/${{ matrix.example }}
