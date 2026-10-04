@@ -2,6 +2,21 @@
 
 This toolkit is created to make it easier for you to develop games like chess, checkers, go, match 3 puzzle and more. It is still under development.
 
+### Install
+
+```sh
+npm install ymir-js
+```
+
+ymir-js is published as an ES module and needs Node.js 20.19+ or 22.12+.
+
+```js
+import { Core, Checkers } from 'ymir-js';
+
+const { Board, Item } = Core;
+const turkish = new Checkers.Turkish.Board().init();
+```
+
 ### Create Board
 
 ```js

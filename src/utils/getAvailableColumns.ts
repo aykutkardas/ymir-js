@@ -1,5 +1,5 @@
-import { MovementType } from '../packages/core/item';
-import parseCoord from './parseCoord';
+import { MovementType } from '../packages/core/item.js';
+import parseCoord from './parseCoord.js';
 
 const getAvailableColumns = (
   coord: string,

@@ -1,8 +1,7 @@
-import { expect } from 'chai';
-import 'mocha';
-import CheckersItem from '../turkish/item';
+import { describe, expect, it } from 'vitest';
+import CheckersItem from '../turkish/item.js';
 
-import CheckersBoard from './board';
+import CheckersBoard from './board.js';
 
 describe('Turkish Checkers', () => {
   it('board.config', () => {
