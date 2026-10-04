@@ -21,6 +21,6 @@ board.squares(); // every square as { coord, row, col, item }, for rendering
 
 Docs: [Building your own game](https://github.com/aykutkardas/ymir-js#building-your-own-game) · Games built only on the core: [Hnefatafl](https://aykutkardas.github.io/ymir-js/examples/hnefatafl/), [Sokoban](https://aykutkardas.github.io/ymir-js/examples/sokoban/), [Tactics](https://aykutkardas.github.io/ymir-js/examples/tactics/)
 
-All of ymir-js is also available as one package: `npm install ymir-js`.
+All ymir-js packages: [`@ymir-js/core`](https://www.npmjs.com/package/@ymir-js/core), [`@ymir-js/checkers`](https://www.npmjs.com/package/@ymir-js/checkers), [`@ymir-js/chess`](https://www.npmjs.com/package/@ymir-js/chess), [`@ymir-js/go`](https://www.npmjs.com/package/@ymir-js/go) and [`@ymir-js/match3`](https://www.npmjs.com/package/@ymir-js/match3).
 
 MIT License
