@@ -1,0 +1,314 @@
+:root {
+  --bg: #f6f6f4;
+  --text: #1b1b19;
+  --muted: #73726d;
+  --line: #e3e2dd;
+  --surface: #ffffff;
+  --accent: #15803d;
+  --light: #ebecd0;
+  --dark: #779556;
+  --last: rgb(255 214 10 / 0.42);
+  --check: rgb(220 38 38 / 0.75);
+  --white-piece: #fafaf9;
+  --black-piece: #1c1917;
+
+  color-scheme: light;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #151514;
+    --text: #f2f1ed;
+    --muted: #a3a29c;
+    --line: #2b2a27;
+    --surface: #1e1e1c;
+    --accent: #4ade80;
+    --light: #d7d9b8;
+    --dark: #6b8a4b;
+
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.layout {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+  display: grid;
+  gap: 16px;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+
+h1 + p {
+  margin: 4px 0 0;
+  font-size: 14px;
+}
+
+h2 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.segmented button {
+  border: 0;
+  background: none;
+  padding: 6px 10px;
+  border-radius: 7px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.segmented button.active {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.segmented button:not(.active):hover {
+  background: var(--line);
+}
+
+.status {
+  margin: 0;
+  min-height: 22px;
+  font-weight: 600;
+}
+
+.board-wrap {
+  position: relative;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-rows: repeat(8, minmax(0, 1fr));
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.2);
+}
+
+.square {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.square.light {
+  background: var(--light);
+}
+
+.square.dark {
+  background: var(--dark);
+}
+
+.square.last {
+  background-image: linear-gradient(var(--last), var(--last));
+}
+
+.square.selected {
+  box-shadow: inset 0 0 0 4px var(--accent);
+}
+
+.square.check {
+  background-image: radial-gradient(circle, var(--check) 30%, transparent 72%);
+}
+
+.square.target::after {
+  content: '';
+  position: absolute;
+  width: 30%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.22);
+}
+
+.square.capture::after {
+  content: '';
+  position: absolute;
+  inset: 6%;
+  border-radius: 50%;
+  border: 5px solid rgb(0 0 0 / 0.22);
+}
+
+.square:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+  z-index: 1;
+}
+
+.piece {
+  font-size: min(9.5vw, 56px);
+  line-height: 1;
+  user-select: none;
+  /* The filled glyphs are recoloured; an outline keeps white pieces visible. */
+  font-family: 'Segoe UI Symbol', 'Noto Sans Symbols 2', 'DejaVu Sans', serif;
+}
+
+.piece.white {
+  color: var(--white-piece);
+  -webkit-text-stroke: 1.5px #1c1917;
+  text-shadow: 0 2px 2px rgb(0 0 0 / 0.25);
+}
+
+.piece.black {
+  color: var(--black-piece);
+  text-shadow: 0 2px 2px rgb(0 0 0 / 0.2);
+}
+
+.rank,
+.file {
+  position: absolute;
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.rank {
+  top: 3px;
+  left: 4px;
+}
+
+.file {
+  right: 4px;
+  bottom: 2px;
+}
+
+.light .rank,
+.light .file {
+  color: var(--dark);
+}
+
+.dark .rank,
+.dark .file {
+  color: var(--light);
+}
+
+.promotion {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 12px;
+  background: rgb(0 0 0 / 0.45);
+  border-radius: 8px;
+  text-align: center;
+  color: #fff;
+}
+
+.promotion p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.promotion div {
+  display: flex;
+  gap: 8px;
+}
+
+.promotion div button {
+  width: 64px;
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 12px;
+  background: var(--light);
+  cursor: pointer;
+}
+
+.promotion div button:hover {
+  background: #fff;
+}
+
+.promotion .piece {
+  font-size: 44px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ghost {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 7px 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ghost:hover:not(:disabled) {
+  background: var(--line);
+}
+
+.ghost:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.moves p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  font-variant-numeric: tabular-nums;
+}

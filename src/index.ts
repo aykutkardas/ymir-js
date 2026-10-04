@@ -1,5 +1,6 @@
 import Core from './packages/core/index.js';
 import Checkers from './packages/checkers/index.js';
+import Chess from './packages/chess/index.js';
 import Go from './packages/go/index.js';
 import Match3 from './packages/match3/index.js';
 import Utils from './utils/index.js';
@@ -25,6 +26,13 @@ export {
   default as Match3Board,
   Match3Item,
 } from './packages/match3/board.js';
+export {
+  default as ChessBoard,
+  ChessPiece,
+  fromSquare,
+  toSquare,
+} from './packages/chess/board.js';
+export { default as ChessGame, START_FEN } from './packages/chess/game.js';
 export { default as GoBoard, GoStone } from './packages/go/board.js';
 export { default as GoGame } from './packages/go/game.js';
 export { default as parseCoord } from './utils/parseCoord.js';
@@ -90,6 +98,18 @@ export type {
   GoStatus,
   SavedGoGame,
 } from './packages/go/game.js';
+export type {
+  ChessColor,
+  ChessPieceItemType,
+  ChessPieceType,
+} from './packages/chess/board.js';
+export type {
+  ChessDrawReason,
+  ChessDrawRules,
+  ChessMove,
+  ChessStatus,
+  SavedChessGame,
+} from './packages/chess/game.js';
 
 // Grouped exports from earlier versions; they keep working.
-export { Core, Checkers, Go, Match3, Utils };
+export { Core, Checkers, Chess, Go, Match3, Utils };
