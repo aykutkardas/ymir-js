@@ -214,6 +214,431 @@
         font-size: 15px;
       }
 
+      .tabs {
+        display: inline-flex;
+        gap: 4px;
+        padding: 4px;
+        margin: 0 0 32px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--surface);
+      }
+
+      .tabs button {
+        border: 0;
+        border-radius: 9px;
+        padding: 8px 18px;
+        background: none;
+        color: var(--muted);
+        font: inherit;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .tabs button[aria-selected='true'] {
+        background: var(--text);
+        color: var(--bg);
+      }
+
+      .tabs button:not([aria-selected='true']):hover {
+        background: var(--line);
+        color: var(--text);
+      }
+
+      .section-lede {
+        margin: -4px 0 20px;
+        color: var(--muted);
+      }
+
+      /* The tutorial */
+
+      .learn {
+        display: grid;
+        gap: 16px;
+        /* Wider than the text column on large screens: code needs the room. */
+        margin-inline: calc((100% - min(1120px, 100vw - 32px)) / 2);
+      }
+
+      .learn-steps {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .learn-steps button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 11px 5px 5px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--muted);
+        font: inherit;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .learn-steps button span {
+        display: grid;
+        place-items: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--code);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .learn-steps button.active {
+        border-color: var(--text);
+        color: var(--text);
+      }
+
+      .learn-steps button.active span {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .learn-lesson {
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+      }
+
+      .learn-title {
+        margin: 0 0 6px;
+        font-size: 18px;
+      }
+
+      .learn-text {
+        margin: 0 0 16px;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .learn-text code {
+        padding: 1px 5px;
+        border-radius: 5px;
+        background: var(--code);
+        color: var(--text);
+        font-size: 0.9em;
+      }
+
+      .learn-work {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+        gap: 16px;
+        align-items: start;
+      }
+
+      .learn-code {
+        display: grid;
+        border-radius: 12px;
+        background: var(--code);
+        overflow: hidden;
+      }
+
+      .learn-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 8px 6px 14px;
+        border-bottom: 1px solid var(--line);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .learn-bar small {
+        margin-left: 6px;
+        color: var(--muted);
+        font-weight: 400;
+      }
+
+      .learn-bar button,
+      .learn-nav button,
+      .copy {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 4px 10px;
+        background: var(--surface);
+        color: var(--text);
+        font: inherit;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .learn-bar button:hover,
+      .learn-nav button:hover:not(:disabled),
+      .copy:hover {
+        background: var(--line);
+      }
+
+      .learn-editor {
+        width: 100%;
+        min-height: 380px;
+        padding: 14px;
+        border: 0;
+        outline: none;
+        resize: vertical;
+        background: transparent;
+        color: var(--text);
+        font-family: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        tab-size: 2;
+        white-space: pre;
+      }
+
+      .learn-editor:focus-visible {
+        box-shadow: inset 0 0 0 2px var(--accent);
+      }
+
+      .learn-out {
+        display: grid;
+        gap: 8px;
+      }
+
+      .learn-board {
+        display: grid;
+        grid-template-columns: repeat(var(--cols, 8), minmax(0, 1fr));
+        aspect-ratio: var(--cols, 8) / var(--rows, 8);
+        border: 6px solid #44403c;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #e7e0d2;
+      }
+
+      .learn-board .sq {
+        position: relative;
+        display: grid;
+        place-items: center;
+        min-width: 0;
+        min-height: 0;
+        background: #efe8da;
+        container-type: size;
+      }
+
+      .learn-board .sq.odd {
+        background: #e2d8c4;
+      }
+
+      .learn-board .sq:hover {
+        outline: 2px solid var(--accent);
+        outline-offset: -2px;
+        z-index: 1;
+      }
+
+      .learn-board .sq.mark {
+        background: #fcd9b6;
+      }
+
+      .learn-board .sq.mark.odd {
+        background: #f9c896;
+      }
+
+      .learn-board .sq.step {
+        background: #bfdbfe;
+      }
+
+      .learn-board .sq.block {
+        background: #57534e;
+        box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.15);
+      }
+
+      .learn-board .piece {
+        display: grid;
+        place-items: center;
+        width: 78%;
+        height: 78%;
+        border-radius: 50%;
+        background: var(--piece);
+        color: #fff;
+        font-weight: 700;
+        font-size: 48cqmin;
+        line-height: 1;
+        box-shadow: 0 2px 3px rgb(0 0 0 / 0.3);
+      }
+
+      .learn-board .tag {
+        position: absolute;
+        right: 3px;
+        bottom: 1px;
+        font-size: 30cqmin;
+        font-weight: 700;
+        color: #9a3412;
+      }
+
+      .learn-board .sq.step .tag {
+        color: #1d4ed8;
+      }
+
+      .learn-empty {
+        grid-column: 1 / -1;
+        place-self: center;
+        margin: 0;
+        padding: 24px;
+        color: #57534e;
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .learn-hover {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .learn-log {
+        min-height: 60px;
+        max-height: 200px;
+        overflow: auto;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: var(--code);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12.5px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .learn-log .quiet {
+        color: var(--muted);
+      }
+
+      .learn-log .err {
+        color: #dc2626;
+      }
+
+      .learn-checks {
+        display: grid;
+        gap: 2px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        font-size: 13.5px;
+      }
+
+      .learn-checks[hidden] {
+        display: none;
+      }
+
+      .learn-checks .ok {
+        color: #15803d;
+      }
+
+      .learn-checks .no {
+        color: #b91c1c;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .learn-checks .ok {
+          color: #4ade80;
+        }
+
+        .learn-checks .no,
+        .learn-log .err {
+          color: #f87171;
+        }
+      }
+
+      .learn-nav {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 16px;
+      }
+
+      .learn-nav button:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+
+      @media (max-width: 720px) {
+        .learn-work {
+          grid-template-columns: 1fr;
+        }
+
+        .learn-editor {
+          min-height: 300px;
+        }
+
+        .learn-lesson {
+          padding: 14px;
+        }
+      }
+
+      /* For agents */
+
+      .agent-files {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+        gap: 16px;
+      }
+
+      .agent-file {
+        display: grid;
+        gap: 8px;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+      }
+
+      .agent-file h3 {
+        margin: 0;
+        font-size: 18px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      .agent-file p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .copy-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 6px 6px 12px;
+        border-radius: 10px;
+        background: var(--code);
+      }
+
+      .copy-row .url {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 12.5px;
+      }
+
+      .prompt {
+        position: relative;
+      }
+
+      .prompt .copy {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
+
+      .prompt pre {
+        padding-right: 80px;
+        white-space: pre-wrap;
+      }
+
+      .plain {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+      }
+
+
       footer {
         margin-top: 64px;
         padding-top: 24px;
@@ -236,11 +661,50 @@
           <a href="https://github.com/aykutkardas/ymir-js">GitHub</a>
           <a href="https://www.npmjs.com/package/ymir-js">npm</a>
           <a href="https://github.com/aykutkardas/ymir-js#readme">Docs</a>
-          <a href="llms.txt">llms.txt</a>
+          <a href="#agents">For agents</a>
         </nav>
       </header>
 
+      <div class="tabs" role="tablist" aria-label="Who is reading">
+        <button type="button" role="tab" id="tab-humans" aria-controls="humans" aria-selected="true">For humans</button>
+        <button type="button" role="tab" id="tab-agents" aria-controls="agents" aria-selected="false" tabindex="-1">For agents</button>
+      </div>
+
+      <section id="humans" role="tabpanel" aria-labelledby="tab-humans">
       <pre><code>npm install ymir-js</code></pre>
+
+      <h2 id="learn-the-core">Learn the core, live</h2>
+      <p class="section-lede">
+        Every game here stands on two classes, <code>Board</code> and <code>Item</code>. These lessons
+        run as you type: change the code and the board on the right redraws.
+      </p>
+      <div id="learn" class="learn">
+        <nav class="learn-steps" aria-label="Lessons"></nav>
+        <div class="learn-lesson">
+          <h3 class="learn-title"></h3>
+          <p class="learn-text"></p>
+          <div class="learn-work">
+            <div class="learn-code">
+              <div class="learn-bar">
+                <span>Code <small>runs as you type</small></span>
+                <button type="button" class="learn-reset">Reset</button>
+              </div>
+              <textarea class="learn-editor" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Lesson code"></textarea>
+            </div>
+            <div class="learn-out">
+              <div class="learn-board" aria-label="Board preview"></div>
+              <div class="learn-hover">Hover a square to see its coord</div>
+              <div class="learn-checks" hidden></div>
+              <div class="learn-log" aria-live="polite"></div>
+            </div>
+          </div>
+          <div class="learn-nav">
+            <button type="button" class="learn-prev">&larr; Previous</button>
+            <button type="button" class="learn-next">Next &rarr;</button>
+          </div>
+        </div>
+        <noscript>The lessons need JavaScript.</noscript>
+      </div>
 
       <h2 id="games">Games</h2>
       <div class="games">
@@ -539,17 +1003,105 @@ match3.swap(from, to);             // e.g. { valid: true, points: 30, steps: [..
         <li><strong>Built for your own games</strong>The same <code>Board</code> and <code>Item</code> core runs every game here. Start from it for a new one.</li>
       </ul>
 
-      <h2>For LLMs and coding agents</h2>
-      <p>
-        <a href="llms.txt">llms.txt</a> summarises the library, its conventions and where each API
-        lives. <a href="llms-full.txt">llms-full.txt</a> has the whole README and every public type
-        declaration in one plain-text file.
-      </p>
+      </section>
+
+      <section id="agents" role="tabpanel" aria-labelledby="tab-agents" hidden>
+        <p class="section-lede">
+          Building with a coding agent? Point it at these plain-text files. They follow the
+          <a href="https://llmstxt.org">llms.txt</a> convention and are rebuilt with the site.
+        </p>
+
+        <div class="agent-files">
+          <article class="agent-file">
+            <h3><a href="llms.txt">llms.txt</a></h3>
+            <p>The short version: what the library is, the conventions to know before writing code, and where each API lives, with links.</p>
+            <div class="copy-row"><code class="url">https://aykutkardas.github.io/ymir-js/llms.txt</code><button type="button" class="copy" data-copy="https://aykutkardas.github.io/ymir-js/llms.txt">Copy</button></div>
+          </article>
+          <article class="agent-file">
+            <h3><a href="llms-full.txt">llms-full.txt</a></h3>
+            <p>Everything in one file: llms.txt, the whole README, and every public type declaration of every package.</p>
+            <div class="copy-row"><code class="url">https://aykutkardas.github.io/ymir-js/llms-full.txt</code><button type="button" class="copy" data-copy="https://aykutkardas.github.io/ymir-js/llms-full.txt">Copy</button></div>
+          </article>
+        </div>
+
+        <h2>A prompt to start from</h2>
+        <div class="prompt">
+          <button type="button" class="copy" data-copy-from="#agent-prompt">Copy</button>
+          <pre><code id="agent-prompt">Use the ymir-js library (npm install ymir-js) for the board and the rules.
+Before writing code, read https://aykutkardas.github.io/ymir-js/llms.txt,
+and https://aykutkardas.github.io/ymir-js/llms-full.txt for exact types.
+Coordinates are "row|col" strings. Use the built-in game classes
+(CheckersGame, ChessGame, GoGame, Match3Board) when they fit; for a new
+game, build on Board and Item from the core, as the custom games do.</code></pre>
+        </div>
+
+        <h2>Good to know</h2>
+        <ul class="facts">
+          <li><strong>Coordinates</strong>Strings <code>"row|col"</code>, zero-based, row 0 at the top. Chess also takes <code>"e4"</code>.</li>
+          <li><strong>Validated moves</strong><code>play</code> / <code>move</code> throw on illegal moves; ask <code>getLegalMoves()</code> first.</li>
+          <li><strong>State</strong>Games report <code>getStatus()</code> and save with <code>toJSON()</code> / <code>fromJSON()</code>.</li>
+          <li><strong>Packages</strong><code>ymir-js</code> re-exports <code>@ymir-js/core</code>, <code>checkers</code>, <code>chess</code>, <code>go</code> and <code>match3</code>.</li>
+        </ul>
+
+        <h2>Source of truth</h2>
+        <ul class="plain">
+          <li><a href="https://github.com/aykutkardas/ymir-js/blob/main/README.md">README</a>: the API by example, a section per game</li>
+          <li><a href="https://github.com/aykutkardas/ymir-js/tree/main/packages">packages/</a>: the source, with tests next to it</li>
+          <li><a href="https://github.com/aykutkardas/ymir-js/tree/main/examples">examples/</a>: complete apps, including custom games written on the core</li>
+        </ul>
+      </section>
 
       <footer>
         MIT License · Made by <a href="https://aykutkardas.com">Aykut Kardaş</a> ·
         <a href="https://github.com/aykutkardas/ymir-js">Source on GitHub</a>
       </footer>
     </main>
+    <script>
+      // Two audiences, two tabs; the URL hash (#agents) picks one.
+      const tabs = [...document.querySelectorAll('[role="tab"]')];
+      const select = (id) => {
+        tabs.forEach((tab) => {
+          const on = tab.getAttribute('aria-controls') === id;
+          tab.setAttribute('aria-selected', String(on));
+          tab.tabIndex = on ? 0 : -1;
+          document.getElementById(tab.getAttribute('aria-controls')).hidden = !on;
+        });
+      };
+      tabs.forEach((tab, i) => {
+        tab.addEventListener('click', () => {
+          const id = tab.getAttribute('aria-controls');
+          history.replaceState(null, '', id === 'agents' ? '#agents' : location.pathname);
+          select(id);
+        });
+        tab.addEventListener('keydown', (e) => {
+          if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+          const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+          next.click();
+          next.focus();
+        });
+      });
+      // A link to something inside a hidden tab (#games) opens that tab first.
+      const fromHash = () => {
+        select(location.hash === '#agents' ? 'agents' : 'humans');
+        const target = location.hash.length > 1 && document.getElementById(location.hash.slice(1));
+        if (target && location.hash !== '#agents') target.scrollIntoView();
+      };
+      window.addEventListener('hashchange', fromHash);
+      fromHash();
+
+      document.querySelectorAll('.copy').forEach((button) =>
+        button.addEventListener('click', async () => {
+          const text = button.dataset.copy ?? document.querySelector(button.dataset.copyFrom).textContent;
+          try {
+            await navigator.clipboard.writeText(text);
+            button.textContent = 'Copied';
+          } catch {
+            button.textContent = 'Copy failed';
+          }
+          setTimeout(() => (button.textContent = 'Copy'), 1500);
+        })
+      );
+    </script>
+    <script type="module" src="learn.js"></script>
   </body>
 </html>

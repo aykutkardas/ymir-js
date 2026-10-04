@@ -1,5 +1,7 @@
 // Builds the GitHub Pages site into _site/:
-//   index.html, llms.txt      copied from site/
+//   index.html, learn.js,     copied from site/
+//   llms.txt
+//   lib/core/                 the core's ES modules, for the live lessons
 //   llms-full.txt             README + every public type declaration
 //   examples/<name>/          each example app, built
 //
@@ -18,8 +20,13 @@ const examples = readdirSync(join(root, 'examples')).filter((name) =>
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
 
-cpSync(join(root, 'site', 'index.html'), join(out, 'index.html'));
-cpSync(join(root, 'site', 'llms.txt'), join(out, 'llms.txt'));
+cpSync(join(root, 'site'), out, { recursive: true });
+
+// The core's ES modules, for the live lessons on the home page (learn.js).
+cpSync(join(root, 'packages', 'core', 'dist'), join(out, 'lib', 'core'), {
+  recursive: true,
+  filter: (path) => !path.endsWith('.d.ts') && !path.includes('.bench.'),
+});
 
 for (const name of examples) {
   const dir = join(root, 'examples', name);
