@@ -37,10 +37,24 @@ jobs:
             exit 1
           fi
 
+      # A version published by hand is not published again; the release
+      # below is still created.
+      - name: Check whether this version is already on npm
+        id: npm
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if npm view "ymir-js@$version" version >/dev/null 2>&1; then
+            echo "ymir-js@$version is already on npm; skipping publish"
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          fi
+
       # prepublishOnly runs typecheck, test and build first.
-      - run: npm publish --provenance --access public
+      - if: steps.npm.outputs.published != 'true'
+        run: npm publish --provenance --access public
 
       - name: Create GitHub release
-        run: gh release create "$GITHUB_REF_NAME" --generate-notes --verify-tag
+        run: |
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 ||
+            gh release create "$GITHUB_REF_NAME" --generate-notes --verify-tag
         env:
           GH_TOKEN: ${{ github.token }}
