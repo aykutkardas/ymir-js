@@ -32,7 +32,7 @@ export class Piece extends Item {
   role: Role;
 
   constructor(role: Role) {
-    super({ name: role, movement: { linear: true, stepCount: LAST } });
+    super({ name: role });
     this.role = role;
   }
 
@@ -83,12 +83,10 @@ export class TaflBoard extends Board<Piece> {
     const piece = this.getItem(coord);
     if (!piece) return [];
 
-    const lines = this.getColumnsByDirection(coord, piece.movement);
-
     return LINEAR_DIRECTIONS.flatMap((direction) => {
       const reachable: string[] = [];
 
-      for (const square of lines[direction]) {
+      for (const square of this.ray(coord, direction)) {
         if (!this.isEmpty(square)) break;
         if (piece.role === 'king' || !this.isRestricted(square)) reachable.push(square);
       }
@@ -168,22 +166,16 @@ export class TaflBoard extends Board<Piece> {
     const inward: Direction = r === 0 ? 'bottom' : r === LAST ? 'top' : c === 0 ? 'right' : 'left';
 
     for (const direction of along) {
-      const row: string[] = [];
-      let square = stepCoord(to, direction);
+      // A run of two or more enemies, ended by a square on the board.
+      const line = this.ray(to, direction);
+      const end = line.findIndex((square) => this.getItem(square)?.side !== other(side));
+      if (end < 2) continue;
 
-      while (this.isExistCoord(square) && this.getItem(square)?.side === other(side)) {
-        row.push(square);
-        square = stepCoord(square, direction);
-      }
-
-      const closed =
-        this.isExistCoord(square) &&
-        (this.getItem(square)?.side === side || CORNERS.includes(square));
+      const row = line.slice(0, end);
+      const closed = this.getItem(line[end])?.side === side || CORNERS.includes(line[end]);
       const faced = row.every((member) => this.getItem(stepCoord(member, inward))?.side === side);
 
-      if (row.length >= 2 && closed && faced) {
-        captured.push(...row.filter((member) => this.getItem(member)?.role !== 'king'));
-      }
+      if (closed && faced) captured.push(...row.filter((member) => this.getItem(member)?.role !== 'king'));
     }
 
     return captured;
@@ -249,9 +241,7 @@ export class TaflBoard extends Board<Piece> {
 
   /** A short key for the position, for repetition checks. */
   key(): string {
-    return this.findCoords()
-      .map((coord) => `${coord}${this.getItem(coord)!.role[0]}`)
-      .join(',');
+    return this.toRows((piece) => piece?.role[0] ?? '.').join('');
   }
 }
 

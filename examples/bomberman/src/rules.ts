@@ -2,7 +2,7 @@
 // Item. Walls, crates, bombs and power-ups are items on the board; the player
 // and the enemies move between squares in real time, driven by tick(ms).
 // Everything random comes from a seeded generator, so a game can be replayed.
-import { Board, Item, stepCoord, type Direction } from 'ymir-js';
+import { Board, Item, stepCoord } from 'ymir-js';
 
 export type Move = 'top' | 'bottom' | 'left' | 'right';
 export type TileKind = 'wall' | 'crate' | 'bomb' | 'power';
@@ -136,12 +136,11 @@ export class BombermanGame {
    */
   blastFrom(coord: string, range: number): string[] {
     const squares = [coord];
-    const lines = this.board.getColumnsByDirection(coord, { linear: true, stepCount: range });
 
     for (const move of MOVES) {
-      for (const square of lines[move as Direction]) {
+      for (const square of this.board.ray(coord, move, range)) {
         const kind = this.board.getItem(square)?.kind;
-        if (!this.board.isExistCoord(square) || kind === 'wall') break;
+        if (kind === 'wall') break;
         squares.push(square);
         if (kind === 'crate' || kind === 'bomb') break;
       }

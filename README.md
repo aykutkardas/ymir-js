@@ -478,10 +478,17 @@ board.findPath('0|0', '2|2'); // ['1|0', '2|0', '2|1', '2|2'] — the shortest r
 board.getBoardMatrix(); // rows of { coord, item }
 board.squares(); // [{ coord: '0|0', row: 0, col: 0, item }, ...] — handy for rendering
 board.isEdge('0|1'); // true — on the outer ring
+board.ray('0|0', 'right'); // ['0|1', '0|2'] — a line up to the edge; ray('0|0', 'right', 1) for one step
+
+// Positions as text, e.g. for levels and tests.
+board.loadRows(['...', '.k.', 'p.p'], (char) =>
+  char === 'k' ? new Item({ name: 'king' }) : char === 'p' ? new Item({ name: 'pawn' }) : null
+);
+board.toRows((item) => item?.name[0] ?? '.'); // ['...', '.k.', 'p.p']
 
 // Find items without walking the board yourself.
 board.findCoord((item) => item.name === 'king'); // '1|1', or null
-board.findCoords((item) => item.data.hp > 0); // every match; every item without a predicate
+board.findCoords((item) => item.name === 'pawn'); // ['2|0', '2|2']; every item without a predicate
 board.countItems((item) => item.name === 'pawn'); // 2
 ```
 

@@ -119,10 +119,9 @@ export class InvadersGame {
    * them, found by looking down the column.
    */
   shooters(): string[] {
-    return this.invaders().filter((coord) => {
-      const { bottom } = this.board.getColumnsByDirection(coord, { bottom: true, stepCount: ROWS });
-      return !bottom.some((square) => this.board.getItem(square)?.type === 'invader');
-    });
+    return this.invaders().filter(
+      (coord) => !this.board.ray(coord, 'bottom').some((square) => this.board.getItem(square)?.type === 'invader')
+    );
   }
 
   /** How long the formation waits between steps: the fewer invaders, the faster. */

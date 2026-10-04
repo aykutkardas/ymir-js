@@ -506,4 +506,51 @@ describe('Core Board Available Columns', () => {
     ]);
     expect(board.getReachable(['0|3'], { steps: 1 }).size).to.equal(3);
   });
+
+  it('ray lists the squares in a direction up to the edge', () => {
+    const board = new Board({ rows: 4, cols: 5 });
+
+    expect(board.ray('1|1', 'right')).to.deep.equal(['1|2', '1|3', '1|4']);
+    expect(board.ray('1|1', 'right', 2)).to.deep.equal(['1|2', '1|3']);
+    expect(board.ray('1|1', 'bottomRight')).to.deep.equal(['2|2', '3|3']);
+    expect(board.ray('0|0', 'top')).to.deep.equal([]);
+    expect(board.ray('1|1', 'left', 0)).to.deep.equal([]);
+  });
+
+  it('ray agrees with getColumnsByDirection on the board', () => {
+    const board = new Board({ rows: 8, cols: 8 });
+    const lines = board.getColumnsByDirection('2|5', { linear: true, angular: true, stepCount: 7 });
+
+    for (const [direction, squares] of Object.entries(lines)) {
+      expect(board.ray('2|5', direction as keyof typeof lines)).to.deep.equal(squares.filter(board.isExistCoord));
+    }
+  });
+
+  it('loads and prints text rows', () => {
+    const board = new Board({ rows: 2, cols: 3 });
+    board.setItem('1|2', new Item({ name: 'old' }));
+    const seen: string[] = [];
+
+    board.loadRows(['x.', '.x'], (char, coord) => {
+      seen.push(coord);
+      return char === 'x' ? new Item({ name: 'x' }) : null;
+    });
+
+    expect(seen).to.deep.equal(['0|0', '0|1', '1|0', '1|1']);
+    expect(board.findCoords()).to.deep.equal(['0|0', '1|1']);
+    expect(board.toRows((item) => (item ? item.name : '.'))).to.deep.equal(['x..', '.x.']);
+  });
+
+  it('loadRows skips characters off the board', () => {
+    const board = new Board({ rows: 1, cols: 2 });
+    const seen: string[] = [];
+
+    board.loadRows(['xxx', 'x'], (_, coord) => {
+      seen.push(coord);
+      return new Item({ name: 'x' });
+    });
+
+    expect(seen).to.deep.equal(['0|0', '0|1']);
+    expect(board.countItems()).to.equal(2);
+  });
 });

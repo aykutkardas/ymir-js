@@ -1,3 +1,4 @@
+import { stepCoord, toCoord } from './coords.js';
 import getAvailableColumns from './utils/getAvailableColumns.js';
 import parseCoord from './utils/parseCoord.js';
 import Item, { ItemType, MovementType } from './item.js';
@@ -144,6 +145,29 @@ class Board<T extends ItemType = ItemType> {
     });
 
     return matrix;
+  }
+
+  /**
+   * Sets up the board from text rows, one character per square: `toItem`
+   * turns each character into an item, or null for an empty square.
+   * Squares the rows don't reach are emptied.
+   */
+  loadRows(rows: string[], toItem: (char: string, coord: string) => T | null | undefined): this {
+    Object.keys(this.board).forEach(this.removeItem);
+
+    rows.forEach((row, rowId) =>
+      [...row].forEach((char, colId) => {
+        const coord = toCoord(rowId, colId);
+        if (this.isExistCoord(coord)) this.setItem(coord, toItem(char, coord) ?? null);
+      })
+    );
+
+    return this;
+  }
+
+  /** The board as text rows, one character per square from `toChar`. */
+  toRows(toChar: (item: T | null, coord: string) => string): string[] {
+    return this.getBoardMatrix().map((row) => row.map(({ coord, item }) => toChar(item, coord)).join(''));
   }
 
   /** Every square with its row, col and item, row by row. */
@@ -333,6 +357,24 @@ class Board<T extends ItemType = ItemType> {
     }
 
     return available;
+  }
+
+  /**
+   * The squares from `coord` (not included) in `direction`, nearest first:
+   * at most `steps` of them, and none past the edge of the board.
+   */
+  ray(coord: string, direction: Direction, steps = Infinity): string[] {
+    const squares: string[] = [];
+
+    for (
+      let square = stepCoord(coord, direction);
+      squares.length < steps && this.isExistCoord(square);
+      square = stepCoord(square, direction)
+    ) {
+      squares.push(square);
+    }
+
+    return squares;
   }
 
   /** The squares next to `coord` on the board: four, or eight with `diagonal`. */
