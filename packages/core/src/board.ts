@@ -275,15 +275,29 @@ class Board<T extends ItemType = ItemType> {
 
     if (columnsObj) return columns;
 
-    return Object.values(columns).flat().filter(this.isExistCoord);
+    const available: string[] = [];
+
+    for (const direction of Object.values(columns)) {
+      for (const column of direction) {
+        if (this.isExistCoord(column)) available.push(column);
+      }
+    }
+
+    return available;
   }
 
   /** The squares next to `coord` on the board: four, or eight with `diagonal`. */
   getNeighbors(coord: string, { diagonal = false }: { diagonal?: boolean } = {}): string[] {
     const [r, c] = parseCoord(coord);
     const steps = diagonal ? NEIGHBORS_8 : NEIGHBORS_4;
+    const neighbors: string[] = [];
 
-    return steps.map(([dr, dc]) => `${r + dr}|${c + dc}`).filter(this.isExistCoord);
+    for (const [dr, dc] of steps) {
+      const next = `${r + dr}|${c + dc}`;
+      if (this.isExistCoord(next)) neighbors.push(next);
+    }
+
+    return neighbors;
   }
 
   /**
@@ -330,8 +344,8 @@ class Board<T extends ItemType = ItemType> {
 
       if (coord === to) {
         const path: string[] = [];
-        for (let at: string | null = to; at && at !== from; at = cameFrom.get(at)!) path.unshift(at);
-        return path;
+        for (let at: string | null = to; at && at !== from; at = cameFrom.get(at)!) path.push(at);
+        return path.reverse();
       }
       if (distance >= steps) continue;
 
