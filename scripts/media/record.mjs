@@ -363,6 +363,24 @@ const scenarios = {
     writeGif('hnefatafl', app.frames, { endHold: 3500 });
   },
 
+  // Sokoban: the third level, solved by the app's own "Show solution".
+  async sokoban() {
+    const app = await open('sokoban', '.board');
+    const { page } = app;
+
+    await page.getByRole('tab', { name: /Storeroom/ }).click();
+    await sleep(200);
+    app.start(110);
+    await sleep(600);
+    await page.getByRole('button', { name: 'Show solution' }).click();
+    for (let i = 0; i < 100 && !/Solved/.test(await page.locator('.notice').textContent()); i += 1) {
+      await sleep(100);
+    }
+    await sleep(1200);
+    await app.stop();
+    writeGif('sokoban', app.frames, { endHold: 3000 });
+  },
+
   // Match 3: play the hinted swaps and watch the cascades.
   async match3() {
     const app = await open('match3', '.grid');

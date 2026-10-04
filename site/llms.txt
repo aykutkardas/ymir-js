@@ -42,6 +42,7 @@ Things to know before writing code with it:
 These are not part of the library; each example writes its own rules on `Board` and `Item` and is meant to be read as a tutorial for building a new game.
 
 - [Hnefatafl rules](https://github.com/aykutkardas/ymir-js/blob/main/examples/hnefatafl/src/rules.ts): Copenhagen Hnefatafl (Viking chess) on the core: a `Piece extends Item` with `{ linear: true }` movement, `getColumnsByDirection` for moves, sandwich and shieldwall captures, king capture, exit fort and encirclement checks, and a `TaflGame` with undo. [Play](https://aykutkardas.github.io/ymir-js/examples/hnefatafl/)
+- [Sokoban rules](https://github.com/aykutkardas/ymir-js/blob/main/examples/sokoban/src/rules.ts): walls, boxes and the player as items; a push uses `getColumnsByDirection(player, { [direction]: true, stepCount: 2 })` for the next two squares and two `moveItem` calls; levels in the standard text format (`#@$.*+`); undo and a breadth-first solver. [Play](https://aykutkardas.github.io/ymir-js/examples/sokoban/)
 
 ## Optional
 
