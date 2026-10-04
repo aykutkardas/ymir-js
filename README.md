@@ -1,6 +1,6 @@
 # ymir-js
 
-This toolkit is created to make it easier for you to develop games like chess, checkers, go, match 3 puzzle and more. It is still under development.
+A toolkit for board games in TypeScript: checkers (Turkish and International), chess, Go and match-3, each with its full rules, on top of a small board and item core you can build your own games on.
 
 ### Install
 
@@ -254,6 +254,40 @@ GoGame.fromJSON(game.toJSON());
 
 ---
 
+## Chess
+
+`ChessGame` knows every rule of chess: castling, en passant, promotion, check, checkmate, stalemate and the draw rules. Its move generator matches the standard [perft](https://www.chessprogramming.org/Perft_Results) counts.
+
+```js
+import { ChessGame } from 'ymir-js';
+
+const game = new ChessGame(); // or new ChessGame(fen)
+
+game.move('e4');                        // SAN
+game.move('e7e5');                      // UCI
+game.move({ from: 'g1', to: 'f3' });    // squares; promotion: 'q' | 'r' | 'b' | 'n'
+
+game.getLegalMoves('b8');               // [{ from: 'b8', to: 'c6', san: 'Nc6', uci: 'b8c6', ... }, ...]
+game.getStatus();
+// { state: 'playing', check: false }
+// { state: 'checkmate', winner: 'white' }
+// { state: 'draw', reason: 'stalemate' | 'repetition' | 'fifty-move' | 'insufficient-material' }
+
+game.fen();                             // current position as FEN
+game.pgn();                             // '1. e4 e5 2. Nf3'
+game.undo();
+game.getBestMove({ depth: 3 });         // a move from the small built-in engine
+ChessGame.fromJSON(game.toJSON());
+
+game.board.getPiece('e4');              // { type: 'p', color: 'white' }
+```
+
+- `drawRules` (`repetition`, `halfMoves`, `insufficientMaterial`) default to the usual engine behaviour: draw at threefold repetition and at fifty moves. FIDE lets a player *claim* those, and makes them automatic at fivefold and seventy-five moves; pass `{ repetition: 5, halfMoves: 150 }` for that.
+- `getBestMove` searches with alpha-beta plus captures until quiet, and scores material and piece placement. Depth 3 answers in tens of milliseconds and plays a reasonable casual game.
+- `game.board` is a regular ymir board (`ChessBoard`), row 0 being rank 8. `toSquare('6|4')` is `'e2'`, `fromSquare('e2')` is `'6|4'`.
+
+---
+
 ## Deprecated in 0.11
 
 These still work and will be removed in 1.0:
@@ -273,11 +307,12 @@ These still work and will be removed in 1.0:
 - [`examples/checkers`](examples/checkers): Turkish and International checkers against the computer, with undo.
 - [`examples/match3`](examples/match3): a 20-move match-3 puzzle with cascades, hints and auto-shuffle.
 - [`examples/go`](examples/go): Go on 9×9, 13×13 or 19×19, against a simple computer player or a friend, with scoring.
+- [`examples/chess`](examples/chess): chess against the built-in engine (three levels) or a friend, as white or black.
 
 Each one runs on its own:
 
 ```sh
-cd examples/checkers   # or examples/match3, examples/go
+cd examples/checkers   # or examples/match3, examples/go, examples/chess
 pnpm install --ignore-workspace
 pnpm dev
 ```
@@ -301,7 +336,7 @@ git push --follow-tags
 | ---------------------- | ------ | --------------------------------------------------------------- |
 | Turkish Checkers       | Done   | [Source](examples/checkers)               |
 | International Checkers | Done   | [Source](examples/checkers)               |
-| Chess                  | -      | -                                                               |
+| Chess                  | Done   | [Source](examples/chess)                  |
 | Match 3 Puzzle         | Done   | [Source](examples/match3)                 |
 | Go                     | Done   | [Source](examples/go)                     |
 
