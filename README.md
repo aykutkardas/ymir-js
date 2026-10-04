@@ -190,6 +190,32 @@ board.toPDNMove(move);             // '28x19x8'
 
 ---
 
+## Match 3
+
+`Match3Board` handles swapping, matching, gravity, refills and cascades.
+
+```js
+import { Match3Board } from 'ymir-js';
+
+const board = new Match3Board({ rows: 8, cols: 8 }).init(); // no ready-made matches, at least one move
+
+board.getPossibleMoves();      // [{ from: '3|4', to: '3|5' }, ...] — use one as a hint
+const result = board.swap('3|4', '3|5');
+// {
+//   valid: true,
+//   points: 90,
+//   steps: [{ matches, cleared, fallen, spawned, points }, ...], // one per cascade
+//   shuffled: false,                                               // true if it ran out of moves
+// }
+```
+
+- A swap that makes no match returns `valid: false` and changes nothing.
+- Each cascade step scores `cleared × pointsPerGem × step` (1×, 2×, 3×, …).
+- `steps` has everything needed to animate: which runs matched, which gems fell where, and what dropped in.
+- Pass `random` for repeatable boards, `kinds` for your own gem set, and `setKinds(rows)` / `getKinds()` to set up or read a board.
+
+---
+
 ## Deprecated in 0.11
 
 These still work and will be removed in 1.0:
@@ -206,10 +232,13 @@ These still work and will be removed in 1.0:
 
 ## Examples
 
-[`examples/checkers`](examples/checkers) is a small game built on the API above: Turkish and International checkers against the computer, in one app.
+- [`examples/checkers`](examples/checkers): Turkish and International checkers against the computer, with undo.
+- [`examples/match3`](examples/match3): a 20-move match-3 puzzle with cascades, hints and auto-shuffle.
+
+Each one runs on its own:
 
 ```sh
-cd examples/checkers
+cd examples/checkers   # or examples/match3
 pnpm install --ignore-workspace
 pnpm dev
 ```
@@ -234,7 +263,7 @@ git push --follow-tags
 | Turkish Checkers       | Done   | [Source](examples/checkers)               |
 | International Checkers | Done   | [Source](examples/checkers)               |
 | Chess                  | -      | -                                                               |
-| Match 3 Puzzle         | -      | -                                                               |
+| Match 3 Puzzle         | Done   | [Source](examples/match3)                 |
 | Go                     | -      | -                                                               |
 
 ---
