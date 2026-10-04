@@ -1,6 +1,6 @@
 {
   "name": "ymir-js",
-  "version": "0.9.2",
+  "version": "0.10.0",
   "description": "This toolkit is created to make it easier for you to develop games like chess, checkers, go, match 3 puzzle and more. It is still under development.",
   "type": "module",
   "main": "./dist/index.js",
