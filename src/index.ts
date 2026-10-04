@@ -52,6 +52,7 @@ export type {
   ColumnType,
   Direction,
   DistanceType,
+  PathOptions,
   ResolvedBoardConfig,
 } from './packages/core/board.js';
 export type { ItemOptions, ItemType, MovementType } from './packages/core/item.js';

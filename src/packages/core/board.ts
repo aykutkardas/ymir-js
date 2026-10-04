@@ -277,6 +277,85 @@ class Board<T extends ItemType = ItemType> {
 
     return Object.values(columns).flat().filter(this.isExistCoord);
   }
+
+  /** The squares next to `coord` on the board: four, or eight with `diagonal`. */
+  getNeighbors(coord: string, { diagonal = false }: { diagonal?: boolean } = {}): string[] {
+    const [r, c] = parseCoord(coord);
+    const steps = diagonal ? NEIGHBORS_8 : NEIGHBORS_4;
+
+    return steps.map(([dr, dc]) => `${r + dr}|${c + dc}`).filter(this.isExistCoord);
+  }
+
+  /**
+   * Every square reachable from `from` in at most `steps` steps, with the
+   * number of steps it takes (the start is included, at 0). By default a
+   * step may go to any empty square; pass `canEnter` to decide yourself,
+   * e.g. to walk through allies or around water.
+   */
+  getReachable(from: string, options: PathOptions = {}): Map<string, number> {
+    const { steps = Infinity, diagonal = false } = options;
+    const canEnter = options.canEnter ?? ((coord: string) => this.isEmpty(coord));
+    const reached = new Map([[from, 0]]);
+    const queue = [from];
+
+    for (let i = 0; i < queue.length; i += 1) {
+      const coord = queue[i];
+      const distance = reached.get(coord)!;
+
+      if (distance >= steps) continue;
+
+      for (const next of this.getNeighbors(coord, { diagonal })) {
+        if (reached.has(next) || !canEnter(next, coord)) continue;
+        reached.set(next, distance + 1);
+        queue.push(next);
+      }
+    }
+
+    return reached;
+  }
+
+  /**
+   * The shortest way from `from` to `to`, as the squares stepped on (not
+   * including `from`), or null if there is none. Same options as
+   * `getReachable`; `to` itself must pass `canEnter`.
+   */
+  findPath(from: string, to: string, options: PathOptions = {}): string[] | null {
+    const { steps = Infinity, diagonal = false } = options;
+    const canEnter = options.canEnter ?? ((coord: string) => this.isEmpty(coord));
+    const cameFrom = new Map<string, string | null>([[from, null]]);
+    const queue: [string, number][] = [[from, 0]];
+
+    for (let i = 0; i < queue.length; i += 1) {
+      const [coord, distance] = queue[i];
+
+      if (coord === to) {
+        const path: string[] = [];
+        for (let at: string | null = to; at && at !== from; at = cameFrom.get(at)!) path.unshift(at);
+        return path;
+      }
+      if (distance >= steps) continue;
+
+      for (const next of this.getNeighbors(coord, { diagonal })) {
+        if (cameFrom.has(next) || !canEnter(next, coord)) continue;
+        cameFrom.set(next, coord);
+        queue.push([next, distance + 1]);
+      }
+    }
+
+    return null;
+  }
 }
+
+const NEIGHBORS_4: [number, number][] = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+const NEIGHBORS_8: [number, number][] = [...NEIGHBORS_4, [-1, -1], [-1, 1], [1, -1], [1, 1]];
+
+export type PathOptions = {
+  /** The most steps to take. Unlimited by default. */
+  steps?: number;
+  /** Whether a step may go onto `coord` (coming from `from`). Default: the square is empty. */
+  canEnter?: (coord: string, from: string) => boolean;
+  /** Also step diagonally. */
+  diagonal?: boolean;
+};
 
 export default Board;

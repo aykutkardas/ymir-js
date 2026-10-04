@@ -63,15 +63,6 @@ class GoBoard extends Board<GoStone> {
     return this.getItem(coord)?.color ?? null;
   }
 
-  /** The points next to `coord` along the lines (up to four). */
-  getNeighbors(coord: string): string[] {
-    const [r, c] = parseCoord(coord);
-
-    return [`${r - 1}|${c}`, `${r + 1}|${c}`, `${r}|${c - 1}`, `${r}|${c + 1}`].filter(
-      this.isExistCoord
-    );
-  }
-
   /** The group of connected stones on `coord`, with its liberties. */
   getGroup(coord: string): GoGroup | null {
     const color = this.getColor(coord);
