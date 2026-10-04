@@ -256,8 +256,8 @@ The games above ship with the library. These don't: each one is an example app t
 | Game | What it shows | Status |
 | --- | --- | --- |
 | [Hnefatafl](https://aykutkardas.github.io/ymir-js/examples/hnefatafl/) (Viking chess) | Rook-like movement with `getColumnsByDirection`, sandwich captures, special squares, an asymmetric goal, a computer player | [Source](examples/hnefatafl) |
-| Reversi | Flipping along all eight directions | coming next |
-| Sokoban | Pushing boxes, levels, undo | planned |
+| Reversi | Flipping along all eight directions | planned |
+| [Sokoban](https://aykutkardas.github.io/ymir-js/examples/sokoban/) | Pushing boxes with `getColumnsByDirection`, levels in the classic text format, undo, a solver | [Source](examples/sokoban) |
 | Tactics | Units with stats in `item.data`, movement and attack ranges | planned |
 
 ### Hnefatafl
@@ -299,6 +299,41 @@ Captures, the king's capture, forts and encirclement are a few more methods on t
 
 <br clear="right" />
 
+### Sokoban
+
+<a href="https://aykutkardas.github.io/ymir-js/examples/sokoban/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/sokoban.gif" width="240" align="right" alt="Sokoban: the Storeroom level, solved" /></a>
+
+Push every box onto a goal. Three small levels made for the demo, each checked by a solver that also powers the app's *Show solution* button and its "best" score.
+
+Walls, boxes and the player are all items on the board, so a push is two `moveItem` calls. The core finds the next square and the one after it:
+
+```ts
+step(direction: Move) {
+  const player = this.findPlayer();
+  const [next, beyond] = this.getColumnsByDirection(player, {
+    [direction]: true,
+    stepCount: 2,
+  })[direction];
+
+  const blocker = this.getItem(next);
+  if (!this.isExistCoord(next) || blocker?.kind === 'wall') return null;
+
+  if (blocker?.kind === 'box') {
+    if (!this.isEmpty(beyond)) return null; // a wall or another box
+    this.moveItem(next, beyond);
+    this.moveItem(player, next);
+    return 'push';
+  }
+
+  this.moveItem(player, next);
+  return 'walk';
+}
+```
+
+Levels use the usual Sokoban text format (`#` wall, `@` player, `$` box, `.` goal), so you can add your own in `levels.ts`.
+
+<br clear="right" />
+
 ## Building your own game
 
 Every game here is built on the same `Board` and `Item`. Use them for a game of your own:
@@ -337,7 +372,7 @@ board.getBoardMatrix(); // rows of { coord, item }
 Each game, including the [custom games](#custom-games), has an example app in [`examples/`](examples), also [playable online](https://aykutkardas.github.io/ymir-js/). They import the library from `src/`, so they always run against the code in the repo:
 
 ```sh
-cd examples/chess   # or checkers, go, match3, hnefatafl
+cd examples/chess   # or checkers, go, match3, hnefatafl, sokoban
 pnpm install --ignore-workspace
 pnpm dev
 ```
