@@ -37,6 +37,12 @@ Things to know before writing code with it:
 - [Go](https://aykutkardas.github.io/ymir-js/examples/go/): 9×9, 13×13 and 19×19, with scoring. [Source](https://github.com/aykutkardas/ymir-js/tree/main/examples/go)
 - [Match 3](https://aykutkardas.github.io/ymir-js/examples/match3/): a 20-move puzzle with cascades and hints. [Source](https://github.com/aykutkardas/ymir-js/tree/main/examples/match3)
 
+## Custom games (built on the core)
+
+These are not part of the library; each example writes its own rules on `Board` and `Item` and is meant to be read as a tutorial for building a new game.
+
+- [Hnefatafl rules](https://github.com/aykutkardas/ymir-js/blob/main/examples/hnefatafl/src/rules.ts): Copenhagen Hnefatafl (Viking chess) on the core: a `Piece extends Item` with `{ linear: true }` movement, `getColumnsByDirection` for moves, sandwich and shieldwall captures, king capture, exit fort and encirclement checks, and a `TaflGame` with undo. [Play](https://aykutkardas.github.io/ymir-js/examples/hnefatafl/)
+
 ## Optional
 
 - [Tests](https://github.com/aykutkardas/ymir-js/tree/main/src): `*.spec.ts` next to each module show exact expected behaviour, including perft counts for chess.

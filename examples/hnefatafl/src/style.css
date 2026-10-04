@@ -1,0 +1,317 @@
+:root {
+  --bg: #f4f1ea;
+  --text: #1f1c17;
+  --muted: #6f685d;
+  --line: #e2dccf;
+  --surface: #ffffff;
+  --accent: #b45309;
+  --board: #d9c9a5;
+  --grid: #b39d72;
+  --special: #a88a59;
+  --frame: #3f3427;
+  --attacker: #2d2a26;
+  --defender: #f7f2e7;
+  --king: #f7f2e7;
+  --gold: #c9971c;
+
+  color-scheme: light;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #151412;
+    --text: #f2eee6;
+    --muted: #a59e92;
+    --line: #2b2925;
+    --surface: #1d1b18;
+    --accent: #f59e0b;
+    --board: #c8b78f;
+    --grid: #a08a60;
+    --special: #94784a;
+    --frame: #2a231a;
+
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.layout {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+  display: grid;
+  gap: 16px;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+
+h1 + p {
+  margin: 4px 0 0;
+  font-size: 14px;
+}
+
+h2 {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.segmented button {
+  border: 0;
+  background: none;
+  padding: 6px 10px;
+  border-radius: 7px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.segmented button.active {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.segmented button:not(.active):hover {
+  background: var(--line);
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  min-height: 24px;
+  font-weight: 600;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid var(--muted);
+}
+
+.dot.attackers {
+  background: var(--attacker);
+}
+
+.dot.defenders {
+  background: var(--defender);
+}
+
+.dot.over {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(var(--size), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--size), minmax(0, 1fr));
+  aspect-ratio: 1;
+  border: 10px solid var(--frame);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--board);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.2);
+}
+
+.square {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: inset 0 0 0 0.5px var(--grid);
+  cursor: pointer;
+}
+
+/* The throne and the corners: only the king may stop here. */
+.square.throne,
+.square.corner {
+  background: var(--special);
+}
+
+.square.throne::before,
+.square.corner::before {
+  content: '';
+  position: absolute;
+  inset: 22%;
+  border: 2px solid rgb(255 255 255 / 0.45);
+  transform: rotate(45deg);
+}
+
+.square.last {
+  background-image: linear-gradient(rgb(180 83 9 / 0.22), rgb(180 83 9 / 0.22));
+}
+
+.square.selected {
+  box-shadow: inset 0 0 0 3px var(--accent);
+}
+
+.square.target::after {
+  content: '';
+  width: 28%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgb(180 83 9 / 0.6);
+}
+
+.square.captured::after {
+  content: '';
+  width: 54%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px dashed rgb(185 28 28 / 0.6);
+  animation: fade 900ms ease-out forwards;
+}
+
+@keyframes fade {
+  to {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+
+.square:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+
+.piece {
+  position: relative;
+  z-index: 1;
+  width: 72%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.piece.attacker {
+  background: radial-gradient(circle at 35% 30%, #4a4540, var(--attacker) 65%);
+  box-shadow: 0 2px 0 #0d0c0b, 0 4px 6px rgb(0 0 0 / 0.3);
+}
+
+.piece.defender {
+  background: radial-gradient(circle at 35% 30%, #fff, var(--defender) 65%);
+  box-shadow:
+    inset 0 0 0 1px #d4c9b0,
+    0 2px 0 #c8bb9d,
+    0 4px 6px rgb(0 0 0 / 0.25);
+}
+
+.piece.king {
+  width: 84%;
+  background: radial-gradient(circle at 35% 30%, #fff, var(--king) 65%);
+  box-shadow:
+    inset 0 0 0 3px var(--gold),
+    0 2px 0 #c8bb9d,
+    0 4px 6px rgb(0 0 0 / 0.3);
+}
+
+/* A small crown: three points of gold. */
+.piece.king::after {
+  content: '';
+  position: absolute;
+  inset: 30% 26% 34%;
+  background: var(--gold);
+  clip-path: polygon(0 100%, 0 20%, 25% 60%, 50% 0, 75% 60%, 100% 20%, 100% 100%);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.counts {
+  margin-left: auto;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ghost {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 7px 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ghost:hover:not(:disabled) {
+  background: var(--line);
+}
+
+.ghost:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.rules ul {
+  margin: 0 0 8px;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.rules p {
+  margin: 0;
+  font-size: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .square.captured::after {
+    animation: none;
+    opacity: 0;
+  }
+}

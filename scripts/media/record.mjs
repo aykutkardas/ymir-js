@@ -336,6 +336,33 @@ const scenarios = {
     writeGif('go', app.frames, { endHold: 3500 });
   },
 
+  // Hnefatafl: a game between two copies of the example's computer player
+  // (hnefatafl-game.json), replayed in 2-player mode. The king escapes.
+  async hnefatafl() {
+    const moves = JSON.parse(readFileSync(new URL('./hnefatafl-game.json', import.meta.url), 'utf8'));
+    const app = await open('hnefatafl', '.board');
+    const { page } = app;
+    const square = (coord) => {
+      const [r, c] = coord.split('|').map(Number);
+      return page.locator('.square').nth(r * 11 + c);
+    };
+
+    await page.getByRole('tab', { name: '2 players' }).click();
+    app.start(120);
+    await sleep(500);
+
+    for (const [from, to] of moves) {
+      await square(from).click();
+      await sleep(160);
+      await square(to).click();
+      await sleep(330);
+    }
+
+    await sleep(500);
+    await app.stop();
+    writeGif('hnefatafl', app.frames, { endHold: 3500 });
+  },
+
   // Match 3: play the hinted swaps and watch the cascades.
   async match3() {
     const app = await open('match3', '.grid');

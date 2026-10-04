@@ -249,6 +249,56 @@ const result = board.swap(hint.from, hint.to);
 
 ---
 
+## Custom games
+
+The games above ship with the library. These don't: each one is an example app that writes its own rules on top of the core `Board` and `Item`, to show how far the core takes you. Read their `rules.ts` as a tutorial.
+
+| Game | What it shows | Status |
+| --- | --- | --- |
+| [Hnefatafl](https://aykutkardas.github.io/ymir-js/examples/hnefatafl/) (Viking chess) | Rook-like movement with `getColumnsByDirection`, sandwich captures, special squares, an asymmetric goal, a computer player | [Source](examples/hnefatafl) |
+| Reversi | Flipping along all eight directions | coming next |
+| Sokoban | Pushing boxes, levels, undo | planned |
+| Tactics | Units with stats in `item.data`, movement and attack ranges | planned |
+
+### Hnefatafl
+
+<a href="https://aykutkardas.github.io/ymir-js/examples/hnefatafl/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/hnefatafl.gif" width="280" align="right" alt="Hnefatafl: the attackers close in and the king escapes to a corner" /></a>
+
+Hnefatafl is the Vikings' board game, played in Scandinavia before chess arrived, and a fitting one for a library named after a Norse giant. The attackers lay siege; the king must reach a corner. The example follows the [Copenhagen rules](https://aagenielsen.dk/Copenhagen_Hnefatafl_11x11.pdf), including shieldwalls, exit forts and encirclement, in about 400 lines.
+
+The core does the board work. A piece is an `Item` with a movement pattern:
+
+```ts
+class Piece extends Item {
+  constructor(role: Role) {
+    super({ name: role, movement: { linear: true, stepCount: 10 } }); // like a rook
+    this.role = role;
+  }
+}
+```
+
+and the board asks the core for the squares along each line, then applies the game's own rules:
+
+```ts
+movesFrom(coord: string): string[] {
+  const piece = this.getItem(coord);
+  const lines = this.getColumnsByDirection(coord, piece.movement);
+
+  return ['top', 'bottom', 'left', 'right'].flatMap((direction) => {
+    const reachable = [];
+    for (const square of lines[direction]) {
+      if (!this.isEmpty(square)) break; // blocked by a piece
+      if (piece.role === 'king' || !this.isRestricted(square)) reachable.push(square);
+    }
+    return reachable;
+  });
+}
+```
+
+Captures, the king's capture, forts and encirclement are a few more methods on the same board, and `TaflGame` adds turns, undo and the result. A small alpha-beta player (`ai.ts`) plays either side. The rules have their own tests (`rules.test.ts`, `ai.test.ts`), which CI runs.
+
+<br clear="right" />
+
 ## Building your own game
 
 Every game here is built on the same `Board` and `Item`. Use them for a game of your own:
@@ -284,10 +334,10 @@ board.getBoardMatrix(); // rows of { coord, item }
 
 ## Examples
 
-Each game has an example app in [`examples/`](examples), also [playable online](https://aykutkardas.github.io/ymir-js/). They import the library from `src/`, so they always run against the code in the repo:
+Each game, including the [custom games](#custom-games), has an example app in [`examples/`](examples), also [playable online](https://aykutkardas.github.io/ymir-js/). They import the library from `src/`, so they always run against the code in the repo:
 
 ```sh
-cd examples/chess   # or checkers, go, match3
+cd examples/chess   # or checkers, go, match3, hnefatafl
 pnpm install --ignore-workspace
 pnpm dev
 ```
