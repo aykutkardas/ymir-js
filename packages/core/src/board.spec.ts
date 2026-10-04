@@ -458,4 +458,52 @@ describe('Core Board Available Columns', () => {
 
     expect(columns).to.deep.equal(['0|1', '0|1', '2|1', '1|0', '1|2', '0|0', '0|2', '2|0', '2|2']);
   });
+
+  it('lists squares with their row, col and item', () => {
+    const board = new Board({ rows: 2, cols: 2 });
+    const knight = new Item({ name: 'knight' });
+    board.setItem('1|0', knight);
+
+    expect(board.squares()).to.deep.equal([
+      { coord: '0|0', row: 0, col: 0, item: null },
+      { coord: '0|1', row: 0, col: 1, item: null },
+      { coord: '1|0', row: 1, col: 0, item: knight },
+      { coord: '1|1', row: 1, col: 1, item: null },
+    ]);
+  });
+
+  it('finds and counts items', () => {
+    const board = new Board({ rows: 3, cols: 3 });
+    board.setItem('0|2', new Item({ name: 'pawn' }));
+    board.setItem('1|1', new Item({ name: 'king' }));
+    board.setItem('2|0', new Item({ name: 'pawn' }));
+
+    expect(board.findCoord((item) => item.name === 'king')).to.equal('1|1');
+    expect(board.findCoord((item) => item.name === 'queen')).to.equal(null);
+    expect(board.findCoords((item) => item.name === 'pawn')).to.deep.equal(['0|2', '2|0']);
+    expect(board.findCoords()).to.deep.equal(['0|2', '1|1', '2|0']);
+    expect(board.findCoords((_, coord) => coord.startsWith('2|'))).to.deep.equal(['2|0']);
+    expect(board.countItems((item) => item.name === 'pawn')).to.equal(2);
+    expect(board.countItems()).to.equal(3);
+  });
+
+  it('knows the edge squares', () => {
+    const board = new Board({ rows: 3, cols: 4 });
+
+    expect(['0|0', '0|2', '1|0', '1|3', '2|1'].every(board.isEdge)).to.equal(true);
+    expect(board.isEdge('1|1')).to.equal(false);
+    expect(board.isEdge('1|2')).to.equal(false);
+    expect(board.isEdge('-1|0')).to.equal(false);
+    expect(board.isEdge('3|0')).to.equal(false);
+  });
+
+  it('getReachable from several starts counts from the nearest', () => {
+    const board = new Board({ rows: 1, cols: 7 });
+    const reach = board.getReachable(['0|0', '0|6']);
+
+    expect([...reach.entries()].sort()).to.deep.equal([
+      ['0|0', 0], ['0|1', 1], ['0|2', 2], ['0|3', 3], ['0|4', 2], ['0|5', 1], ['0|6', 0],
+    ]);
+    expect(board.getReachable(['0|3'], { steps: 1 }).size).to.equal(3);
+  });
 });

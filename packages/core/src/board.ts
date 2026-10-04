@@ -146,6 +146,45 @@ class Board<T extends ItemType = ItemType> {
     return matrix;
   }
 
+  /** Every square with its row, col and item, row by row. */
+  squares(): Square<T>[] {
+    return Object.entries(this.board).map(([coord, { item }]) => {
+      const [row, col] = parseCoord(coord);
+      return { coord, row, col, item };
+    });
+  }
+
+  /** The coord of the first item that passes `predicate`, or null. */
+  findCoord(predicate: ItemPredicate<T>): string | null {
+    for (const [coord, { item }] of Object.entries(this.board)) {
+      if (item && predicate(item, coord)) return coord;
+    }
+
+    return null;
+  }
+
+  /** The coords of every item that passes `predicate`; of every item without one. */
+  findCoords(predicate?: ItemPredicate<T>): string[] {
+    const coords: string[] = [];
+
+    for (const [coord, { item }] of Object.entries(this.board)) {
+      if (item && (!predicate || predicate(item, coord))) coords.push(coord);
+    }
+
+    return coords;
+  }
+
+  /** How many items pass `predicate`; how many items there are without one. */
+  countItems(predicate?: ItemPredicate<T>): number {
+    let count = 0;
+
+    for (const [coord, { item }] of Object.entries(this.board)) {
+      if (item && (!predicate || predicate(item, coord))) count += 1;
+    }
+
+    return count;
+  }
+
   getItem(coord: string): T | null {
     return this.board[coord]?.item ?? null;
   }
@@ -206,6 +245,16 @@ class Board<T extends ItemType = ItemType> {
 
   isExistCoord(coord: string): boolean {
     return !!this.board[coord];
+  }
+
+  /** Whether the square is on the board's outer ring. */
+  isEdge(coord: string): boolean {
+    if (!this.isExistCoord(coord)) return false;
+
+    const [row, col] = parseCoord(coord);
+    const { rows, cols } = this.config;
+
+    return row === 0 || col === 0 || row === rows - 1 || col === cols - 1;
   }
 
   /** Distance from one coord to another, or null if either is off the board. */
@@ -304,13 +353,14 @@ class Board<T extends ItemType = ItemType> {
    * Every square reachable from `from` in at most `steps` steps, with the
    * number of steps it takes (the start is included, at 0). By default a
    * step may go to any empty square; pass `canEnter` to decide yourself,
-   * e.g. to walk through allies or around water.
+   * e.g. to walk through allies or around water. With several starts,
+   * each square gets the steps from the nearest one.
    */
-  getReachable(from: string, options: PathOptions = {}): Map<string, number> {
+  getReachable(from: string | string[], options: PathOptions = {}): Map<string, number> {
     const { steps = Infinity, diagonal = false } = options;
     const canEnter = options.canEnter ?? ((coord: string) => this.isEmpty(coord));
-    const reached = new Map([[from, 0]]);
-    const queue = [from];
+    const reached = new Map((typeof from === 'string' ? [from] : from).map((start) => [start, 0]));
+    const queue = [...reached.keys()];
 
     for (let i = 0; i < queue.length; i += 1) {
       const coord = queue[i];
@@ -362,6 +412,16 @@ class Board<T extends ItemType = ItemType> {
 
 const NEIGHBORS_4: [number, number][] = [[-1, 0], [1, 0], [0, -1], [0, 1]];
 const NEIGHBORS_8: [number, number][] = [...NEIGHBORS_4, [-1, -1], [-1, 1], [1, -1], [1, 1]];
+
+export type Square<T extends ItemType = ItemType> = {
+  coord: string;
+  row: number;
+  col: number;
+  item: T | null;
+};
+
+/** Called with each item on the board (empty squares are skipped) and its coord. */
+export type ItemPredicate<T extends ItemType = ItemType> = (item: T, coord: string) => boolean;
 
 export type PathOptions = {
   /** The most steps to take. Unlimited by default. */
