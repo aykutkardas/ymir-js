@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": [
+      "es2022",
+      "dom",
+      "dom.iterable"
+    ],
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": [
+      "vite/client",
+      "node"
+    ],
+    "paths": {
+      "ymir-js": [
+        "../../packages/ymir-js/src/index.ts"
+      ],
+      "@ymir-js/*": [
+        "../../packages/*/src/index.ts"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "vite.config.ts"
+  ]
+}
