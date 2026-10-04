@@ -18,5 +18,8 @@ export default defineConfig({
   },
   test: {
     include: ['packages/*/src/**/*.spec.ts'],
+    benchmark: {
+      include: ['packages/*/src/**/*.bench.ts'],
+    },
   },
 });
