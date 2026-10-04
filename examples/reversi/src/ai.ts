@@ -4,7 +4,7 @@
 // It has no randomness, so the same position always gets the same move.
 import { toCoord } from 'ymir-js';
 
-import { other, type Color, type Move, ReversiBoard } from './rules';
+import { other, type Color, type Move, type ReversiBoard } from './rules';
 
 // Square weights, row by row (a common table for 8x8 Reversi).
 const WEIGHTS = [
@@ -47,8 +47,6 @@ export const evaluate = (board: ReversiBoard, color: Color): number => {
   return score + 5 * (mine - theirs);
 };
 
-const clone = (board: ReversiBoard) => new ReversiBoard().load(board.toString().split('\n'));
-
 const search = (board: ReversiBoard, color: Color, depth: number, alpha: number, beta: number): number => {
   const moves = board.movesFor(color);
 
@@ -63,7 +61,7 @@ const search = (board: ReversiBoard, color: Color, depth: number, alpha: number,
   }
 
   for (const move of moves) {
-    const next = clone(board);
+    const next = board.clone();
     next.play(color, move);
     const score = -search(next, other(color), depth - 1, -beta, -alpha);
     if (score >= beta) return beta;
@@ -80,7 +78,7 @@ export const pickMove = (board: ReversiBoard, color: Color, depth = 4): Move | n
   let bestScore = -Infinity;
 
   for (const move of moves) {
-    const next = clone(board);
+    const next = board.clone();
     next.play(color, move);
     const score = -search(next, other(color), depth - 1, -Infinity, -bestScore);
     if (score > bestScore) {

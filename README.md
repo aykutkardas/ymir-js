@@ -490,6 +490,12 @@ board.toRows((item) => item?.name[0] ?? '.'); // ['...', '.k.', 'p.p']
 board.findCoord((item) => item.name === 'king'); // '1|1', or null
 board.findCoords((item) => item.name === 'pawn'); // ['2|0', '2|2']; every item without a predicate
 board.countItems((item) => item.name === 'pawn'); // 2
+
+// Copies, for undo and for trying moves out.
+const saved = board.snapshot(); // copies of the items, by coord
+board.removeItem('1|1');
+board.restore(saved); // the king is back; a snapshot can be restored again and again
+const next = board.clone(); // a whole new board of the same class, sharing nothing
 ```
 
 Coords are plain strings, and a few helpers work on them:
@@ -508,6 +514,7 @@ LINEAR_DIRECTIONS; // ['top', 'bottom', 'left', 'right']; ANGULAR_DIRECTIONS for
 - Methods are bound to the board, so they can be passed as callbacks: `coords.forEach(board.removeItem)`.
 - `getReachable` and `findPath` step onto empty squares by default; pass `canEnter(square, from)` to decide yourself (walk through allies, avoid water…), and `diagonal: true` for eight directions. `getReachable` also takes several starts and counts from the nearest: `getReachable(enemies)` is a distance map to the closest enemy, and a flood fill from a group of pieces.
 - Subclass `Board` and override any method; `super` works. `CheckersBoard` is a full example.
+- `clone`, `snapshot` and `restore` copy items with `cloneItem`: the item keeps its class, and its plain objects and arrays (`data`, `movement`) are copied deeply; anything else (a `Date`, a class instance in `data`) is shared. `clone` doesn't run the constructor and copies a subclass's other fields shallowly; override it and call `super.clone()` if one must not be shared.
 
 ---
 

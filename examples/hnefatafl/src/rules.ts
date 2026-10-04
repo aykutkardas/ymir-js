@@ -3,7 +3,16 @@
 // is the example of building your own game.
 //
 // Rules: https://aagenielsen.dk/Copenhagen_Hnefatafl_11x11.pdf
-import { Board, Item, LINEAR_DIRECTIONS, parseCoord, stepCoord, toCoord, type Direction } from 'ymir-js';
+import {
+  Board,
+  Item,
+  LINEAR_DIRECTIONS,
+  parseCoord,
+  stepCoord,
+  toCoord,
+  type BoardSnapshot,
+  type Direction,
+} from 'ymir-js';
 
 export type Side = 'attackers' | 'defenders';
 export type Role = 'attacker' | 'defender' | 'king';
@@ -255,7 +264,7 @@ export class TaflGame {
 
   private positions: string[] = [];
 
-  private past: { snapshot: [string, Role][]; turn: Side }[] = [];
+  private past: { snapshot: BoardSnapshot<Piece>; turn: Side }[] = [];
 
   /** The standard start, or a custom `position` such as `{ '5|5': 'king' }`. */
   constructor({ position, turn = 'attackers' }: { position?: Record<string, Role>; turn?: Side } = {}) {
@@ -278,7 +287,7 @@ export class TaflGame {
     const legal = this.getLegalMoves(move.from).some((m) => m.to === move.to);
     if (!legal) throw new Error(`Illegal move ${move.from} > ${move.to}`);
 
-    this.past.push({ snapshot: this.snapshot(), turn: this.turn });
+    this.past.push({ snapshot: this.board.snapshot(), turn: this.turn });
     const captured = this.board.play(move);
     this.moves.push({ ...move, captured, side: this.turn });
     this.turn = other(this.turn);
@@ -291,7 +300,7 @@ export class TaflGame {
     const last = this.past.pop();
     if (!last) return;
 
-    this.restore(last.snapshot);
+    this.board.restore(last.snapshot);
     this.turn = last.turn;
     this.moves.pop();
     this.positions.pop();
@@ -343,16 +352,5 @@ export class TaflGame {
 
   private positionKey() {
     return `${this.turn}:${this.board.key()}`;
-  }
-
-  private snapshot(): [string, Role][] {
-    return Object.entries(this.board.board)
-      .filter(([, { item }]) => item)
-      .map(([coord, { item }]) => [coord, item!.role]);
-  }
-
-  private restore(snapshot: [string, Role][]) {
-    Object.keys(this.board.board).forEach(this.board.removeItem);
-    snapshot.forEach(([coord, role]) => this.board.setItem(coord, new Piece(role)));
   }
 }
