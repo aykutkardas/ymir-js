@@ -16,6 +16,8 @@ const rows = (...rowIds: number[]) =>
   );
 
 class TurkishCheckersBoard extends CheckersBoard {
+  readonly variant = 'turkish' as const;
+
   protected readonly whiteItemCoords = rows(1, 2);
 
   protected readonly blackItemCoords = rows(5, 6);

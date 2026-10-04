@@ -135,6 +135,12 @@ h1 + p {
   background: var(--line);
 }
 
+.ghost:disabled {
+  opacity: 0.4;
+  cursor: default;
+  background: var(--surface);
+}
+
 .icon {
   padding: 7px 10px;
 }

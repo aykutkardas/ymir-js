@@ -6,11 +6,10 @@ import {
   SHARED_RULES,
   VARIANTS,
   coordOf,
-  createBoard,
-  other,
+  createGame,
   pickComputerMove,
-  type Board,
   type Color,
+  type Game,
   type Move,
   type Variant,
 } from './game';
@@ -18,38 +17,37 @@ import { play, setMuted } from './sound';
 
 const STEP_MS = 260;
 
-type Game = {
-  board: Board;
-  turn: Color;
-  lastMove: Move | null;
+type State = {
+  game: Game;
+  // Bumped after every change to the game so the UI re-renders.
   version: number;
 };
 
-const newGame = (variant: Variant): Game => ({
-  board: createBoard(variant),
-  turn: HUMAN,
-  lastMove: null,
+const newState = (variant: Variant): State => ({
+  game: createGame(variant),
   version: 0,
 });
 
 export function App() {
   const [variant, setVariant] = useState<Variant>('turkish');
-  const [game, setGame] = useState(() => newGame('turkish'));
+  const [{ game, version }, setState] = useState(() => newState('turkish'));
   const [selected, setSelected] = useState<string | null>(null);
   // Squares the moving piece has already jumped to in the current chain.
   const [progress, setProgress] = useState<string[]>([]);
   const [muted, setMutedState] = useState(false);
   const timers = useRef<number[]>([]);
 
-  const { board, turn, lastMove } = game;
+  const { board, turn } = game;
+  const lastMove = game.moves.at(-1) ?? null;
   const { size, checkered, name } = VARIANTS[variant];
 
+  const gameStatus = useMemo(() => game.getStatus(), [game, version]);
   const legalMoves = useMemo(
-    () => board.getLegalMoves(turn) as Move[],
-    [board, turn, game.version]
+    () => game.getLegalMoves() as Move[],
+    [game, version]
   );
   const mustCapture = legalMoves.some((move) => move.captured.length);
-  const winner = legalMoves.length ? null : other(turn);
+  const over = gameStatus.state !== 'playing';
 
   // Moves that are still possible given the piece and the jumps made so far.
   const candidates = selected
@@ -71,22 +69,19 @@ export function App() {
     timers.current = [];
   };
 
+  const refresh = () => setState((s) => ({ ...s, version: s.version + 1 }));
+
   const commit = (move: Move) => {
-    board.playMove(move);
+    game.play(move);
     play(move.captured.length ? 'capture' : 'move');
     setSelected(null);
     setProgress([]);
-    setGame((g) => ({
-      ...g,
-      turn: other(g.turn),
-      lastMove: move,
-      version: g.version + 1,
-    }));
+    refresh();
   };
 
   // The computer plays its whole chain one jump at a time.
   useEffect(() => {
-    if (turn !== COMPUTER || winner) return;
+    if (turn !== COMPUTER || over) return;
 
     const move = pickComputerMove(board, COMPUTER);
     if (!move) return;
@@ -112,18 +107,18 @@ export function App() {
     );
 
     return clearTimers;
-  }, [board, turn, game.version]);
+  }, [game, version]);
 
   const restart = (next: Variant = variant) => {
     clearTimers();
     setVariant(next);
-    setGame(newGame(next));
+    setState(newState(next));
     setSelected(null);
     setProgress([]);
   };
 
   const onSquare = (coord: string) => {
-    if (turn !== HUMAN || winner) return;
+    if (turn !== HUMAN || over) return;
 
     if (nextSquares.has(coord)) {
       const nextProgress = [...progress, coord];
@@ -151,6 +146,19 @@ export function App() {
     }
   };
 
+  // Take back your last move and the computer's reply.
+  const undo = () => {
+    clearTimers();
+    setSelected(null);
+    setProgress([]);
+    game.undo();
+    while (game.turn !== HUMAN && game.canUndo) game.undo();
+    refresh();
+  };
+
+  // White (the computer) moves first, so the second move is the first of yours.
+  const canUndo = game.moves.length >= 2;
+
   const toggleMute = () => {
     setMuted(!muted);
     setMutedState(!muted);
@@ -159,11 +167,16 @@ export function App() {
   const remaining = (color: Color) => board.getItemsByColor(color).length;
   const start = size === 8 ? 16 : 20;
 
-  const status = winner
-    ? winner === HUMAN
-      ? 'You win'
-      : 'The computer wins'
-    : turn === HUMAN
+  const status =
+    gameStatus.state === 'won'
+      ? gameStatus.winner === HUMAN
+        ? 'You win'
+        : 'The computer wins'
+      : gameStatus.state === 'draw'
+        ? gameStatus.reason === 'repetition'
+          ? 'Draw — the same position came up three times'
+          : 'Draw — too many king moves without a capture'
+        : turn === HUMAN
       ? progress.length
         ? 'Keep capturing'
         : mustCapture
@@ -194,6 +207,9 @@ export function App() {
               </button>
             ))}
           </div>
+          <button class="ghost" onClick={undo} disabled={!canUndo}>
+            Undo
+          </button>
           <button class="ghost" onClick={() => restart()}>
             New game
           </button>
@@ -210,7 +226,7 @@ export function App() {
 
       <section class="game">
         <div class="status" aria-live="polite">
-          <span class={`dot ${winner ? 'over' : turn}`} />
+          <span class={`dot ${over ? 'over' : turn}`} />
           {status}
         </div>
 

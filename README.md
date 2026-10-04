@@ -131,6 +131,51 @@ board.getLegalMoves('white', '2|3');
 board.autoPlay('white', { onSelect, onMove });
 ```
 
+### Playing a game
+
+`CheckersGame` keeps track of whose turn it is, the moves played and whether the game is over.
+
+```js
+import { CheckersGame } from 'ymir-js';
+
+const game = CheckersGame.create('international'); // white moves first
+
+game.getLegalMoves();               // moves for the side to move
+game.play({ from: '3|6', path: ['4|5'] }); // throws if the move is not legal
+game.turn;                          // 'black'
+
+game.undo();
+game.redo();
+
+game.getStatus();
+// { state: 'playing' }
+// { state: 'won', winner: 'white', reason: 'no-moves' }
+// { state: 'draw', reason: 'repetition' | 'king-moves' }
+
+const saved = game.toJSON();        // plain JSON: start position + moves
+CheckersGame.fromJSON(saved);       // replays the moves
+```
+
+To start from a custom position, set up a board and pass it in: `new CheckersGame(board, { turn: 'black' })`. Positions can be read and written as `{ coord: 'w' | 'b' | 'W' | 'B' }` with `board.getPosition()` and `board.setPosition()`.
+
+**Draw rules** can be changed with `new CheckersGame(board, { drawRules })`:
+
+| Rule                                                      | International (FMJD) | Turkish |
+| --------------------------------------------------------- | -------------------- | ------- |
+| `repetition`: same position, same side to move, this many times | 3              | 3       |
+| `kingMoves`: moves in a row with only kings and no capture | 50 (25 each)        | off     |
+
+### International notation
+
+International boards read and write standard PDN: squares 1–50 with White at the bottom (ymir draws White at the top, so coords are rotated).
+
+```js
+board.toFEN('white');              // 'W:W31,32,...,50:B1,2,...,20'
+const turn = board.setFEN('W:W28:B23,13');
+const move = board.findPDNMove('28x8', 'white'); // or '28x19x8'
+board.toPDNMove(move);             // '28x19x8'
+```
+
 | Rule                          | Turkish                  | International             |
 | ----------------------------- | ------------------------ | ------------------------- |
 | Board                         | 8x8, 16 pieces each      | 10x10, 20 pieces each     |
