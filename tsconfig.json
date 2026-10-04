@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
-    "target": "es5",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "sourceMap": false,
-    "experimentalDecorators": true,
-    "lib": ["dom", "es6", "es5", "es2017", "es2019"]
+    "target": "es2020",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": ["es2020"],
+    "types": ["node"],
+    "strict": false,
+    "skipLibCheck": true,
+    "noEmit": true
   },
-  "include": ["./src/**/*"],
-  "exclude": ["./test/**/*"],
-  "compileOnSave": false
+  "include": ["./src/**/*"]
 }

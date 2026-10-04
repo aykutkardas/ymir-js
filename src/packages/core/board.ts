@@ -1,6 +1,6 @@
-import getAvailableColumns from '../../utils/getAvailableColumns';
-import parseCoord from '../../utils/parseCoord';
-import { ItemType, MovementType } from './item';
+import getAvailableColumns from '../../utils/getAvailableColumns.js';
+import parseCoord from '../../utils/parseCoord.js';
+import Item, { ItemType, MovementType } from './item.js';
 
 export type DistanceType = {
   x: number;
@@ -65,6 +65,20 @@ class Board {
   updateBoard = (board: BoardType) => {
     this.board = board;
     return this;
+  };
+
+  updateBoardWithMatrix = (matrix: ItemType[][]) => {
+    const newBoard: BoardType = {};
+
+    matrix.forEach((row, rowIndex) => {
+      row.forEach((item, colIndex) => {
+        newBoard[`${rowIndex}|${colIndex}`] = {
+          item: item ? new Item(item) : null,
+        };
+      });
+    });
+
+    return this.updateBoard(newBoard);
   };
 
   getBoardMatrix = (): BoardMatrixItem[][] => {

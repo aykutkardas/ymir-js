@@ -1,9 +1,7 @@
-import * as _ from 'lodash';
-
-import getAvailableColumns from '../../../utils/getAvailableColumns';
-import Board from '../../core/board';
-import { MovementType } from '../../core/item';
-import Item, { CheckersColorType, CheckersItemType } from './item';
+import getAvailableColumns from '../../../utils/getAvailableColumns.js';
+import Board from '../../core/board.js';
+import { MovementType } from '../../core/item.js';
+import Item, { CheckersColorType, CheckersItemType } from './item.js';
 
 export type BoardConfig = {
   x: number;
@@ -238,9 +236,9 @@ class InternationalCheckersBoard extends Board {
 
     Object.keys(availableColumns).forEach((key) => {
       if (!isFoundAnySuccessDirection) {
-        resultCoords[key] = _.uniq(availableColumns[key]);
+        resultCoords[key] = [...new Set(availableColumns[key])];
       } else if (captureAvailableColumns[key]) {
-        resultCoords[key] = _.uniq(availableColumns[key]);
+        resultCoords[key] = [...new Set(availableColumns[key])];
       }
     });
 

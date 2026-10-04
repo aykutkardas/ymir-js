@@ -1,8 +1,7 @@
-import { expect } from 'chai';
-import 'mocha';
+import { describe, expect, it } from 'vitest';
 
-import Board from './board';
-import Item from './item';
+import Board from './board.js';
+import Item from './item.js';
 
 describe('Core Board', () => {
   it('Board 3x3', () => {
@@ -63,6 +62,21 @@ describe('Core Board', () => {
       '4|1': { item: null },
       '4|2': { item: null },
     });
+  });
+
+  it('updateBoardWithMatrix', () => {
+    const board = new Board({ x: 2, y: 2 });
+
+    board.updateBoardWithMatrix([
+      [{ name: 'a' } as Item, null],
+      [null, { name: 'b' } as Item],
+    ]);
+
+    expect(Object.keys(board.board)).to.deep.equal(['0|0', '0|1', '1|0', '1|1']);
+    expect(board.getItem('0|0')).to.be.instanceOf(Item);
+    expect(board.getItem('0|0').name).to.equal('a');
+    expect(board.getItem('0|1')).to.equal(null);
+    expect(board.getItem('1|1').name).to.equal('b');
   });
 
   it('setItem', () => {
