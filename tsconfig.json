@@ -1,13 +1,20 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "es2020",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "lib": ["es2020"],
-    "types": ["node"],
-    "strict": true,
-    "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "types": [
+      "node"
+    ],
+    "paths": {
+      "@ymir-js/*": [
+        "./packages/*/src/index.ts"
+      ],
+      "ymir-js": [
+        "./packages/ymir-js/src/index.ts"
+      ]
+    }
   },
-  "include": ["./src/**/*"]
+  "include": [
+    "./packages/*/src/**/*"
+  ]
 }

@@ -27,7 +27,17 @@ A TypeScript toolkit for board games. Checkers, chess, Go and match-3 come with 
 npm install ymir-js
 ```
 
-Needs Node.js 20.19+ or 22.12+, or any modern bundler.
+`ymir-js` has everything. Each part is also its own package, if you only need one game or just the core:
+
+| Package | What's in it |
+| --- | --- |
+| [`@ymir-js/core`](packages/core) | `Board`, `Item`, movement, directions, pathfinding: the base for your own games |
+| [`@ymir-js/checkers`](packages/checkers) | Turkish and International checkers |
+| [`@ymir-js/chess`](packages/chess) | Chess and its engine |
+| [`@ymir-js/go`](packages/go) | Go |
+| [`@ymir-js/match3`](packages/match3) | Match-3 |
+
+The names are the same in every package (`import { ChessGame } from '@ymir-js/chess'` or `from 'ymir-js'`), and they are the same classes. Needs Node.js 20.19+ or 22.12+, or any modern bundler.
 
 ## Quick start
 
@@ -406,7 +416,7 @@ board.getBoardMatrix(); // rows of { coord, item }
 
 ## Examples
 
-Each game, including the [custom games](#custom-games), has an example app in [`examples/`](examples), also [playable online](https://aykutkardas.github.io/ymir-js/). They import the library from `src/`, so they always run against the code in the repo:
+Each game, including the [custom games](#custom-games), has an example app in [`examples/`](examples), also [playable online](https://aykutkardas.github.io/ymir-js/). They import the library from the package sources in `packages/`, so they always run against the code in the repo:
 
 ```sh
 cd examples/chess   # or checkers, go, match3, hnefatafl, sokoban, tactics
@@ -428,19 +438,21 @@ Grouped imports from earlier versions (`Core.Board`, `Checkers.Turkish.Board`, `
 
 ## Contributing
 
+This is a pnpm workspace: the packages are in [`packages/`](packages), the example apps in [`examples/`](examples).
+
 ```sh
 pnpm install
-pnpm test        # vitest
+pnpm test        # vitest, against the sources
 pnpm typecheck
-pnpm build
+pnpm build       # every package, core first
 ```
 
 The GIFs above are recorded from the example apps with `pnpm build && node scripts/build-site.mjs`, then `pnpm record` in [`scripts/media`](scripts/media) (uses an installed Edge or Chrome).
 
-Releases are published from CI: bump the version and push the tag, and GitHub Actions publishes to npm with provenance and creates a GitHub release.
+Releases are published from CI. All packages share one version: bump it and push the tag, and GitHub Actions publishes every package that changed version to npm (with provenance) and creates a GitHub release.
 
 ```sh
-npm version minor
+node scripts/version.mjs minor
 git push --follow-tags
 ```
 

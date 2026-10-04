@@ -8,7 +8,7 @@ The game itself is a thin UI over the library:
 - `board.playMove(move)` plays a whole move, removes captured pieces and promotes kings.
 - `board.autoPlay(color, …)` picks the computer's move.
 
-The app imports ymir-js from `../../src` (see `vite.config.ts`), so it always runs against the code in this repo.
+The app imports ymir-js from the package sources in `../../packages` (see `vite.config.ts`), so it always runs against the code in this repo.
 
 ```sh
 pnpm install --ignore-workspace

@@ -1,7 +1,7 @@
 name: Publish
 
-# Push a version tag to release:
-#   npm version minor && git push --follow-tags
+# Release every package at once:
+#   node scripts/version.mjs minor && git push --follow-tags
 on:
   push:
     tags:
@@ -29,28 +29,24 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Check the tag matches package.json
+      - name: Check the tag matches the packages
         run: |
-          version="v$(node -p "require('./package.json').version")"
+          version="v$(node -p "require('./packages/ymir-js/package.json').version")"
           if [ "$version" != "$GITHUB_REF_NAME" ]; then
-            echo "Tag $GITHUB_REF_NAME does not match package.json ($version)"
+            echo "Tag $GITHUB_REF_NAME does not match packages/ymir-js ($version)"
             exit 1
           fi
 
-      # A version published by hand is not published again; the release
-      # below is still created.
-      - name: Check whether this version is already on npm
-        id: npm
-        run: |
-          version="$(node -p "require('./package.json').version")"
-          if npm view "ymir-js@$version" version >/dev/null 2>&1; then
-            echo "ymir-js@$version is already on npm; skipping publish"
-            echo "published=true" >> "$GITHUB_OUTPUT"
-          fi
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
 
-      # prepublishOnly runs typecheck, test and build first.
-      - if: steps.npm.outputs.published != 'true'
-        run: npm publish --provenance --access public
+      # Publishes each package whose version is not on npm yet, core first.
+      # Uses trusted publishing; an NPM_TOKEN secret, if set, is used instead
+      # (needed once for a package's very first publish).
+      - run: node scripts/publish.mjs
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub release
         run: |

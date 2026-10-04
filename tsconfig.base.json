@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": [
+      "es2020"
+    ],
+    "strict": true,
+    "skipLibCheck": true
+  }
+}

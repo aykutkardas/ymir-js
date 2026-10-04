@@ -1,0 +1,43 @@
+{
+  "name": "@ymir-js/match3",
+  "version": "0.11.0",
+  "description": "Match-3 for ymir-js: swaps, matches, gravity, refills and cascades reported step by step.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "build": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aykutkardas/ymir-js.git",
+    "directory": "packages/match3"
+  },
+  "homepage": "https://aykutkardas.github.io/ymir-js/",
+  "keywords": [
+    "match-3",
+    "puzzle",
+    "game"
+  ],
+  "author": "Aykut Kardaş",
+  "license": "MIT",
+  "dependencies": {
+    "@ymir-js/core": "workspace:^"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

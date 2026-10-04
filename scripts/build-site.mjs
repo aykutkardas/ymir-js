@@ -37,14 +37,19 @@ const walk = (dir) => {
     else if (entry.endsWith('.d.ts')) declarations.push(path);
   }
 };
-walk(join(root, 'dist'));
+// Each package's declarations, from its dist/ (run `pnpm build` first).
+const packages = readdirSync(join(root, 'packages')).sort();
+const packageNames = Object.fromEntries(
+  packages.map((pkg) => [pkg, JSON.parse(readFileSync(join(root, 'packages', pkg, 'package.json'), 'utf8')).name])
+);
+packages.forEach((pkg) => walk(join(root, 'packages', pkg, 'dist')));
 
 const llms = readFileSync(join(root, 'site', 'llms.txt'), 'utf8');
 const readme = readFileSync(join(root, 'README.md'), 'utf8');
 const types = declarations
   .map((path) => {
-    const file = relative(join(root, 'dist'), path).replace(/\\/g, '/');
-    return `### ${file}\n\n\`\`\`ts\n${readFileSync(path, 'utf8').trim()}\n\`\`\``;
+    const [pkg, , ...rest] = relative(join(root, 'packages'), path).split(/[\\/]/);
+    return `### ${packageNames[pkg]}: ${rest.join('/')}\n\n\`\`\`ts\n${readFileSync(path, 'utf8').trim()}\n\`\`\``;
   })
   .join('\n\n');
 
@@ -57,7 +62,7 @@ writeFileSync(
     readme.trim(),
     '---',
     '# Public type declarations',
-    'Generated from the published `dist/` folder. Coordinates are "row|col" strings unless noted.',
+    "Generated from each package's published `dist/` folder; `ymir-js` re-exports all of them. Coordinates are \"row|col\" strings unless noted.",
     types,
   ].join('\n\n') + '\n'
 );
