@@ -1,11 +1,11 @@
 // A small computer player for either side: alpha-beta search two moves deep
 // (its move and the reply) with a hand-written evaluation. It is not strong,
 // but it captures, protects the king, and goes for a corner when it can.
+import { manhattan } from 'ymir-js';
+
 import { CORNERS, type Move, type Side, type TaflBoard, type TaflGame } from './rules';
 
 const WIN = 100_000;
-
-const at = (coord: string) => coord.split('|').map(Number) as [number, number];
 
 /** How good the position is for the defenders (negative: good for the attackers). */
 const evaluate = (board: TaflBoard): number => {
@@ -13,18 +13,12 @@ const evaluate = (board: TaflBoard): number => {
   if (!king) return -WIN;
   if (CORNERS.includes(king)) return WIN;
 
-  let attackers = 0;
-  let defenders = 0;
-  Object.values(board.board).forEach(({ item }) => {
-    if (item?.role === 'attacker') attackers += 1;
-    if (item?.role === 'defender') defenders += 1;
-  });
-
+  const attackers = board.countItems((piece) => piece.role === 'attacker');
+  const defenders = board.countItems((piece) => piece.role === 'defender');
   const kingMoves = board.movesFrom(king);
   const openCorners = kingMoves.filter((square) => CORNERS.includes(square)).length;
   const pressure = board.getNeighbors(king).filter((n) => board.getItem(n)?.role === 'attacker').length;
-  const [r, c] = at(king);
-  const toCorner = Math.min(...CORNERS.map(at).map(([cr, cc]) => Math.abs(cr - r) + Math.abs(cc - c)));
+  const toCorner = Math.min(...CORNERS.map((corner) => manhattan(king, corner)));
 
   return (
     defenders * 30 -

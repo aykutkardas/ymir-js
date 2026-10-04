@@ -86,10 +86,7 @@ export function App() {
         ? 'The computer is thinking…'
         : `${NAMES[game.turn]} to move`;
 
-  const counts = Object.values(game.board.board).reduce(
-    (n, { item }) => (item ? { ...n, [item.role]: (n[item.role] ?? 0) + 1 } : n),
-    {} as Record<string, number>
-  );
+  const count = (role: string) => game.board.countItems((piece) => piece.role === role);
 
   return (
     <main class="layout">
@@ -120,8 +117,7 @@ export function App() {
       </p>
 
       <div class="board" role="grid" aria-label="Hnefatafl board" style={{ '--size': SIZE }}>
-        {Object.keys(game.board.board).map((coord) => {
-          const piece = game.board.getItem(coord);
+        {game.board.squares().map(({ coord, item: piece }) => {
           const classes = [
             'square',
             coord === THRONE ? 'throne' : '',
@@ -154,7 +150,7 @@ export function App() {
           New game
         </button>
         <span class="muted counts">
-          Attackers {counts.attacker ?? 0} / 24 · Defenders {counts.defender ?? 0} / 12
+          Attackers {count('attacker')} / 24 · Defenders {count('defender')} / 12
         </span>
       </div>
 

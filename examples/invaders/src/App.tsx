@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { parseCoord } from 'ymir-js';
 
 import { CANNON_ROW, COLS, InvadersGame, ROWS, SHIP_ROW, type Kind } from './rules';
 
@@ -177,10 +178,8 @@ export function App() {
 
   const things = [];
 
-  for (const coord of Object.keys(game.board.board)) {
-    const tile = game.board.getItem(coord);
+  for (const { coord, row, col, item: tile } of game.board.squares()) {
     if (!tile) continue;
-    const [row, col] = coord.split('|').map(Number);
     if (tile.type === 'invader') {
       const kind = tile.data!.kind!;
       things.push(
@@ -209,7 +208,7 @@ export function App() {
     things.push(<span key={`b${i}`} class="cell bomb" style={place(bomb.row, bomb.col)} />)
   );
   for (const coord of game.blasts.keys()) {
-    const [row, col] = coord.split('|').map(Number);
+    const [row, col] = parseCoord(coord);
     things.push(<span key={`x${coord}`} class="cell blast" style={place(row, col)} />);
   }
   if (status.state === 'playing' || status.reason === 'invaded') {

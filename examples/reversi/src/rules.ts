@@ -1,6 +1,6 @@
 // Reversi, written on top of ymir-js's core Board and Item. A disc is an item;
 // the eight lines out of a square come from the core's getColumnsByDirection.
-import { Board, Item, type Direction } from 'ymir-js';
+import { Board, DIRECTIONS, Item } from 'ymir-js';
 
 export type Color = 'black' | 'white';
 
@@ -22,17 +22,6 @@ export class Disc extends Item {
     this.color = color;
   }
 }
-
-const DIRECTIONS: Direction[] = [
-  'top',
-  'bottom',
-  'left',
-  'right',
-  'topLeft',
-  'topRight',
-  'bottomLeft',
-  'bottomRight',
-];
 
 /** The board: discs, and which discs a move would flip. */
 export class ReversiBoard extends Board<Disc> {
@@ -91,7 +80,7 @@ export class ReversiBoard extends Board<Disc> {
   }
 
   count(color: Color): number {
-    return Object.values(this.board).filter(({ item }) => item?.color === color).length;
+    return this.countItems((disc) => disc.color === color);
   }
 
   /** The position as rows of b / w / . */

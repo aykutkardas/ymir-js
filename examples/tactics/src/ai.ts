@@ -1,23 +1,15 @@
 // The computer player for one side. Each unit, in turn, looks at every square
 // it can reach and every attack from there, and picks the best by a simple
 // score. With nothing to attack, it walks towards the nearest enemy.
+import { manhattan } from 'ymir-js';
+
 import { other, type Side, type TacticsBoard } from './rules';
 
 export type Plan = { from: string; to: string; target: string | null };
 
 /** How many steps the nearest enemy is from each square (rocks block, units don't). */
-const distanceToEnemies = (board: TacticsBoard, side: Side): Map<string, number> => {
-  const best = new Map<string, number>();
-
-  for (const enemy of board.unitsOf(other(side))) {
-    const reach = board.getReachable(enemy, { canEnter: (square) => board.terrain[square] !== 'rock' });
-    reach.forEach((d, square) => {
-      if (!best.has(square) || d < best.get(square)!) best.set(square, d);
-    });
-  }
-
-  return best;
-};
+const distanceToEnemies = (board: TacticsBoard, side: Side): Map<string, number> =>
+  board.getReachable(board.unitsOf(other(side)), { canEnter: (square) => board.terrain[square] !== 'rock' });
 
 /** What the unit on `from` should do this turn. */
 export const planFor = (board: TacticsBoard, from: string): Plan => {
@@ -49,9 +41,7 @@ export const planFor = (board: TacticsBoard, from: string): Plan => {
       const kills = damage >= foe.data.hp;
 
       // The strike back, if the target survives and can reach this square.
-      const [r1, c1] = to.split('|').map(Number);
-      const [r2, c2] = target.split('|').map(Number);
-      const d = Math.abs(r1 - r2) + Math.abs(c1 - c2);
+      const d = manhattan(to, target);
       const strikesBack = !kills && d >= foe.data.range[0] && d <= foe.data.range[1];
       const counter = strikesBack ? Math.max(1, foe.data.attack - unit.data.defense - cover / 2) : 0;
 

@@ -2,7 +2,7 @@
 // Item. Walls, crates, bombs and power-ups are items on the board; the player
 // and the enemies move between squares in real time, driven by tick(ms).
 // Everything random comes from a seeded generator, so a game can be replayed.
-import { Board, Item, type Direction } from 'ymir-js';
+import { Board, Item, stepCoord, type Direction } from 'ymir-js';
 
 export type Move = 'top' | 'bottom' | 'left' | 'right';
 export type TileKind = 'wall' | 'crate' | 'bomb' | 'power';
@@ -57,12 +57,6 @@ const ENEMY_STARTS = ['9|11', '1|11', '9|1', '5|7'];
 /** A small seeded random generator (Park-Miller), so games can be replayed. */
 export const seeded = (seed: number) => () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 
-const step = (coord: string, move: Move) => {
-  const [r, c] = coord.split('|').map(Number);
-  const [dr, dc] = { top: [-1, 0], bottom: [1, 0], left: [0, -1], right: [0, 1] }[move];
-  return `${r + dr}|${c + dc}`;
-};
-
 /** The square an actor counts as being on: whichever it is closer to. */
 export const occupied = (actor: Actor) => (actor.progress < 0.5 ? actor.from : actor.to);
 
@@ -96,13 +90,9 @@ export class BombermanGame {
       this.board.getNeighbors(coord).forEach((n) => clear.add(n));
     });
 
-    for (let r = 0; r < ROWS; r += 1) {
-      for (let c = 0; c < COLS; c += 1) {
-        const coord = `${r}|${c}`;
-        const edge = r === 0 || c === 0 || r === ROWS - 1 || c === COLS - 1;
-        if (edge || (r % 2 === 0 && c % 2 === 0)) this.board.setItem(coord, new Tile('wall'));
-        else if (!clear.has(coord) && this.random() < crates) this.board.setItem(coord, new Tile('crate'));
-      }
+    for (const { coord, row, col } of this.board.squares()) {
+      if (this.board.isEdge(coord) || (row % 2 === 0 && col % 2 === 0)) this.board.setItem(coord, new Tile('wall'));
+      else if (!clear.has(coord) && this.random() < crates) this.board.setItem(coord, new Tile('crate'));
     }
 
     this.actors.push(this.actor('player', START, 4));
@@ -129,7 +119,7 @@ export class BombermanGame {
   }
 
   bombsPlaced(): number {
-    return Object.values(this.board.board).filter(({ item }) => item?.kind === 'bomb').length;
+    return this.board.countItems((tile) => tile.kind === 'bomb');
   }
 
   /** Whether an actor may step onto `coord`: no walls, crates or bombs. */
@@ -261,7 +251,7 @@ export class BombermanGame {
       const direction = actor.kind === 'player' ? this.input.move : this.enemyDirection(actor);
       if (!direction) return;
 
-      const next = step(actor.from, direction);
+      const next = stepCoord(actor.from, direction);
       if (!this.isWalkable(next)) return;
       actor.to = next;
       actor.facing = direction;
@@ -276,7 +266,7 @@ export class BombermanGame {
 
   /** Enemies chase the player when close, otherwise wander, mostly straight. */
   private enemyDirection(enemy: Actor): Move | null {
-    const open = MOVES.filter((m) => this.isWalkable(step(enemy.from, m)));
+    const open = MOVES.filter((m) => this.isWalkable(stepCoord(enemy.from, m)));
     if (!open.length) return null;
 
     const path = this.board.findPath(enemy.from, occupied(this.player), {
@@ -284,7 +274,7 @@ export class BombermanGame {
       canEnter: (coord) => this.isWalkable(coord),
     });
     if (path?.length && this.random() < 0.5) {
-      return open.find((m) => step(enemy.from, m) === path[0]) ?? null;
+      return open.find((m) => stepCoord(enemy.from, m) === path[0]) ?? null;
     }
 
     if (enemy.facing && open.includes(enemy.facing) && this.random() < 0.75) return enemy.facing;

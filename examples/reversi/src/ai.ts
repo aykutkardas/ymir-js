@@ -2,6 +2,8 @@
 // Corners are worth a lot (they can never be flipped), the squares next to an
 // empty corner are dangerous, and having more moves than the opponent helps.
 // It has no randomness, so the same position always gets the same move.
+import { toCoord } from 'ymir-js';
+
 import { other, type Color, type Move, ReversiBoard } from './rules';
 
 // Square weights, row by row (a common table for 8x8 Reversi).
@@ -27,15 +29,14 @@ const CORNERS: [number, number][] = [
 export const evaluate = (board: ReversiBoard, color: Color): number => {
   let score = 0;
 
-  Object.entries(board.board).forEach(([coord, { item }]) => {
+  board.squares().forEach(({ row: r, col: c, item }) => {
     if (!item) return;
-    const [r, c] = coord.split('|').map(Number);
     let weight = WEIGHTS[r][c];
 
     // Next to a corner that is already taken, the square is no longer a risk.
     if (weight < 0) {
       const corner = CORNERS.find(([cr, cc]) => Math.abs(cr - r) <= 1 && Math.abs(cc - c) <= 1);
-      if (corner && board.getItem(`${corner[0]}|${corner[1]}`)) weight = 5;
+      if (corner && board.getItem(toCoord(...corner))) weight = 5;
     }
 
     score += item.color === color ? weight : -weight;

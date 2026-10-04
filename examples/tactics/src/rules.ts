@@ -1,7 +1,7 @@
 // A small turn-based tactics game, written on top of ymir-js's core Board and
 // Item. Units keep their stats in the item's typed `data`; movement ranges
 // come from the core's getReachable and findPath.
-import { Board, Item } from 'ymir-js';
+import { Board, Item, manhattan as distance, toCoord } from 'ymir-js';
 
 export type Side = 'blue' | 'red';
 export type UnitType = 'knight' | 'archer' | 'scout';
@@ -47,12 +47,6 @@ export type AttackResult = {
 
 export type Status = { state: 'playing' } | { state: 'won'; winner: Side };
 
-const distance = (a: string, b: string) => {
-  const [r1, c1] = a.split('|').map(Number);
-  const [r2, c2] = b.split('|').map(Number);
-  return Math.abs(r1 - r2) + Math.abs(c1 - c2);
-};
-
 export const other = (side: Side): Side => (side === 'blue' ? 'red' : 'blue');
 
 /** The battlefield: terrain, units, movement and combat. */
@@ -68,14 +62,14 @@ export class TacticsBoard extends Board<Unit> {
 
     map.forEach((line, r) =>
       [...line].forEach((ch, c) => {
-        this.terrain[`${r}|${c}`] = ch === 'F' ? 'forest' : ch === 'R' ? 'rock' : 'grass';
+        this.terrain[toCoord(r, c)] = ch === 'F' ? 'forest' : ch === 'R' ? 'rock' : 'grass';
       })
     );
     Object.entries(units).forEach(([coord, [type, side]]) => this.setItem(coord, new Unit(type, side)));
   }
 
   unitsOf(side: Side): string[] {
-    return Object.keys(this.board).filter((coord) => this.getItem(coord)?.data.side === side);
+    return this.findCoords((unit) => unit.data.side === side);
   }
 
   /**

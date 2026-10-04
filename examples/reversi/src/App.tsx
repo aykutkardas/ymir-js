@@ -129,8 +129,7 @@ export function App() {
       </div>
 
       <div class="board" role="grid" aria-label="Reversi board">
-        {Object.keys(game.board.board).map((coord) => {
-          const disc = game.board.getItem(coord);
+        {game.board.squares().map(({ coord, item: disc }) => {
           const hint = !computerTurn && legal.has(coord);
 
           return (

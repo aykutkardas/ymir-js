@@ -3,7 +3,7 @@
 // formation marches across it one square at a time with moveItem, as in the
 // arcade original. Bullets, the cannon and the mystery ship are plain values.
 // Everything advances with tick(ms), and the randomness is seeded.
-import { Board, Item } from 'ymir-js';
+import { Board, Item, parseCoord, toCoord } from 'ymir-js';
 
 export type Kind = 'squid' | 'crab' | 'octopus';
 export type TileData = { kind?: Kind; hp?: number };
@@ -46,9 +46,6 @@ const PAUSE_MS = 1200;
 
 /** A small seeded random generator (Park-Miller), so games can be replayed. */
 export const seeded = (seed: number) => () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-
-const at = (row: number, col: number) => `${row}|${col}`;
-const parse = (coord: string) => coord.split('|').map(Number) as [number, number];
 
 export class InvadersGame {
   readonly board = new Board<Tile>({ rows: ROWS, cols: COLS });
@@ -98,13 +95,13 @@ export class InvadersGame {
 
   constructor({ seed = 1 }: { seed?: number } = {}) {
     this.random = seeded(seed);
-    SHIELD_ROWS.forEach((r) => SHIELD_COLS.forEach((c) => this.board.setItem(at(r, c), new Tile('shield', { hp: 2 }))));
+    SHIELD_ROWS.forEach((r) => SHIELD_COLS.forEach((c) => this.board.setItem(toCoord(r, c), new Tile('shield', { hp: 2 }))));
     this.spawnWave();
   }
 
   getStatus(): Status {
     if (this.lives <= 0) return { state: 'over', reason: 'shot' };
-    if (this.invaders().some((coord) => parse(coord)[0] >= LANDED_ROW)) return { state: 'over', reason: 'invaded' };
+    if (this.invaders().some((coord) => parseCoord(coord)[0] >= LANDED_ROW)) return { state: 'over', reason: 'invaded' };
     return { state: 'playing' };
   }
 
@@ -114,7 +111,7 @@ export class InvadersGame {
 
   /** Where the invaders are. */
   invaders(): string[] {
-    return Object.keys(this.board.board).filter((coord) => this.board.getItem(coord)?.type === 'invader');
+    return this.board.findCoords((tile) => tile.type === 'invader');
   }
 
   /**
@@ -178,9 +175,9 @@ export class InvadersGame {
     const shooters = this.shooters();
     if (this.bombWait <= 0 && shooters.length && this.bombs.length < 3) {
       // Half the time from right above the cannon, if anyone is.
-      const above = shooters.filter((coord) => Math.abs(parse(coord)[1] - this.cannon) <= 1);
+      const above = shooters.filter((coord) => Math.abs(parseCoord(coord)[1] - this.cannon) <= 1);
       const pool = above.length && this.random() < 0.5 ? above : shooters;
-      const [row, col] = parse(pool[Math.floor(this.random() * pool.length)]);
+      const [row, col] = parseCoord(pool[Math.floor(this.random() * pool.length)]);
       this.bombs.push({ row, col, wait: 0 });
       this.bombWait = 500 + this.random() * 900;
     }
@@ -192,7 +189,7 @@ export class InvadersGame {
     // Each wave starts a little lower, down to three rows.
     const top = 2 + Math.min(this.wave - 1, 3);
     ROW_KINDS.forEach((kind, i) => {
-      for (let c = 3; c <= 15; c += 2) this.board.setItem(at(top + i * 2, c), new Tile('invader', { kind }));
+      for (let c = 3; c <= 15; c += 2) this.board.setItem(toCoord(top + i * 2, c), new Tile('invader', { kind }));
     });
     this.total = this.invaders().length;
     this.dir = 1;
@@ -210,20 +207,20 @@ export class InvadersGame {
   private step() {
     const coords = this.invaders();
     const edge = coords.some((coord) => {
-      const col = parse(coord)[1] + this.dir;
+      const col = parseCoord(coord)[1] + this.dir;
       return col < 0 || col >= COLS;
     });
     const [dr, dc] = edge ? [1, 0] : [0, this.dir];
 
     // Move the leading invaders first, so nobody steps onto a neighbour.
     coords
-      .map(parse)
+      .map(parseCoord)
       .sort(([ra, ca], [rb, cb]) => (dr ? rb - ra : (cb - ca) * this.dir))
       .forEach(([r, c]) => {
-        const to = at(r + dr, c + dc);
+        const to = toCoord(r + dr, c + dc);
         // Marching through a shield wears it away.
         if (this.board.getItem(to)?.type === 'shield') this.board.removeItem(to);
-        this.board.moveItem(at(r, c), to);
+        this.board.moveItem(toCoord(r, c), to);
       });
 
     if (edge) this.dir = this.dir === 1 ? -1 : 1;
@@ -245,7 +242,7 @@ export class InvadersGame {
   /** What the cannon's shot runs into on its square. */
   private hitByShot() {
     const shot = this.shot!;
-    const coord = at(shot.row, shot.col);
+    const coord = toCoord(shot.row, shot.col);
     const tile = this.board.getItem(coord);
 
     if (tile?.type === 'invader') {
@@ -278,7 +275,7 @@ export class InvadersGame {
       while (bomb.wait >= BOMB_MS && this.bombs.includes(bomb)) {
         bomb.wait -= BOMB_MS;
         bomb.row += 1;
-        const coord = at(bomb.row, bomb.col);
+        const coord = toCoord(bomb.row, bomb.col);
 
         if (this.board.getItem(coord)?.type === 'shield') {
           this.damage(coord);
@@ -321,7 +318,7 @@ export class InvadersGame {
   private cannonHit() {
     this.lives -= 1;
     this.hit = true;
-    this.boom(at(CANNON_ROW, this.cannon));
+    this.boom(toCoord(CANNON_ROW, this.cannon));
     this.bombs = [];
     this.shot = null;
     this.pause = PAUSE_MS;
