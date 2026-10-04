@@ -258,7 +258,7 @@ The games above ship with the library. These don't: each one is an example app t
 | [Hnefatafl](https://aykutkardas.github.io/ymir-js/examples/hnefatafl/) (Viking chess) | Rook-like movement with `getColumnsByDirection`, sandwich captures, special squares, an asymmetric goal, a computer player | [Source](examples/hnefatafl) |
 | Reversi | Flipping along all eight directions | planned |
 | [Sokoban](https://aykutkardas.github.io/ymir-js/examples/sokoban/) | Pushing boxes with `getColumnsByDirection`, levels in the classic text format, undo, a solver | [Source](examples/sokoban) |
-| Tactics | Units with stats in `item.data`, movement and attack ranges | planned |
+| [Tactics](https://aykutkardas.github.io/ymir-js/examples/tactics/) | Units with typed stats in `item.data`, movement ranges with `getReachable`, paths with `findPath`, a computer player | [Source](examples/tactics) |
 
 ### Hnefatafl
 
@@ -334,6 +334,39 @@ Levels use the usual Sokoban text format (`#` wall, `@` player, `$` box, `.` goa
 
 <br clear="right" />
 
+### Tactics
+
+<a href="https://aykutkardas.github.io/ymir-js/examples/tactics/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/tactics.gif" width="260" align="right" alt="Tactics: blue and red units move, attack and strike back; blue wins" /></a>
+
+A small turn-based battle: knights, archers and scouts on a field with forests and rocks. Each unit moves, then attacks or waits; a unit that survives strikes back if it can reach. The red side is played by a simple AI.
+
+Units keep their stats in the item's typed `data`:
+
+```ts
+class Unit extends Item<UnitData> {
+  constructor(type: UnitType, side: Side) {
+    super({ name: type, data: { type, side, hp: STATS[type].maxHp, ...STATS[type] } });
+  }
+}
+```
+
+and where a unit can go comes from the core's `getReachable`, with the game deciding what can be walked through:
+
+```ts
+const reach = this.getReachable(coord, {
+  steps: unit.data.move,
+  canEnter: (square) => {
+    if (this.terrain[square] === 'rock') return false;
+    const there = this.getItem(square);
+    return !there || there.data.side === unit.data.side; // through allies, not enemies
+  },
+});
+```
+
+`findPath` gives the route a unit walks, for the animation. Both were added to the core for this game.
+
+<br clear="right" />
+
 ## Building your own game
 
 Every game here is built on the same `Board` and `Item`. Use them for a game of your own:
@@ -354,11 +387,15 @@ board.isExistCoord('5|5'); // false
 board.getDirection('0|0', '2|2'); // 'bottomRight'
 board.getDistanceBetweenTwoCoords('0|0', '2|1'); // { x: 1, y: 2 }
 board.getColumnsByDirection('1|1', { linear: true }); // { top: ['0|1'], bottom: ['2|1'], ... }
+board.getNeighbors('1|1'); // ['0|1', '2|1', '1|0', '1|2']; { diagonal: true } for eight
+board.getReachable('0|0', { steps: 2 }); // Map { '0|0' => 0, '1|0' => 1, ... } — empty squares within 2 steps
+board.findPath('0|0', '2|2'); // ['1|0', '2|0', '2|1', '2|2'] — the shortest route
 board.getBoardMatrix(); // rows of { coord, item }
 ```
 
 - Off-board coords are safe: `getItem` returns `null`, `isEmpty` returns `false`, and `getDirection` / `getDistanceBetweenTwoCoords` return `null`.
 - Methods are bound to the board, so they can be passed as callbacks: `coords.forEach(board.removeItem)`.
+- `getReachable` and `findPath` step onto empty squares by default; pass `canEnter(square, from)` to decide yourself (walk through allies, avoid water…), and `diagonal: true` for eight directions.
 - Subclass `Board` and override any method; `super` works. `CheckersBoard` is a full example.
 
 ---
@@ -372,7 +409,7 @@ board.getBoardMatrix(); // rows of { coord, item }
 Each game, including the [custom games](#custom-games), has an example app in [`examples/`](examples), also [playable online](https://aykutkardas.github.io/ymir-js/). They import the library from `src/`, so they always run against the code in the repo:
 
 ```sh
-cd examples/chess   # or checkers, go, match3, hnefatafl, sokoban
+cd examples/chess   # or checkers, go, match3, hnefatafl, sokoban, tactics
 pnpm install --ignore-workspace
 pnpm dev
 ```
