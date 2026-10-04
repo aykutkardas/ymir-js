@@ -239,18 +239,14 @@ export function App() {
       </p>
 
       <div class="board" style={{ '--rows': rows, '--cols': cols }} role="grid" aria-label="Battlefield">
-        {Object.keys(board.board).map((coord) => {
+        {board.squares().map(({ coord, row, col, item }) => {
           // A walking unit is drawn where it is, not where it started.
           const drawn =
-            walking?.at === coord
-              ? board.getItem(walking.from)
-              : walking?.from === coord
-                ? null
-                : board.getItem(coord);
+            walking?.at === coord ? board.getItem(walking.from) : walking?.from === coord ? null : item;
           const classes = [
             'cell',
             board.terrain[coord],
-            coord.split('|').map(Number).reduce((a, b) => a + b) % 2 ? 'alt' : '',
+            (row + col) % 2 ? 'alt' : '',
             moveSquares.has(coord) ? 'move' : '',
             targets.has(coord) ? 'target' : '',
             active === coord ? 'active' : '',

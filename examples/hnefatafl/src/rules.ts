@@ -3,7 +3,7 @@
 // is the example of building your own game.
 //
 // Rules: https://aagenielsen.dk/Copenhagen_Hnefatafl_11x11.pdf
-import { Board, Item, type Direction } from 'ymir-js';
+import { Board, Item, LINEAR_DIRECTIONS, parseCoord, stepCoord, toCoord, type Direction } from 'ymir-js';
 
 export type Side = 'attackers' | 'defenders';
 export type Role = 'attacker' | 'defender' | 'king';
@@ -24,26 +24,6 @@ const LAST = SIZE - 1;
 export const THRONE = '5|5';
 export const CORNERS = ['0|0', `0|${LAST}`, `${LAST}|0`, `${LAST}|${LAST}`];
 
-const LINES: Direction[] = ['top', 'bottom', 'left', 'right'];
-const STEP: Record<string, [number, number]> = {
-  top: [-1, 0],
-  bottom: [1, 0],
-  left: [0, -1],
-  right: [0, 1],
-};
-
-const at = (coord: string) => coord.split('|').map(Number) as [number, number];
-const coordOf = (r: number, c: number) => `${r}|${c}`;
-const step = (coord: string, direction: Direction) => {
-  const [r, c] = at(coord);
-  const [dr, dc] = STEP[direction];
-  return coordOf(r + dr, c + dc);
-};
-const onEdge = (coord: string) => {
-  const [r, c] = at(coord);
-  return r === 0 || c === 0 || r === LAST || c === LAST;
-};
-
 export const sideOf = (role: Role): Side => (role === 'attacker' ? 'attackers' : 'defenders');
 export const other = (side: Side): Side => (side === 'attackers' ? 'defenders' : 'attackers');
 
@@ -63,11 +43,11 @@ export class Piece extends Item {
 
 // The Copenhagen starting position.
 const ATTACKERS = [
-  ...[3, 4, 5, 6, 7].flatMap((i) => [coordOf(0, i), coordOf(LAST, i), coordOf(i, 0), coordOf(i, LAST)]),
-  coordOf(1, 5),
-  coordOf(LAST - 1, 5),
-  coordOf(5, 1),
-  coordOf(5, LAST - 1),
+  ...[3, 4, 5, 6, 7].flatMap((i) => [toCoord(0, i), toCoord(LAST, i), toCoord(i, 0), toCoord(i, LAST)]),
+  toCoord(1, 5),
+  toCoord(LAST - 1, 5),
+  toCoord(5, 1),
+  toCoord(5, LAST - 1),
 ];
 const DEFENDERS = ['3|5', '4|4', '4|5', '4|6', '5|3', '5|4', '5|6', '5|7', '6|4', '6|5', '6|6', '7|5'];
 
@@ -90,13 +70,8 @@ export class TaflBoard extends Board<Piece> {
     return coord === THRONE || CORNERS.includes(coord);
   }
 
-  /** The squares next to `coord` along its row and column. */
-  getNeighbors(coord: string): string[] {
-    return LINES.map((direction) => step(coord, direction)).filter(this.isExistCoord);
-  }
-
   findKing(): string | null {
-    return Object.keys(this.board).find((coord) => this.getItem(coord)?.role === 'king') ?? null;
+    return this.findCoord((piece) => piece.role === 'king');
   }
 
   /**
@@ -110,7 +85,7 @@ export class TaflBoard extends Board<Piece> {
 
     const lines = this.getColumnsByDirection(coord, piece.movement);
 
-    return LINES.flatMap((direction) => {
+    return LINEAR_DIRECTIONS.flatMap((direction) => {
       const reachable: string[] = [];
 
       for (const square of lines[direction]) {
@@ -123,9 +98,9 @@ export class TaflBoard extends Board<Piece> {
   }
 
   movesFor(side: Side): Move[] {
-    return Object.keys(this.board)
-      .filter((coord) => this.getItem(coord)?.side === side)
-      .flatMap((from) => this.movesFrom(from).map((to) => ({ from, to })));
+    return this.findCoords((piece) => piece.side === side).flatMap((from) =>
+      this.movesFrom(from).map((to) => ({ from, to }))
+    );
   }
 
   /** Whether `square` counts as an enemy of a piece of `side` when sandwiching it. */
@@ -150,14 +125,13 @@ export class TaflBoard extends Board<Piece> {
     const captured = new Set<string>();
 
     // Sandwich captures: the enemy next to `to`, with something hostile behind it.
-    for (const direction of LINES) {
-      const target = step(to, direction);
+    for (const direction of LINEAR_DIRECTIONS) {
+      const target = stepCoord(to, direction);
       const victim = this.getItem(target);
 
       if (!victim || victim.side === mover.side || victim.role === 'king') continue;
-      if (this.isExistCoord(step(target, direction)) && this.isHostileTo(step(target, direction), victim.side)) {
-        captured.add(target);
-      }
+      const behind = stepCoord(target, direction);
+      if (this.isExistCoord(behind) && this.isHostileTo(behind, victim.side)) captured.add(target);
     }
 
     this.shieldwall(to, mover.side).forEach((coord) => captured.add(coord));
@@ -186,26 +160,26 @@ export class TaflBoard extends Board<Piece> {
    * the inside, is captured together. The king in such a row survives.
    */
   private shieldwall(to: string, side: Side): string[] {
-    if (!onEdge(to)) return [];
+    if (!this.isEdge(to)) return [];
 
-    const [r, c] = at(to);
+    const [r, c] = parseCoord(to);
     const captured: string[] = [];
     const along: Direction[] = r === 0 || r === LAST ? ['left', 'right'] : ['top', 'bottom'];
     const inward: Direction = r === 0 ? 'bottom' : r === LAST ? 'top' : c === 0 ? 'right' : 'left';
 
     for (const direction of along) {
       const row: string[] = [];
-      let square = step(to, direction);
+      let square = stepCoord(to, direction);
 
       while (this.isExistCoord(square) && this.getItem(square)?.side === other(side)) {
         row.push(square);
-        square = step(square, direction);
+        square = stepCoord(square, direction);
       }
 
       const closed =
         this.isExistCoord(square) &&
         (this.getItem(square)?.side === side || CORNERS.includes(square));
-      const faced = row.every((member) => this.getItem(step(member, inward))?.side === side);
+      const faced = row.every((member) => this.getItem(stepCoord(member, inward))?.side === side);
 
       if (row.length >= 2 && closed && faced) {
         captured.push(...row.filter((member) => this.getItem(member)?.role !== 'king'));
@@ -222,35 +196,22 @@ export class TaflBoard extends Board<Piece> {
   isKingCaptured(): boolean {
     const king = this.findKing();
     if (!king) return true;
-    if (onEdge(king)) return false;
+    if (this.isEdge(king)) return false;
 
-    return LINES.every((direction) => {
-      const square = step(king, direction);
+    return LINEAR_DIRECTIONS.every((direction) => {
+      const square = stepCoord(king, direction);
       return square === THRONE || this.getItem(square)?.role === 'attacker';
     });
   }
 
   /** Whether the attackers have closed a ring around every defender. */
   isEncircled(): boolean {
-    const seen = new Set<string>();
-    const queue = Object.keys(this.board).filter((coord) => this.getItem(coord)?.side === 'defenders');
+    // Everywhere the defenders could spread to without passing an attacker.
+    const reach = this.getReachable(this.findCoords((piece) => piece.side === 'defenders'), {
+      canEnter: (square) => this.getItem(square)?.role !== 'attacker',
+    });
 
-    queue.forEach((coord) => seen.add(coord));
-
-    while (queue.length) {
-      const coord = queue.pop()!;
-      if (onEdge(coord)) return false;
-
-      for (const direction of LINES) {
-        const next = step(coord, direction);
-        if (!this.isExistCoord(next) || seen.has(next)) continue;
-        if (this.getItem(next)?.role === 'attacker') continue;
-        seen.add(next);
-        queue.push(next);
-      }
-    }
-
-    return true;
+    return ![...reach.keys()].some(this.isEdge);
   }
 
   /**
@@ -262,26 +223,16 @@ export class TaflBoard extends Board<Piece> {
    */
   isExitFort(): boolean {
     const king = this.findKing();
-    if (!king || !onEdge(king) || !this.movesFrom(king).length) return false;
+    if (!king || !this.isEdge(king) || !this.movesFrom(king).length) return false;
 
-    const pocket = new Set([king]);
+    const pocket = new Set(this.getReachable(king).keys()); // the empty squares the king can walk to
     const wall = new Set<string>();
-    const queue = [king];
 
-    while (queue.length) {
-      const coord = queue.pop()!;
-      for (const direction of LINES) {
-        const next = step(coord, direction);
-        if (!this.isExistCoord(next) || pocket.has(next)) continue;
-        const piece = this.getItem(next);
-        if (!piece) {
-          pocket.add(next);
-          queue.push(next);
-        } else if (piece.role === 'defender') {
-          wall.add(next);
-        } else if (piece.role === 'attacker') {
-          return false; // an attacker already touches the pocket
-        }
+    for (const square of pocket) {
+      for (const next of this.getNeighbors(square)) {
+        const role = this.getItem(next)?.role;
+        if (role === 'attacker') return false; // an attacker already touches the pocket
+        if (role === 'defender') wall.add(next);
       }
     }
 
@@ -292,15 +243,14 @@ export class TaflBoard extends Board<Piece> {
       [
         ['top', 'bottom'],
         ['left', 'right'],
-      ].every(([a, b]) => safe(step(piece, a as Direction)) || safe(step(piece, b as Direction)))
+      ].every(([a, b]) => safe(stepCoord(piece, a as Direction)) || safe(stepCoord(piece, b as Direction)))
     );
   }
 
   /** A short key for the position, for repetition checks. */
   key(): string {
-    return Object.entries(this.board)
-      .filter(([, { item }]) => item)
-      .map(([coord, { item }]) => `${coord}${item!.role[0]}`)
+    return this.findCoords()
+      .map((coord) => `${coord}${this.getItem(coord)!.role[0]}`)
       .join(',');
   }
 }

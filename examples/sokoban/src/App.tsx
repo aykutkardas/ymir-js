@@ -196,8 +196,7 @@ export function App() {
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
-        {Object.keys(board.board).map((coord) => {
-          const tile = board.getItem(coord);
+        {board.squares().map(({ coord, item: tile }) => {
           const kind = tile?.kind ?? (board.floor.has(coord) ? 'floor' : 'void');
           const goal = board.goals.has(coord);
 

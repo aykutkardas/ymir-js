@@ -1,7 +1,6 @@
 const DIGIT_0 = 48;
 const DIGIT_9 = 57;
 const MINUS = 45;
-const PIPE = 124;
 
 // Longest digit run that adds up exactly in a double, so the fast path
 // gives the same number parseInt would.
@@ -35,7 +34,7 @@ const parsePart = (coord: string, start: number, end: number): number => {
  * `"row|col"` to `[row, col]`. Plain coords take a fast path; anything
  * else is parsed as `coord.split('|').map((n) => parseInt(n, 10))`.
  */
-const parseCoord = (coord: string): number[] => {
+const parseCoord = (coord: string): [row: number, col: number] => {
   const pipe = coord.indexOf('|');
 
   if (pipe !== -1) {
@@ -45,7 +44,7 @@ const parseCoord = (coord: string): number[] => {
     if (!Number.isNaN(row) && !Number.isNaN(col)) return [row, col];
   }
 
-  return parseSlow(coord);
+  return parseSlow(coord) as [number, number];
 };
 
 export default parseCoord;

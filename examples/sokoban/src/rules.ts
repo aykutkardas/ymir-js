@@ -1,6 +1,6 @@
 // Sokoban, written on top of ymir-js's core Board and Item. Walls, boxes and
 // the player are items on the board; goals are marks on the floor.
-import { Board, Item, type Direction } from 'ymir-js';
+import { Board, Item, LINEAR_DIRECTIONS, stepCoord, type Direction } from 'ymir-js';
 
 export type Kind = 'wall' | 'box' | 'player';
 export type Move = 'top' | 'bottom' | 'left' | 'right';
@@ -50,11 +50,11 @@ export class SokobanBoard extends Board<Tile> {
   }
 
   findPlayer(): string {
-    return Object.keys(this.board).find((coord) => this.getItem(coord)?.kind === 'player')!;
+    return this.findCoord((tile) => tile.kind === 'player')!;
   }
 
   boxes(): string[] {
-    return Object.keys(this.board).filter((coord) => this.getItem(coord)?.kind === 'box');
+    return this.findCoords((tile) => tile.kind === 'box');
   }
 
   isSolved(): boolean {
@@ -105,18 +105,8 @@ export class SokobanBoard extends Board<Tile> {
   }
 
   private findFloor(): Set<string> {
-    const floor = new Set<string>();
-    const queue = [this.findPlayer()];
-
-    while (queue.length) {
-      const coord = queue.pop()!;
-      if (floor.has(coord) || !this.isExistCoord(coord) || this.getItem(coord)?.kind === 'wall') continue;
-      floor.add(coord);
-      const [r, c] = coord.split('|').map(Number);
-      queue.push(`${r - 1}|${c}`, `${r + 1}|${c}`, `${r}|${c - 1}`, `${r}|${c + 1}`);
-    }
-
-    return floor;
+    const reach = this.getReachable(this.findPlayer(), { canEnter: (coord) => this.getItem(coord)?.kind !== 'wall' });
+    return new Set(reach.keys());
   }
 }
 
@@ -175,29 +165,19 @@ export class SokobanGame {
   }
 }
 
-const DELTA: Record<Move, [number, number]> = {
-  top: [-1, 0],
-  bottom: [1, 0],
-  left: [0, -1],
-  right: [0, 1],
-};
+const MOVES = LINEAR_DIRECTIONS as readonly Move[];
 
 /**
  * The shortest solution (fewest moves) from the current position, found by
  * breadth-first search, or null if there is none. Fine for small levels.
  */
 export const solve = (board: SokobanBoard, limit = 200_000): Move[] | null => {
-  const walls = new Set(Object.keys(board.board).filter((c) => board.getItem(c)?.kind === 'wall'));
+  const walls = new Set(board.findCoords((tile) => tile.kind === 'wall'));
   const goals = board.goals;
-  const shift = (coord: string, move: Move) => {
-    const [r, c] = coord.split('|').map(Number);
-    const [dr, dc] = DELTA[move];
-    return `${r + dr}|${c + dc}`;
-  };
   // A box pushed into a corner that is not a goal can never move again.
   const isDeadCorner = (coord: string) => {
     if (goals.has(coord)) return false;
-    const blocked = (move: Move) => walls.has(shift(coord, move));
+    const blocked = (move: Move) => walls.has(stepCoord(coord, move));
     return (blocked('top') || blocked('bottom')) && (blocked('left') || blocked('right'));
   };
 
@@ -212,13 +192,13 @@ export const solve = (board: SokobanBoard, limit = 200_000): Move[] | null => {
 
     if (boxes.every((b) => goals.has(b))) return path;
 
-    for (const move of Object.keys(DELTA) as Move[]) {
-      const next = shift(player, move);
+    for (const move of MOVES) {
+      const next = stepCoord(player, move);
       if (walls.has(next)) continue;
 
       let nextBoxes = boxes;
       if (boxes.includes(next)) {
-        const beyond = shift(next, move);
+        const beyond = stepCoord(next, move);
         if (walls.has(beyond) || boxes.includes(beyond) || isDeadCorner(beyond)) continue;
         nextBoxes = boxes.map((b) => (b === next ? beyond : b));
       }

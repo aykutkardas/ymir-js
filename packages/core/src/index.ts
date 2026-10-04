@@ -3,6 +3,15 @@
 export { default as Board } from './board.js';
 export { default as Item } from './item.js';
 export { default as parseCoord } from './utils/parseCoord.js';
+export {
+  ANGULAR_DIRECTIONS,
+  DIRECTION_STEPS,
+  DIRECTIONS,
+  LINEAR_DIRECTIONS,
+  manhattan,
+  stepCoord,
+  toCoord,
+} from './coords.js';
 
 export type {
   BoardConfig,
@@ -13,7 +22,9 @@ export type {
   ColumnType,
   Direction,
   DistanceType,
+  ItemPredicate,
   PathOptions,
   ResolvedBoardConfig,
+  Square,
 } from './board.js';
 export type { ItemOptions, ItemType, MovementType } from './item.js';

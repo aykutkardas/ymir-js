@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { parseCoord } from 'ymir-js';
 
 import { BombermanGame, BOMB_MS, COLS, ROWS, type Actor, type Move } from './rules';
 
@@ -25,8 +26,8 @@ const startSeed = () => {
 
 /** Where an actor is drawn: between its two squares, as percentages of the board. */
 const position = (actor: Actor) => {
-  const [fr, fc] = actor.from.split('|').map(Number);
-  const [tr, tc] = actor.to.split('|').map(Number);
+  const [fr, fc] = parseCoord(actor.from);
+  const [tr, tc] = parseCoord(actor.to);
   const r = fr + (tr - fr) * actor.progress;
   const c = fc + (tc - fc) * actor.progress;
   return { top: `${(r / ROWS) * 100}%`, left: `${(c / COLS) * 100}%` };
@@ -146,29 +147,23 @@ export function App() {
     return () => cancelAnimationFrame(frame);
   }, [game, started]);
 
-  const squares = [];
-  for (let r = 0; r < ROWS; r += 1) {
-    for (let c = 0; c < COLS; c += 1) {
-      const coord = `${r}|${c}`;
-      const tile = game.board.getItem(coord);
-      const fire = game.fire.has(coord);
-      const urgent = tile?.kind === 'bomb' && tile.data!.timer! < BOMB_MS / 3;
+  const squares = game.board.squares().map(({ coord, row, col, item: tile }) => {
+    const urgent = tile?.kind === 'bomb' && tile.data!.timer! < BOMB_MS / 3;
 
-      squares.push(
-        <div key={coord} class={`square ${(r + c) % 2 ? 'odd' : ''}`}>
-          {tile?.kind === 'wall' && <span class="wall" />}
-          {tile?.kind === 'crate' && <span class="crate" />}
-          {tile?.kind === 'bomb' && <span class={`bomb ${urgent ? 'urgent' : ''}`} />}
-          {tile?.kind === 'power' && (
-            <span class={`power ${tile.data!.power}`}>
-              <PowerIcon power={tile.data!.power!} />
-            </span>
-          )}
-          {fire && <span class="fire" />}
-        </div>
-      );
-    }
-  }
+    return (
+      <div key={coord} class={`square ${(row + col) % 2 ? 'odd' : ''}`}>
+        {tile?.kind === 'wall' && <span class="wall" />}
+        {tile?.kind === 'crate' && <span class="crate" />}
+        {tile?.kind === 'bomb' && <span class={`bomb ${urgent ? 'urgent' : ''}`} />}
+        {tile?.kind === 'power' && (
+          <span class={`power ${tile.data!.power}`}>
+            <PowerIcon power={tile.data!.power!} />
+          </span>
+        )}
+        {game.fire.has(coord) && <span class="fire" />}
+      </div>
+    );
+  });
 
   const headline =
     status.state === 'won'
