@@ -1,0 +1,127 @@
+.row {
+  display: flex;
+  width: 100%;
+}
+
+.column {
+  display: flex;
+  background-color: #666;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  color: white;
+  cursor: pointer;
+  transition: 0.1s;
+  margin: 1px;
+  position: relative;
+  border-radius: 2px;
+  box-shadow: 1px 1px 2px 1px #121212;
+}
+
+.row:nth-child(odd) .column:nth-child(odd),
+.row:nth-child(even) .column:nth-child(even) {
+  background-color: #555;
+}
+
+.column::before {
+  content: attr(data-coord);
+  display: block;
+  opacity: 0.5;
+  color: black;
+  font-size: 11px;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 2px;
+  font-size: 8px;
+}
+
+.column[data-available="true"] {
+  background-color: #cafcca !important;
+}
+
+.column[data-available="true"]:hover {
+  background-color: #cafccacc !important;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #fff;
+  font-size: 12px;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+}
+
+.item::before {
+  content: "";
+  position: relative;
+  width: 10px;
+  height: 10px;
+  background: #eee;
+  border-radius: 50%;
+}
+
+.black {
+  background-color: #000;
+}
+
+.black::before {
+  background: #222;
+}
+
+.item[data-selected="true"] {
+  border: 4px solid #ffdf20;
+  z-index: 2;
+}
+
+.item[data-king="true"]::before {
+  content: "";
+  position: relative;
+  width: 10px;
+  height: 10px;
+  background: #ffdf20;
+  border-radius: 50%;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 1025px) {
+  #app {
+    transform: scale(0.7);
+  }
+
+  .board {
+    padding: 0;
+    border: 0;
+  }
+}
+
+.boardFooter {
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+
+  position: absolute;
+  bottom: 0px;
+}
+
+.boardFooter a {
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  text-decoration: none;
+}
