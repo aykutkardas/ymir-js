@@ -1,4 +1,4 @@
-import { Checkers } from 'ymir-js';
+import { InternationalBoard, TurkishBoard } from 'ymir-js';
 
 export type Variant = 'turkish' | 'international';
 export type Color = 'white' | 'black';
@@ -48,8 +48,8 @@ export const other = (color: Color): Color =>
 
 export const createBoard = (variant: Variant) =>
   variant === 'turkish'
-    ? new Checkers.Turkish.Board().init()
-    : new Checkers.International.Board().init();
+    ? new TurkishBoard().init()
+    : new InternationalBoard().init();
 
 export type Board = ReturnType<typeof createBoard>;
 

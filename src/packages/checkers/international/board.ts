@@ -21,7 +21,7 @@ class InternationalCheckersBoard extends CheckersBoard {
 
   protected readonly blackItemCoords = darkSquares(6, 7, 8, 9);
 
-  constructor(config: BoardConfig = { x: 10, y: 10 }) {
+  constructor(config: BoardConfig = { rows: 10, cols: 10 }) {
     super(config);
   }
 

@@ -8,6 +8,8 @@ describe('Turkish Checkers', () => {
     const board = new CheckersBoard();
 
     expect(board.config).to.deep.equal({
+      rows: 8,
+      cols: 8,
       x: 8,
       y: 8,
     });
