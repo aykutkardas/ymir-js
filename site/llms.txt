@@ -1,0 +1,44 @@
+# ymir-js
+
+> ymir-js is a TypeScript toolkit for board games. It ships complete, tested rule engines for checkers (Turkish and International), chess, Go and match-3, built on a small generic `Board`/`Item` core that you can use for your own games. Zero runtime dependencies, ES module only, Node 20.19+ / 22.12+ or any modern bundler.
+
+Install with `npm install ymir-js` and import named exports, e.g. `import { ChessGame, GoGame, Match3Board, CheckersGame, Board } from 'ymir-js'`. Older grouped exports (`Core`, `Checkers`, `Chess`, `Go`, `Match3`, `Utils`) still work.
+
+Things to know before writing code with it:
+
+- Coordinates are strings `"row|col"`, zero-based, row 0 at the top (e.g. `"3|4"`). Chess also accepts algebraic squares (`"e4"`); convert with `toSquare` / `fromSquare`. Go converts to GTP vertices with `board.toGTP` / `board.fromGTP`.
+- `new Board({ rows, cols })` creates a board; `getItem`, `setItem`, `moveItem`, `removeItem`, `switchItem`, `isEmpty`, `isExistCoord`, `getBoardMatrix`. Methods are bound, so they can be passed as callbacks. Off-board coords are safe: `getItem` returns `null`, `isEmpty` returns `false`.
+- Each game has a "game" class that owns turns, history, undo and the result, and a board you can read: `CheckersGame` (+ `TurkishBoard`, `InternationalBoard`), `ChessGame` (+ `ChessBoard`), `GoGame` (+ `GoBoard`), and `Match3Board` (single-player, no game class).
+- Moves are validated: `play` / `move` throw on an illegal move. Ask first with `getLegalMoves()` (all games), `checkPlay` (Go) or `canSwap` (match-3).
+- Checkers, chess and Go report their state with `getStatus()` (playing, won, draw and why) and save and restore with `toJSON()` / `fromJSON()`. Match-3 has no end state of its own; `swap` reports points and `getPossibleMoves()` is never empty because the board reshuffles itself.
+- Built-in computer players: `checkersBoard.autoPlay(color, { onMove })` and `chessGame.getBestMove({ depth })`.
+- Rules follow the official sources: FMJD for International checkers (incl. 25-move and 16/5-move endgame draws), Turkish draughts (pieces removed one by one, no 180° king turn, "one piece each" draw), FIDE chess (perft-verified move generation), and standard Go (simple or positional superko, area or territory scoring).
+
+## Docs
+
+- [README](https://github.com/aykutkardas/ymir-js/blob/main/README.md): install, the core board API, and a section per game with examples and rule tables.
+- [Full reference](https://aykutkardas.github.io/ymir-js/llms-full.txt): the README plus every public type declaration, in one plain-text file.
+
+## Games
+
+- [Checkers](https://github.com/aykutkardas/ymir-js/blob/main/src/packages/checkers/board.ts): `TurkishBoard` / `InternationalBoard` with `getLegalMoves(color)` (mandatory and maximum capture, full capture chains), `playMove(move)`, `autoPlay`; moves are `{ from, path, captured }`.
+- [Checkers game](https://github.com/aykutkardas/ymir-js/blob/main/src/packages/checkers/game.ts): `CheckersGame.create('turkish' | 'international')`, `play`, `undo`, `redo`, `getStatus()` (win, repetition, king-move and lone-king draws), `toJSON`.
+- [International notation](https://github.com/aykutkardas/ymir-js/blob/main/src/packages/checkers/international/notation.ts): PDN FEN (`toFEN`, `setFEN`) and moves (`32-28`, `28x19x8`).
+- [Chess](https://github.com/aykutkardas/ymir-js/blob/main/src/packages/chess/game.ts): `new ChessGame(fen?)`, `move('Nf3' | 'g1f3' | { from, to, promotion })`, `getLegalMoves(square?)`, `getStatus()`, `fen()`, `pgn()`, `undo()`, `getBestMove({ depth })`, `perft(depth)`.
+- [Go](https://github.com/aykutkardas/ymir-js/blob/main/src/packages/go/game.ts): `new GoGame({ size, rules, komi, ko, setup })`, `play(coord)`, `checkPlay`, `pass`, `resign`, `koPoint`, `captures`, after two passes `toggleDead` and `getScore()`.
+- [Go board](https://github.com/aykutkardas/ymir-js/blob/main/src/packages/go/board.ts): groups, liberties, captures, scoring, GTP coordinates.
+- [Match 3](https://github.com/aykutkardas/ymir-js/blob/main/src/packages/match3/board.ts): `new Match3Board({ rows, cols, kinds, random }).init()`, `swap(from, to)` returns every cascade step (`matches`, `cleared`, `fallen`, `spawned`, `points`), `getPossibleMoves()`, `shuffle()`.
+- [Core board](https://github.com/aykutkardas/ymir-js/blob/main/src/packages/core/board.ts): the generic `Board<T>` every game builds on.
+
+## Live examples
+
+- [Checkers](https://aykutkardas.github.io/ymir-js/examples/checkers/): Turkish and International against the computer, with undo. [Source](https://github.com/aykutkardas/ymir-js/tree/main/examples/checkers)
+- [Chess](https://aykutkardas.github.io/ymir-js/examples/chess/): against the built-in engine at three levels, or two players. [Source](https://github.com/aykutkardas/ymir-js/tree/main/examples/chess)
+- [Go](https://aykutkardas.github.io/ymir-js/examples/go/): 9×9, 13×13 and 19×19, with scoring. [Source](https://github.com/aykutkardas/ymir-js/tree/main/examples/go)
+- [Match 3](https://aykutkardas.github.io/ymir-js/examples/match3/): a 20-move puzzle with cascades and hints. [Source](https://github.com/aykutkardas/ymir-js/tree/main/examples/match3)
+
+## Optional
+
+- [Tests](https://github.com/aykutkardas/ymir-js/tree/main/src): `*.spec.ts` next to each module show exact expected behaviour, including perft counts for chess.
+- [npm package](https://www.npmjs.com/package/ymir-js)
+- [Source repository](https://github.com/aykutkardas/ymir-js)
