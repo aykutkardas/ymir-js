@@ -47,13 +47,16 @@ const browser = await chromium
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /** Opens an example and returns helpers for clicking and recording its board. */
-const open = async (name, boardSelector) => {
+const open = async (name, boardSelector, { query = '', fakeClock = false } = {}) => {
   const page = await browser.newPage({
     viewport: { width: 480, height: 900 },
     colorScheme: 'light',
     reducedMotion: 'no-preference',
   });
-  await page.goto(`${base}/examples/${name}/`);
+  // A fake clock runs with real time until paused; then only runFor() moves it.
+  if (fakeClock) await page.clock.install({ time: 0 });
+  await page.goto(`${base}/examples/${name}/${query}`);
+  if (fakeClock) await page.clock.pauseAt(60_000);
   await page.waitForSelector(boardSelector);
 
   const frames = [];
@@ -443,6 +446,45 @@ const scenarios = {
     await sleep(800);
     await app.stop();
     writeGif('reversi', app.frames, { endHold: 3000 });
+  },
+
+  // Bomberman, in real time: a play-through planned offline against the same
+  // rules (bomberman-game.json: keys pressed on which 16 ms frame), replayed
+  // on the browser's fake clock so every frame lands on the same game tick.
+  async bomberman() {
+    const plan = JSON.parse(readFileSync(new URL('./bomberman-game.json', import.meta.url), 'utf8'));
+    const app = await open('bomberman', '.board', { query: `?seed=${plan.seed}`, fakeClock: true });
+    const { page } = app;
+    const board = page.locator('.board');
+    const player = page.locator('.actor.player');
+    let now = 0;
+    const capture = async () => app.frames.push({ png: await board.screenshot({ animations: 'allow' }), at: now });
+
+    const events = new Map();
+    for (const [frame, type, key] of plan.events) {
+      events.set(frame, [...(events.get(frame) ?? []), { type, key }]);
+    }
+    const checks = new Map(plan.checks.map(([frame, from, to]) => [frame, `${from}>${to}`]));
+
+    await capture();
+    for (let frame = 0; frame < plan.frames + 40; frame += 1) {
+      for (const { type, key } of events.get(frame) ?? []) {
+        if (type === 'down') await page.keyboard.down(key);
+        if (type === 'up') await page.keyboard.up(key);
+        if (type === 'bomb') await page.keyboard.press('Space');
+      }
+      if (checks.has(frame)) {
+        const at = `${await player.getAttribute('data-from')}>${await player.getAttribute('data-to')}`;
+        if (at !== checks.get(frame)) throw new Error(`Replay diverged on frame ${frame}: ${at}, planned ${checks.get(frame)}`);
+      }
+      await page.clock.runFor(16);
+      now += 16;
+      if (frame % 6 === 5) await capture();
+    }
+
+    const headline = await page.locator('.hud .status').textContent();
+    if (!/win/.test(headline)) throw new Error(`Replay ended with "${headline}"`);
+    writeGif('bomberman', app.frames, { endHold: 3000 });
   },
 
   // Match 3: play the hinted swaps and watch the cascades.
