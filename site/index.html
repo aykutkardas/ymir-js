@@ -6,7 +6,7 @@
     <title>ymir-js</title>
     <meta
       name="description"
-      content="A TypeScript toolkit for board games: checkers, chess, Go and match-3 with their full rules, on a small board core you can build your own games on. Learn it in puzzles."
+      content="A TypeScript toolkit for board games: checkers, chess, Go and match-3 with their full rules, on a small board core you can build your own games on."
     />
     <link rel="alternate" type="text/plain" href="llms.txt" title="llms.txt" />
     <link
@@ -23,6 +23,7 @@
           ymir-js
         </a>
         <nav aria-label="Project links">
+          <a href="tutorials/">Tutorials</a>
           <a href="https://github.com/aykutkardas/ymir-js">GitHub</a>
           <a href="https://www.npmjs.com/package/ymir-js">npm</a>
           <a href="https://github.com/aykutkardas/ymir-js#readme">Docs</a>
@@ -44,7 +45,7 @@
 
         <div class="tabs" role="tablist" aria-label="Who is reading">
           <button type="button" role="tab" id="tab-humans" aria-controls="humans" aria-selected="true">
-            <strong>For humans</strong><span>Puzzles and games</span>
+            <strong>For humans</strong><span>Games and tutorials</span>
           </button>
           <button type="button" role="tab" id="tab-agents" aria-controls="agents" aria-selected="false" tabindex="-1">
             <strong>For agents</strong><span>llms.txt and a prompt</span>
@@ -53,52 +54,24 @@
       </section>
 
       <div id="humans" role="tabpanel" aria-labelledby="tab-humans">
-        <section id="puzzles" class="wrap block">
-          <div class="block-head">
-            <h2>Learn the core in 11 puzzles</h2>
-            <p>
-              Each puzzle is a small board and a goal. Change a line or two, press Run, and watch
-              your code play out on the board. No setup, nothing to install.
-            </p>
-          </div>
-
-          <div id="puzzle" class="pz">
-            <aside class="pz-side">
-              <p class="pz-progress"></p>
-              <ol class="pz-list"></ol>
-            </aside>
-
-            <div class="pz-main">
-              <div class="pz-task">
-                <p class="pz-step"></p>
-                <h3 class="pz-title"></h3>
-                <p class="pz-goal"></p>
-                <p class="pz-text"></p>
-              </div>
-
-              <div class="pz-play">
-                <div class="pz-code">
-                  <div class="pz-api" aria-label="Methods for this puzzle; click to insert"></div>
-                  <div class="pz-editor">
-                    <pre class="pz-highlight" aria-hidden="true"><code></code></pre>
-                    <textarea class="pz-input" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Your code"></textarea>
-                  </div>
-                  <div class="pz-actions">
-                    <button type="button" class="pz-run">▶ Run</button>
-                    <button type="button" class="pz-solution">Show solution</button>
-                    <button type="button" class="pz-reset">Reset</button>
-                  </div>
-                </div>
-
-                <div class="pz-view">
-                  <div class="pz-board" aria-label="Puzzle board"></div>
-                  <p class="pz-status" aria-live="polite"></p>
-                  <div class="pz-result" aria-live="polite"></div>
-                </div>
-              </div>
+        <section id="tutorials" class="wrap block">
+          <a class="teaser" href="tutorials/">
+            <div class="teaser-board" aria-hidden="true">
+              <span></span><span></span><span class="t-ghost">🪙</span><span></span>
+              <span></span><span class="t-it">🤖</span><span></span><span></span>
+              <span class="t-wall"></span><span class="t-path"></span><span class="t-path"></span><span></span>
+              <span></span><span></span><span class="t-path"></span><span class="t-it">🐱</span>
             </div>
-          </div>
-          <noscript><p>The puzzles need JavaScript.</p></noscript>
+            <div class="teaser-text">
+              <p class="teaser-kicker">Tutorials</p>
+              <h2>Learn the core in 11 puzzles</h2>
+              <p>
+                A small board and a goal each: place an item, walk a robot around the walls, swap two
+                pieces, undo a mess. Change a line or two, press Run and watch it play out.
+              </p>
+              <span class="teaser-cta">Start the puzzles →</span>
+            </div>
+          </a>
         </section>
 
         <section id="games" class="wrap block">
@@ -135,7 +108,7 @@
             </article>
           </div>
 
-          <h3 class="group">Built on the core <span>example apps with their own rules, to read as tutorials</span></h3>
+          <h3 class="group">Built on the core <span>example apps that write their own rules on the core; read their source</span></h3>
           <div class="cards">
             <article class="card">
               <a class="shot" href="examples/hnefatafl/"><img src="media/hnefatafl.gif" alt="Hnefatafl: the king escapes to a corner" loading="lazy" /></a>
@@ -198,7 +171,7 @@ checkers.getLegalMoves(); // [{ from, path, captured }, ...]</code></pre>
               <li><strong>Rules you can trust</strong>Tested against the official rules: perft for chess, FMJD and Turkish federation rules for checkers.</li>
               <li><strong>Any UI</strong>No rendering, no framework. The examples use Preact; use what you like.</li>
               <li><strong>Typed, zero dependencies</strong>TypeScript, an ES module with types, nothing else installed.</li>
-              <li><strong>Your own games</strong>The puzzles above are the whole core. The custom games show where it goes.</li>
+              <li><strong>Your own games</strong>The <a href="tutorials/">tutorials</a> cover the whole core. The custom games show where it goes.</li>
             </ul>
           </div>
         </section>
@@ -275,6 +248,5 @@ game, build on Board and Item from the core, as the custom games do.</code></pre
     </footer>
 
     <script type="module" src="main.js"></script>
-    <script type="module" src="puzzles.js"></script>
   </body>
 </html>

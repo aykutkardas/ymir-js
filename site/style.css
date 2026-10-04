@@ -1003,4 +1003,141 @@ footer {
   .pz-board .changed .it {
     animation: none;
   }
+
+  .teaser {
+    transition: none;
+  }
+}
+
+/* Tutorials: the teaser on the home page, and the page itself */
+
+.top nav a[aria-current='page'] {
+  background: var(--sunken);
+  color: var(--text);
+}
+
+.teaser {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 32px;
+  align-items: center;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--accent-soft), var(--surface) 60%);
+  text-decoration: none;
+  transition: border-color 150ms, transform 150ms;
+}
+
+.teaser:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.teaser-board {
+  display: grid;
+  grid-template-columns: repeat(4, 44px);
+  grid-template-rows: repeat(4, 44px);
+  border: 5px solid #44403c;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.teaser-board span {
+  display: grid;
+  place-items: center;
+  background: var(--sq-a);
+  font-size: 26px;
+  line-height: 1;
+}
+
+/* A checkerboard: rows alternate which squares are dark. */
+.teaser-board span:nth-child(8n + 2),
+.teaser-board span:nth-child(8n + 4),
+.teaser-board span:nth-child(8n + 5),
+.teaser-board span:nth-child(8n + 7) {
+  background: var(--sq-b);
+}
+
+.teaser-board .t-ghost {
+  opacity: 0.35;
+}
+
+.teaser-board span.t-wall {
+  background: var(--wall);
+}
+
+.teaser-board span.t-path {
+  background: #bfdbfe;
+}
+
+.teaser-kicker,
+.crumbs {
+  margin: 0;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.crumbs a {
+  text-decoration: none;
+}
+
+.crumbs a:hover {
+  text-decoration: underline;
+}
+
+.teaser-text h2 {
+  margin: 4px 0 8px;
+}
+
+.teaser-text p:not(.teaser-kicker) {
+  max-width: 560px;
+  margin: 0;
+  color: var(--muted);
+}
+
+.teaser-cta {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.tutorial {
+  padding-top: 40px;
+}
+
+.tutorial h1 {
+  margin: 4px 0 6px;
+  font-size: clamp(28px, 4vw, 40px);
+}
+
+.next p {
+  max-width: 720px;
+  margin: 0;
+  color: var(--muted);
+}
+
+@media (max-width: 640px) {
+  .teaser {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .teaser-board {
+    grid-template-columns: repeat(4, 36px);
+    grid-template-rows: repeat(4, 36px);
+  }
+
+  .teaser-board span {
+    font-size: 21px;
+  }
 }
