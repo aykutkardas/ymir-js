@@ -1,6 +1,6 @@
 {
   "name": "@ymir-js/checkers",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Turkish and International checkers for ymir-js: full rules, capture chains, draws, undo and PDN notation.",
   "type": "module",
   "main": "./dist/index.js",
