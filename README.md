@@ -10,10 +10,20 @@ A TypeScript toolkit for board games. Checkers, chess, Go and match-3 come with 
 
 <table>
   <tr>
-    <td align="center"><a href="https://aykutkardas.github.io/ymir-js/examples/checkers/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/checkers.gif" width="200" alt="Turkish checkers: a capture chain and a new king" /></a><br />Checkers</td>
-    <td align="center"><a href="https://aykutkardas.github.io/ymir-js/examples/chess/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/chess.gif" width="200" alt="Chess: Morphy's Opera Game, ending in checkmate" /></a><br />Chess</td>
-    <td align="center"><a href="https://aykutkardas.github.io/ymir-js/examples/go/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/go.gif" width="200" alt="Go on 9x9, ending with the score" /></a><br />Go</td>
-    <td align="center"><a href="https://aykutkardas.github.io/ymir-js/examples/match3/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/match3.gif" width="200" alt="Match 3: swaps and cascades" /></a><br />Match 3</td>
+    <td align="center" width="25%"><a href="https://aykutkardas.github.io/ymir-js/examples/checkers/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/checkers.gif" width="170" alt="Turkish checkers: a capture chain and a new king" /></a><br /><b>Checkers</b><br /><sub>in the library</sub></td>
+    <td align="center" width="25%"><a href="https://aykutkardas.github.io/ymir-js/examples/chess/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/chess.gif" width="170" alt="Chess: Morphy's Opera Game, ending in checkmate" /></a><br /><b>Chess</b><br /><sub>in the library</sub></td>
+    <td align="center" width="25%"><a href="https://aykutkardas.github.io/ymir-js/examples/go/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/go.gif" width="170" alt="Go on 9x9, ending with the score" /></a><br /><b>Go</b><br /><sub>in the library</sub></td>
+    <td align="center" width="25%"><a href="https://aykutkardas.github.io/ymir-js/examples/match3/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/match3.gif" width="170" alt="Match 3: swaps and cascades" /></a><br /><b>Match 3</b><br /><sub>in the library</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="25%"><a href="https://aykutkardas.github.io/ymir-js/examples/hnefatafl/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/hnefatafl.gif" width="170" alt="Hnefatafl: the attackers close in and the king escapes to a corner" /></a><br /><b>Hnefatafl</b><br /><sub><a href="#custom-games">custom game</a></sub></td>
+    <td align="center" width="25%"><a href="https://aykutkardas.github.io/ymir-js/examples/reversi/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/reversi.gif" width="170" alt="Reversi: a whole game, discs flipping, ending on a full board" /></a><br /><b>Reversi</b><br /><sub><a href="#custom-games">custom game</a></sub></td>
+    <td align="center" width="25%"><a href="https://aykutkardas.github.io/ymir-js/examples/sokoban/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/sokoban.gif" width="170" alt="Sokoban: the Storeroom level, solved" /></a><br /><b>Sokoban</b><br /><sub><a href="#custom-games">custom game</a></sub></td>
+    <td align="center" width="25%"><a href="https://aykutkardas.github.io/ymir-js/examples/tactics/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/tactics.gif" width="170" alt="Tactics: blue and red units move, attack and strike back; blue wins" /></a><br /><b>Tactics</b><br /><sub><a href="#custom-games">custom game</a></sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="25%"><a href="https://aykutkardas.github.io/ymir-js/examples/bomberman/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/bomberman.gif" width="170" alt="Bomberman: bombs burning crates, power-ups, every enemy blown up" /></a><br /><b>Bomberman</b><br /><sub><a href="#custom-games">custom game</a></sub></td>
+    <td align="center" width="25%"><a href="https://aykutkardas.github.io/ymir-js/examples/invaders/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/invaders.gif" width="170" alt="Invaders: the first wave shot down, then the next one marching in" /></a><br /><b>Invaders</b><br /><sub><a href="#custom-games">custom game</a></sub></td>
   </tr>
 </table>
 
@@ -263,17 +273,16 @@ const result = board.swap(hint.from, hint.to);
 
 The games above ship with the library. These don't: each one is an example app that writes its own rules on top of the core `Board` and `Item`, to show how far the core takes you. Read their `rules.ts` as a tutorial.
 
-| Game | What it shows | Status |
+| Game | What it shows | Code |
 | --- | --- | --- |
 | [Bomberman](https://aykutkardas.github.io/ymir-js/examples/bomberman/) | A real-time game: bombs, crates and power-ups as items, blasts along `getColumnsByDirection`, enemies chasing with `findPath`, time advanced by `tick(ms)` | [Source](examples/bomberman) |
 | [Hnefatafl](https://aykutkardas.github.io/ymir-js/examples/hnefatafl/) (Viking chess) | Rook-like movement with `getColumnsByDirection`, sandwich captures, special squares, an asymmetric goal, a computer player | [Source](examples/hnefatafl) |
+| [Invaders](https://aykutkardas.github.io/ymir-js/examples/invaders/) | A real-time shooter: a formation that marches with `moveItem`, shooters picked by looking down each column with `getColumnsByDirection`, shields that wear away | [Source](examples/invaders) |
 | [Reversi](https://aykutkardas.github.io/ymir-js/examples/reversi/) | Flipping along all eight lines with one `getColumnsByDirection` call, passing, a computer player | [Source](examples/reversi) |
 | [Sokoban](https://aykutkardas.github.io/ymir-js/examples/sokoban/) | Pushing boxes with `getColumnsByDirection`, levels in the classic text format, undo, a solver | [Source](examples/sokoban) |
 | [Tactics](https://aykutkardas.github.io/ymir-js/examples/tactics/) | Units with typed stats in `item.data`, movement ranges with `getReachable`, paths with `findPath`, a computer player | [Source](examples/tactics) |
 
 ### Hnefatafl
-
-<a href="https://aykutkardas.github.io/ymir-js/examples/hnefatafl/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/hnefatafl.gif" width="280" align="right" alt="Hnefatafl: the attackers close in and the king escapes to a corner" /></a>
 
 Hnefatafl is the Vikings' board game, played in Scandinavia before chess arrived, and a fitting one for a library named after a Norse giant. The attackers lay siege; the king must reach a corner. The example follows the [Copenhagen rules](https://aagenielsen.dk/Copenhagen_Hnefatafl_11x11.pdf), including shieldwalls, exit forts and encirclement, in about 400 lines.
 
@@ -308,11 +317,7 @@ movesFrom(coord: string): string[] {
 
 Captures, the king's capture, forts and encirclement are a few more methods on the same board, and `TaflGame` adds turns, undo and the result. A small alpha-beta player (`ai.ts`) plays either side. The rules have their own tests (`rules.test.ts`, `ai.test.ts`), which CI runs.
 
-<br clear="right" />
-
 ### Sokoban
-
-<a href="https://aykutkardas.github.io/ymir-js/examples/sokoban/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/sokoban.gif" width="240" align="right" alt="Sokoban: the Storeroom level, solved" /></a>
 
 Push every box onto a goal. Three small levels made for the demo, each checked by a solver that also powers the app's *Show solution* button and its "best" score.
 
@@ -343,11 +348,7 @@ step(direction: Move) {
 
 Levels use the usual Sokoban text format (`#` wall, `@` player, `$` box, `.` goal), so you can add your own in `levels.ts`.
 
-<br clear="right" />
-
 ### Tactics
-
-<a href="https://aykutkardas.github.io/ymir-js/examples/tactics/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/tactics.gif" width="260" align="right" alt="Tactics: blue and red units move, attack and strike back; blue wins" /></a>
 
 A small turn-based battle: knights, archers and scouts on a field with forests and rocks. Each unit moves, then attacks or waits; a unit that survives strikes back if it can reach. The red side is played by a simple AI.
 
@@ -376,11 +377,7 @@ const reach = this.getReachable(coord, {
 
 `findPath` gives the route a unit walks, for the animation. Both were added to the core for this game.
 
-<br clear="right" />
-
 ### Reversi
-
-<a href="https://aykutkardas.github.io/ymir-js/examples/reversi/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/reversi.gif" width="260" align="right" alt="Reversi: a whole game, discs flipping, ending on a full board" /></a>
 
 Trap a line of the other colour between your new disc and one of yours, and every trapped disc flips. If you cannot move you pass; when neither side can, the most discs wins. Play against the computer (three levels) or a friend.
 
@@ -412,11 +409,7 @@ flipsFor(coord: string, color: Color): string[] {
 
 A legal move is any square where that list isn't empty. The computer player (`ai.ts`) searches a few moves ahead with the usual Reversi evaluation: corners are gold, the squares next to an empty corner are traps, and having more moves than the opponent helps.
 
-<br clear="right" />
-
 ### Bomberman
-
-<a href="https://aykutkardas.github.io/ymir-js/examples/bomberman/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/bomberman.gif" width="260" align="right" alt="Bomberman: bombs burning crates, power-ups, every enemy blown up" /></a>
 
 Drop bombs, burn crates, pick up power-ups (more bombs, a longer blast, more speed) and blow up every enemy. Arrow keys or WASD and Space; buttons on a phone.
 
@@ -442,7 +435,22 @@ blastFrom(coord: string, range: number): string[] {
 
 A bomb caught in a blast goes off too, so chain reactions come free. Enemies wander, and when you are close they chase you with `findPath(enemy, you, { steps: 6, canEnter })`. Everything random comes from a seeded generator: add `?seed=42` to the URL to play the same map again. The GIF is a planned play-through, replayed on the browser's fake clock tick for tick.
 
-<br clear="right" />
+### Invaders
+
+Five rows of invaders march across, step down at each edge and speed up as you thin them out. Shoot them before they land; shields soak up hits from both sides, and a mystery ship crosses the top now and then. ← → and Space; buttons on a phone.
+
+The invaders and the shields are items, so the formation's march is the arcade's own: every invader moves one square with `moveItem`, the leading ones first so nobody lands on a neighbour, and the whole group steps down and turns when one reaches an edge. Only an invader with nobody below it may drop a bomb, which is one look down its column:
+
+```ts
+shooters(): string[] {
+  return this.invaders().filter((coord) => {
+    const { bottom } = this.board.getColumnsByDirection(coord, { bottom: true, stepCount: ROWS });
+    return !bottom.some((square) => this.board.getItem(square)?.type === 'invader');
+  });
+}
+```
+
+Shots, bombs, the cannon and the ship are plain values; like Bomberman, the game advances with `tick(ms)` and is seeded, and the GIF is a planned game replayed tick for tick.
 
 ## Building your own game
 
@@ -486,7 +494,7 @@ board.getBoardMatrix(); // rows of { coord, item }
 Each game, including the [custom games](#custom-games), has an example app in [`examples/`](examples), also [playable online](https://aykutkardas.github.io/ymir-js/). They import the library from the package sources in `packages/`, so they always run against the code in the repo:
 
 ```sh
-cd examples/chess   # or checkers, go, match3, hnefatafl, sokoban, tactics, reversi, bomberman
+cd examples/chess   # or checkers, go, match3, hnefatafl, sokoban, tactics, reversi, bomberman, invaders
 pnpm install --ignore-workspace
 pnpm dev
 ```
