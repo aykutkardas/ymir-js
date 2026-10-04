@@ -1009,6 +1009,131 @@ footer {
   }
 }
 
+/* Packages */
+
+.version {
+  display: inline-block;
+  margin-bottom: 16px;
+  padding: 3px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font: 600 12.5px var(--mono);
+  text-decoration: none;
+}
+
+.version:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.installs {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  margin-top: 24px;
+}
+
+.installs .install {
+  margin-top: 0;
+}
+
+.installs p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.installs p a {
+  text-decoration-color: var(--line);
+}
+
+.card h4 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+}
+
+.pkg {
+  color: var(--muted);
+  font: 500 12px var(--mono);
+  text-decoration: none;
+}
+
+.pkg:hover {
+  color: var(--accent);
+}
+
+.group code {
+  font-size: 0.92em;
+}
+
+.pkg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 14px;
+}
+
+.pkg-card {
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  gap: 10px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.pkg-card.all {
+  border-style: dashed;
+}
+
+.pkg-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 10px;
+}
+
+.pkg-card h3 {
+  margin: 0;
+  font: 700 16px var(--mono);
+}
+
+.pkg-card h3 a {
+  text-decoration: none;
+}
+
+.pkg-card h3 a:hover {
+  text-decoration: underline;
+}
+
+.pkg-for {
+  color: var(--accent);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.pkg-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.pkg-links {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.uses {
+  margin-top: 10px !important;
+  font-size: 14px;
+}
+
 /* Tutorials: the teaser on the home page, and the page itself */
 
 .top nav a[aria-current='page'] {

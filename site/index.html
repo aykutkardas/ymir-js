@@ -33,14 +33,21 @@
 
     <main>
       <section class="hero wrap">
+        <a class="version" href="https://www.npmjs.com/package/ymir-js">v%VERSION% on npm</a>
         <h1>Board games,<br />as plain TypeScript.</h1>
         <p class="lede">
           Checkers, chess, Go and match-3 with their full rules, on a small <code>Board</code> and
           <code>Item</code> core you can build your own games on. No framework, no dependencies.
         </p>
-        <div class="install">
-          <code>npm install ymir-js</code>
-          <button type="button" class="copy" data-copy="npm install ymir-js">Copy</button>
+        <div class="installs">
+          <div class="install">
+            <code>npm install ymir-js</code>
+            <button type="button" class="copy" data-copy="npm install ymir-js">Copy</button>
+          </div>
+          <p>
+            Everything in one package. Or only what you need:
+            <a href="#packages"><code>@ymir-js/core</code> and one package per game</a>.
+          </p>
         </div>
 
         <div class="tabs" role="tablist" aria-label="Who is reading">
@@ -84,31 +91,31 @@
           <div class="cards">
             <article class="card">
               <a class="shot" href="examples/checkers/"><img src="media/checkers.gif" alt="Turkish checkers: a capture chain and a new king" loading="lazy" /></a>
-              <h4>Checkers</h4>
+              <h4>Checkers <a class="pkg" href="https://www.npmjs.com/package/@ymir-js/checkers">@ymir-js/checkers</a></h4>
               <p>Turkish and International, against the computer.</p>
               <div class="card-links"><a class="play" href="examples/checkers/">Play</a><a href="https://github.com/aykutkardas/ymir-js#checkers">API</a></div>
             </article>
             <article class="card">
               <a class="shot" href="examples/chess/"><img src="media/chess.gif" alt="Chess: Morphy's Opera Game" loading="lazy" /></a>
-              <h4>Chess</h4>
+              <h4>Chess <a class="pkg" href="https://www.npmjs.com/package/@ymir-js/chess">@ymir-js/chess</a></h4>
               <p>Every rule, PGN and FEN, and a built-in engine.</p>
               <div class="card-links"><a class="play" href="examples/chess/">Play</a><a href="https://github.com/aykutkardas/ymir-js#chess">API</a></div>
             </article>
             <article class="card">
               <a class="shot" href="examples/go/"><img src="media/go.gif" alt="Go on 9x9, ending with the score" loading="lazy" /></a>
-              <h4>Go</h4>
+              <h4>Go <a class="pkg" href="https://www.npmjs.com/package/@ymir-js/go">@ymir-js/go</a></h4>
               <p>9×9 to 19×19, ko and superko, scoring.</p>
               <div class="card-links"><a class="play" href="examples/go/">Play</a><a href="https://github.com/aykutkardas/ymir-js#go">API</a></div>
             </article>
             <article class="card">
               <a class="shot" href="examples/match3/"><img src="media/match3.gif" alt="Match 3: swaps and cascades" loading="lazy" /></a>
-              <h4>Match 3</h4>
+              <h4>Match 3 <a class="pkg" href="https://www.npmjs.com/package/@ymir-js/match3">@ymir-js/match3</a></h4>
               <p>Swaps, cascades step by step, hints.</p>
               <div class="card-links"><a class="play" href="examples/match3/">Play</a><a href="https://github.com/aykutkardas/ymir-js#match-3">API</a></div>
             </article>
           </div>
 
-          <h3 class="group">Built on the core <span>example apps that write their own rules on the core; read their source</span></h3>
+          <h3 class="group">Built on <code>@ymir-js/core</code> <span>example apps that write their own rules on the core; read their source</span></h3>
           <div class="cards">
             <article class="card">
               <a class="shot" href="examples/hnefatafl/"><img src="media/hnefatafl.gif" alt="Hnefatafl: the king escapes to a corner" loading="lazy" /></a>
@@ -149,13 +156,118 @@
           </div>
         </section>
 
+        <section id="packages" class="wrap block">
+          <div class="block-head">
+            <h2>Packages</h2>
+            <p>
+              Install only what you use. Every game package depends on <code>@ymir-js/core</code>, and
+              <code>ymir-js</code> bundles them all. All at v%VERSION%, released together.
+            </p>
+          </div>
+          <div class="pkg-grid">
+            <article class="pkg-card">
+              <div class="pkg-head">
+                <h3><a href="https://www.npmjs.com/package/@ymir-js/core">@ymir-js/core</a></h3>
+                <span class="pkg-for">Your own games</span>
+              </div>
+              <p>The board everything is built on: squares and items, movement patterns, directions, rays, reach and paths, snapshots.</p>
+              <div class="copy-row">
+                <code>npm install @ymir-js/core</code>
+                <button type="button" class="copy" data-copy="npm install @ymir-js/core">Copy</button>
+              </div>
+              <div class="pkg-links">
+                <a href="https://www.npmjs.com/package/@ymir-js/core">npm</a>
+                <a href="https://github.com/aykutkardas/ymir-js/tree/main/packages/core">Source</a>
+              </div>
+            </article>
+            <article class="pkg-card">
+              <div class="pkg-head">
+                <h3><a href="https://www.npmjs.com/package/@ymir-js/checkers">@ymir-js/checkers</a></h3>
+                <span class="pkg-for">CheckersGame</span>
+              </div>
+              <p>Turkish and International checkers: full rules, capture chains, draws, undo and PDN notation.</p>
+              <div class="copy-row">
+                <code>npm install @ymir-js/checkers</code>
+                <button type="button" class="copy" data-copy="npm install @ymir-js/checkers">Copy</button>
+              </div>
+              <div class="pkg-links">
+                <a href="https://www.npmjs.com/package/@ymir-js/checkers">npm</a>
+                <a href="https://github.com/aykutkardas/ymir-js/tree/main/packages/checkers">Source</a>
+              </div>
+            </article>
+            <article class="pkg-card">
+              <div class="pkg-head">
+                <h3><a href="https://www.npmjs.com/package/@ymir-js/chess">@ymir-js/chess</a></h3>
+                <span class="pkg-for">ChessGame</span>
+              </div>
+              <p>Every rule, FEN / SAN / UCI / PGN, perft-verified move generation and a small engine.</p>
+              <div class="copy-row">
+                <code>npm install @ymir-js/chess</code>
+                <button type="button" class="copy" data-copy="npm install @ymir-js/chess">Copy</button>
+              </div>
+              <div class="pkg-links">
+                <a href="https://www.npmjs.com/package/@ymir-js/chess">npm</a>
+                <a href="https://github.com/aykutkardas/ymir-js/tree/main/packages/chess">Source</a>
+              </div>
+            </article>
+            <article class="pkg-card">
+              <div class="pkg-head">
+                <h3><a href="https://www.npmjs.com/package/@ymir-js/go">@ymir-js/go</a></h3>
+                <span class="pkg-for">GoGame</span>
+              </div>
+              <p>Captures, ko and superko, pass and resign, dead stones, area and territory scoring.</p>
+              <div class="copy-row">
+                <code>npm install @ymir-js/go</code>
+                <button type="button" class="copy" data-copy="npm install @ymir-js/go">Copy</button>
+              </div>
+              <div class="pkg-links">
+                <a href="https://www.npmjs.com/package/@ymir-js/go">npm</a>
+                <a href="https://github.com/aykutkardas/ymir-js/tree/main/packages/go">Source</a>
+              </div>
+            </article>
+            <article class="pkg-card">
+              <div class="pkg-head">
+                <h3><a href="https://www.npmjs.com/package/@ymir-js/match3">@ymir-js/match3</a></h3>
+                <span class="pkg-for">Match3Board</span>
+              </div>
+              <p>Swaps, matches, gravity, refills and cascades reported step by step.</p>
+              <div class="copy-row">
+                <code>npm install @ymir-js/match3</code>
+                <button type="button" class="copy" data-copy="npm install @ymir-js/match3">Copy</button>
+              </div>
+              <div class="pkg-links">
+                <a href="https://www.npmjs.com/package/@ymir-js/match3">npm</a>
+                <a href="https://github.com/aykutkardas/ymir-js/tree/main/packages/match3">Source</a>
+              </div>
+            </article>
+            <article class="pkg-card all">
+              <div class="pkg-head">
+                <h3><a href="https://www.npmjs.com/package/ymir-js">ymir-js</a></h3>
+                <span class="pkg-for">Everything</span>
+              </div>
+              <p>All of the above in one install, re-exported under the same names.</p>
+              <div class="copy-row">
+                <code>npm install ymir-js</code>
+                <button type="button" class="copy" data-copy="npm install ymir-js">Copy</button>
+              </div>
+              <div class="pkg-links">
+                <a href="https://www.npmjs.com/package/ymir-js">npm</a>
+                <a href="https://github.com/aykutkardas/ymir-js/tree/main/packages/ymir-js">Source</a>
+              </div>
+            </article>
+          </div>
+        </section>
+
         <section class="wrap block">
           <div class="block-head">
             <h2>Using it</h2>
             <p>Plain classes: read the state, call a method, draw it however you like.</p>
           </div>
           <div class="split">
-            <pre class="code"><code data-lang="js">import { ChessGame, GoGame, CheckersGame } from 'ymir-js';
+            <pre class="code"><code data-lang="js">import { ChessGame } from '@ymir-js/chess';
+import { GoGame } from '@ymir-js/go';
+import { CheckersGame } from '@ymir-js/checkers';
+// (or import them all from 'ymir-js')
 
 const chess = new ChessGame();
 chess.move('e4');
@@ -213,7 +325,9 @@ checkers.getLegalMoves(); // [{ from, path, captured }, ...]</code></pre>
             <p>Paste it into your agent, then describe the game you want.</p>
           </div>
           <div class="prompt">
-            <pre><code id="agent-prompt">Use the ymir-js library (npm install ymir-js) for the board and the rules.
+            <pre><code id="agent-prompt">Use ymir-js for the board and the rules: npm install ymir-js, or only the
+packages needed (@ymir-js/core for a custom game; @ymir-js/checkers,
+@ymir-js/chess, @ymir-js/go or @ymir-js/match3 for those games).
 Before writing code, read https://aykutkardas.github.io/ymir-js/llms.txt,
 and https://aykutkardas.github.io/ymir-js/llms-full.txt for exact types.
 Coordinates are "row|col" strings. Use the built-in game classes
@@ -231,7 +345,7 @@ game, build on Board and Item from the core, as the custom games do.</code></pre
             <li><strong>Coordinates</strong>Strings <code>"row|col"</code>, from 0, row 0 at the top. Chess also takes <code>"e4"</code>.</li>
             <li><strong>Validated moves</strong><code>play</code> and <code>move</code> throw on an illegal move; ask <code>getLegalMoves()</code> first.</li>
             <li><strong>State</strong>Games report <code>getStatus()</code> and save with <code>toJSON()</code> / <code>fromJSON()</code>.</li>
-            <li><strong>Packages</strong><code>ymir-js</code> re-exports <code>@ymir-js/core</code>, <code>checkers</code>, <code>chess</code>, <code>go</code> and <code>match3</code>.</li>
+            <li><strong>Packages</strong><code>@ymir-js/core</code> plus one package per game (<code>checkers</code>, <code>chess</code>, <code>go</code>, <code>match3</code>); <code>ymir-js</code> re-exports them all under the same names.</li>
           </ul>
           <p class="sources">
             Source of truth: the <a href="https://github.com/aykutkardas/ymir-js/blob/main/README.md">README</a>,
