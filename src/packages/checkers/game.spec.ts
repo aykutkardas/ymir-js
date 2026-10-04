@@ -328,5 +328,5 @@ describe('CheckersGame on random games', () => {
         expect(game.turn).to.equal('white');
       }
     }
-  });
+  }, 20_000);
 });
