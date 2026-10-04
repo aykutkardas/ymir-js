@@ -446,4 +446,16 @@ describe('Core Board Available Columns', () => {
 
     expect(availableColumn).to.deep.equal(['0|0', '0|2', '2|0', '2|2']);
   });
+
+  it('getAvailableColumns keeps direction order and repeats', () => {
+    const board = new Board({ rows: 3, cols: 3 });
+    const columns = board.getAvailableColumns('1|1', {
+      top: true,
+      linear: true,
+      angular: true,
+      stepCount: 2,
+    });
+
+    expect(columns).to.deep.equal(['0|1', '0|1', '2|1', '1|0', '1|2', '0|0', '0|2', '2|0', '2|2']);
+  });
 });
