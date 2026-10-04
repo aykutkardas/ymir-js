@@ -39,6 +39,7 @@ for (const file of files) {
 }
 
 execFileSync('git', ['commit', '-am', next], { cwd: root, stdio: 'inherit' });
-execFileSync('git', ['tag', `v${next}`], { cwd: root, stdio: 'inherit' });
+// An annotated tag, so `git push --follow-tags` pushes it.
+execFileSync('git', ['tag', '-a', `v${next}`, '-m', next], { cwd: root, stdio: 'inherit' });
 
 console.log(`${current} → ${next}. Push with: git push --follow-tags`);
