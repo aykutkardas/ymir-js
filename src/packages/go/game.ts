@@ -73,7 +73,10 @@ class GoGame {
 
   private readonly firstTurn: GoColor;
 
-  private history: { move: GoMove; before: GoPosition }[] = [];
+  // `beforeKey` is cached so ko checks do not re-serialise every position.
+  private history: { move: GoMove; before: GoPosition; beforeKey: string }[] = [];
+
+  private readonly setupKey: string;
 
   private resignedBy: GoColor | null = null;
 
@@ -92,6 +95,7 @@ class GoGame {
     this.komi = komi;
     this.ko = ko;
     this.setup = setup;
+    this.setupKey = positionKey(setup);
     this.firstTurn = turn ?? (Object.keys(setup).length ? 'white' : 'black');
     this.turn = this.firstTurn;
   }
@@ -149,14 +153,13 @@ class GoGame {
     const after = positionKey(this.board.getPosition());
     this.board.setPosition(before);
 
-    const forbidden =
+    const repeats =
       this.ko === 'simple'
-        ? this.history.length
-          ? [positionKey(this.history[this.history.length - 1].before)]
-          : []
-        : [positionKey(this.setup), ...this.history.map(({ before: b }) => positionKey(b))];
+        ? this.history[this.history.length - 1]?.beforeKey === after
+        : after === this.setupKey ||
+          this.history.some(({ beforeKey }) => beforeKey === after);
 
-    if (forbidden.includes(after)) return { legal: false, reason: 'ko' };
+    if (repeats) return { legal: false, reason: 'ko' };
 
     return result;
   }
@@ -181,7 +184,7 @@ class GoGame {
     const move: GoMove = { type: 'play', color: this.turn, coord, captured };
 
     this.captures[this.turn] += captured.length;
-    this.history.push({ move, before });
+    this.history.push({ move, before, beforeKey: positionKey(before) });
     this.turn = otherColor(this.turn);
 
     return move;
@@ -192,7 +195,8 @@ class GoGame {
 
     const move: GoMove = { type: 'pass', color: this.turn };
 
-    this.history.push({ move, before: this.board.getPosition() });
+    const before = this.board.getPosition();
+    this.history.push({ move, before, beforeKey: positionKey(before) });
     this.turn = otherColor(this.turn);
 
     return move;
