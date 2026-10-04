@@ -99,6 +99,44 @@ board.getBoardMatrix();
 
 ---
 
+## Checkers
+
+`Checkers.Turkish.Board` and `Checkers.International.Board` know the rules of each game: mandatory capture, capture chains, taking the most pieces, flying kings and promotion.
+
+```js
+import { Checkers } from 'ymir-js';
+
+const board = new Checkers.Turkish.Board().init();
+
+// Legal moves for a color. If a capture is possible, only the chains that
+// take the most pieces are returned.
+const moves = board.getLegalMoves('black');
+// => [{ from: '5|0', path: ['4|0'], captured: [] }, ...]
+
+// Plays a whole move: removes captured pieces and promotes at the end.
+board.playMove(moves[0]);
+
+// Every capture chain one piece can make.
+board.getCaptureSequences('4|0');
+
+// Moves of one piece, under the same rules (e.g. to continue a chain).
+board.getLegalMoves('white', '2|3');
+
+// A simple computer player. onMove is called once per jump.
+board.autoPlay('white', { onSelect, onMove });
+```
+
+| Rule                          | Turkish                  | International             |
+| ----------------------------- | ------------------------ | ------------------------- |
+| Board                         | 8x8, 16 pieces each      | 10x10, 20 pieces each     |
+| Men move                      | forward and sideways     | diagonally forward        |
+| Men capture                   | forward and sideways     | diagonally, also backward |
+| Kings                         | fly along rows/columns   | fly along diagonals       |
+| Captured pieces are removed   | one by one, during a jump | after the whole move     |
+| Taking the most pieces        | mandatory                | mandatory                 |
+
+---
+
 ## Examples
 
 Games built with ymir-js live in [`examples/`](examples):

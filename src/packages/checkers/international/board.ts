@@ -1,4 +1,4 @@
-import { BoardConfig } from '../../core/board.js';
+import { BoardConfig, Direction } from '../../core/board.js';
 import CheckersBoard, { CheckersColorType } from '../board.js';
 import Item from './item.js';
 
@@ -23,6 +23,11 @@ class InternationalCheckersBoard extends CheckersBoard {
 
   constructor(config: BoardConfig = { x: 10, y: 10 }) {
     super(config);
+  }
+
+  // Men move forward only, but capture both forward and backward.
+  protected getCaptureDirections(): Direction[] {
+    return ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'];
   }
 
   protected createItem(item: { color: CheckersColorType; king?: boolean }) {

@@ -23,7 +23,46 @@ export type DefendCoord = { coord: string; inDangerCoord: string };
 
 export type AutoPlayCallbacks = {
   onSelect?: (coord: string) => void;
+  /** Called once per step; a capture chain calls it for every jump. */
   onMove?: (fromCoord: string, toCoord: string) => void;
+};
+
+export type CheckersMove = {
+  from: string;
+  /** Squares the piece lands on, in order; the last one is where it ends. */
+  path: string[];
+  /** Captured pieces, in the order they are jumped. Empty for a plain move. */
+  captured: string[];
+};
+
+const DELTAS: Record<Direction, [number, number]> = {
+  top: [-1, 0],
+  bottom: [1, 0],
+  left: [0, -1],
+  right: [0, 1],
+  topLeft: [-1, -1],
+  topRight: [-1, 1],
+  bottomLeft: [1, -1],
+  bottomRight: [1, 1],
+};
+
+const OPPOSITE: Record<Direction, Direction> = {
+  top: 'bottom',
+  bottom: 'top',
+  left: 'right',
+  right: 'left',
+  topLeft: 'bottomRight',
+  topRight: 'bottomLeft',
+  bottomLeft: 'topRight',
+  bottomRight: 'topLeft',
+};
+
+const LINEAR: Direction[] = ['top', 'bottom', 'left', 'right'];
+const ANGULAR: Direction[] = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'];
+
+const step = (coord: string, [dRow, dCol]: [number, number]) => {
+  const [rowId, colId] = parseCoord(coord);
+  return `${rowId + dRow}|${colId + dCol}`;
 };
 
 const getEnemyColor = (color: CheckersColorType): CheckersColorType =>
@@ -53,6 +92,33 @@ abstract class CheckersBoard extends Board<CheckersItemType> {
 
   constructor(config: BoardConfig) {
     super(config);
+  }
+
+  /** Directions a piece may capture in. By default, the ones it moves in. */
+  protected getCaptureDirections(item: CheckersItemType): Direction[] {
+    const { movement } = item;
+    const directions = new Set<Direction>(
+      (Object.keys(DELTAS) as Direction[]).filter((d) => movement[d])
+    );
+
+    if (movement.linear) LINEAR.forEach((d) => directions.add(d));
+    if (movement.angular) ANGULAR.forEach((d) => directions.add(d));
+
+    return [...directions];
+  }
+
+  /**
+   * Whether captured pieces leave the board as soon as they are jumped
+   * (Turkish) or only once the whole move is over (International). When
+   * they stay, they block the way and cannot be jumped twice.
+   */
+  protected removesCapturedImmediately(): boolean {
+    return false;
+  }
+
+  /** Row a piece of this color is promoted on. */
+  getKingRowId(color: CheckersColorType): number {
+    return color === CHECKERS_WHITE ? this.config.x - 1 : 0;
   }
 
   init() {
@@ -213,6 +279,135 @@ abstract class CheckersBoard extends Board<CheckersItemType> {
     return [...new Set(keys.flatMap((key) => availableColumns[key]))];
   };
 
+  /**
+   * Every complete capture chain the piece on `coord` can make. A chain
+   * goes on while another capture is possible, so each result ends on a
+   * square with nothing left to take.
+   */
+  getCaptureSequences = (coord: string): CheckersMove[] => {
+    const item = this.getItem(coord);
+
+    if (!item) return [];
+
+    const immediate = this.removesCapturedImmediately();
+    const directions = this.getCaptureDirections(item);
+    const sequences: CheckersMove[] = [];
+
+    const isFree = (square: string, captured: string[]) =>
+      this.isExistCoord(square) &&
+      (square === coord ||
+        !!this.isEmpty(square) ||
+        (immediate && captured.includes(square)));
+
+    const walk = (
+      at: string,
+      path: string[],
+      captured: string[],
+      lastDirection?: Direction
+    ) => {
+      let canContinue = false;
+
+      for (const direction of directions) {
+        // With pieces removed on the spot, a king could otherwise jump
+        // back over the square it just cleared.
+        if (immediate && lastDirection === OPPOSITE[direction]) continue;
+
+        const delta = DELTAS[direction];
+        let target = step(at, delta);
+
+        // A king may capture from a distance; a man only next to it.
+        while (item.king && isFree(target, captured)) {
+          target = step(target, delta);
+        }
+
+        const targetItem = this.getItem(target);
+
+        if (
+          !targetItem ||
+          targetItem.color === item.color ||
+          captured.includes(target)
+        ) {
+          continue;
+        }
+
+        let landing = step(target, delta);
+
+        while (isFree(landing, captured)) {
+          canContinue = true;
+          walk(landing, [...path, landing], [...captured, target], direction);
+
+          if (!item.king) break;
+          landing = step(landing, delta);
+        }
+      }
+
+      if (!canContinue && captured.length) {
+        sequences.push({ from: coord, path, captured });
+      }
+    };
+
+    walk(coord, [], []);
+
+    return sequences;
+  };
+
+  /**
+   * Legal moves for a color. Capturing is mandatory, and among captures
+   * only the chains that take the most pieces are allowed. Pass
+   * `fromCoord` to get the moves of a single piece under the same rules.
+   */
+  getLegalMoves = (
+    color: CheckersColorType,
+    fromCoord?: string
+  ): CheckersMove[] => {
+    const origins = Object.entries(this.board)
+      .filter(([, { item }]) => item?.color === color)
+      .map(([coord]) => coord);
+
+    const captures = origins.flatMap((origin) =>
+      this.getCaptureSequences(origin)
+    );
+
+    if (captures.length) {
+      const most = Math.max(...captures.map((move) => move.captured.length));
+
+      return captures.filter(
+        (move) =>
+          move.captured.length === most &&
+          (!fromCoord || move.from === fromCoord)
+      );
+    }
+
+    return origins
+      .filter((origin) => !fromCoord || origin === fromCoord)
+      .flatMap((origin) =>
+        this.getAvailableColumns(origin, this.getItem(origin)!.movement).map(
+          (to) => ({ from: origin, path: [to], captured: [] })
+        )
+      );
+  };
+
+  /**
+   * Plays a whole move: the piece ends on the last square of the path,
+   * captured pieces are removed and a man that ends on its king row is
+   * promoted.
+   */
+  playMove = (move: CheckersMove): this => {
+    const item = this.getItem(move.from);
+    const to = move.path[move.path.length - 1];
+
+    if (!item || !to) return this;
+
+    this.moveItem(move.from, to);
+    move.captured.forEach(this.removeItem);
+
+    if (!item.king && parseCoord(to)[0] === this.getKingRowId(item.color)) {
+      item.setKing();
+    }
+
+    return this;
+  };
+
   autoPlay = (
     color: CheckersColorType,
     { onSelect, onMove }: AutoPlayCallbacks = {}
@@ -222,12 +417,18 @@ abstract class CheckersBoard extends Board<CheckersItemType> {
       onMove?.(fromCoord, toCoord);
     };
 
-    // 1. Capture.
-    const [attack] = Object.entries(this.getAttackCoordsByColor(color));
+    // 1. Capture, taking as many pieces as the rules require.
+    const [capture] = this.getLegalMoves(color).filter(
+      (move) => move.captured.length
+    );
 
-    if (attack) {
-      const [origin, [{ coord }]] = attack;
-      return play(origin, coord);
+    if (capture) {
+      onSelect?.(capture.from);
+      [capture.from, ...capture.path].reduce((from, to) => {
+        onMove?.(from, to);
+        return to;
+      });
+      return;
     }
 
     // 2. Defend a piece that is about to be captured.
@@ -244,7 +445,7 @@ abstract class CheckersBoard extends Board<CheckersItemType> {
     ).flat();
 
     // 3. Promote a piece.
-    const kingRowId = color === CHECKERS_WHITE ? this.config.x - 1 : 0;
+    const kingRowId = this.getKingRowId(color);
 
     for (const [origin, moves] of Object.entries(normalMoves)) {
       const [rowId] = parseCoord(origin);

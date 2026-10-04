@@ -24,6 +24,11 @@ class TurkishCheckersBoard extends CheckersBoard {
     super(config);
   }
 
+  // Turkish draughts takes captured pieces off the board one by one.
+  protected removesCapturedImmediately() {
+    return true;
+  }
+
   protected createItem(item: { color: CheckersColorType; king?: boolean }) {
     return new Item(item);
   }
