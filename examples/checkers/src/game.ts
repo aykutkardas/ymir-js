@@ -1,4 +1,4 @@
-import { InternationalBoard, TurkishBoard } from 'ymir-js';
+import { CheckersGame, type CheckersBoard } from 'ymir-js';
 
 export type Variant = 'turkish' | 'international';
 export type Color = 'white' | 'black';
@@ -21,6 +21,8 @@ export const VARIANTS: Record<
       'Men move one square forward or sideways and capture the same way.',
       'Kings fly along rows and columns.',
       'Captured pieces leave the board one by one.',
+      'A man that reaches the far row mid-capture keeps capturing as a man.',
+      'One piece each is a draw.',
     ],
   },
   international: {
@@ -31,6 +33,7 @@ export const VARIANTS: Record<
       'Men move one square diagonally forward and capture in all four diagonals.',
       'Kings fly along diagonals.',
       'Captured pieces leave the board when the move ends.',
+      'A lone king draws against up to three pieces after 5 or 16 moves each.',
     ],
   },
 };
@@ -43,15 +46,11 @@ export const SHARED_RULES = [
 export const HUMAN: Color = 'black';
 export const COMPUTER: Color = 'white';
 
-export const other = (color: Color): Color =>
-  color === 'white' ? 'black' : 'white';
+// Both variants start with white, so the computer opens.
+export const createGame = (variant: Variant) => CheckersGame.create(variant);
 
-export const createBoard = (variant: Variant) =>
-  variant === 'turkish'
-    ? new TurkishBoard().init()
-    : new InternationalBoard().init();
-
-export type Board = ReturnType<typeof createBoard>;
+export type Game = ReturnType<typeof createGame>;
+export type Board = CheckersBoard;
 
 export const coordOf = (row: number, col: number) => `${row}|${col}`;
 

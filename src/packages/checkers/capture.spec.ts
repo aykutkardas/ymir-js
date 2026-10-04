@@ -75,6 +75,24 @@ describe('Turkish captures', () => {
     expect(most).to.equal(1);
   });
 
+  it('a man reaching the last row mid-chain keeps capturing as a man', () => {
+    // White man jumps to the last row (7), then must take sideways along it.
+    // A king could also take 7|5 from a distance, a man cannot.
+    const board = turkish({
+      '5|1': ['white'],
+      '6|1': ['black'],
+      '7|2': ['black'],
+      '7|5': ['black'],
+    });
+
+    expect(board.getCaptureSequences('5|1')).to.deep.equal([
+      { from: '5|1', path: ['7|1', '7|3'], captured: ['6|1', '7|2'] },
+    ]);
+
+    board.playMove(board.getLegalMoves('white')[0]);
+    expect(board.getItem('7|3')?.king).to.equal(true);
+  });
+
   it('the chain that captures the most pieces is mandatory', () => {
     const board = turkish({
       '2|0': ['white'],

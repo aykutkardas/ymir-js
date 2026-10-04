@@ -26,6 +26,14 @@ export type AutoPlayCallbacks = {
   onMove?: (fromCoord: string, toCoord: string) => void;
 };
 
+/** A piece as one letter: `w`/`b` for men, `W`/`B` for kings. */
+export type PieceCode = 'w' | 'b' | 'W' | 'B';
+
+/** Every piece on the board, by coord. Empty squares are left out. */
+export type CheckersPosition = Record<string, PieceCode>;
+
+export type CheckersVariant = 'turkish' | 'international';
+
 export type CheckersMove = {
   from: string;
   /** Squares the piece lands on, in order; the last one is where it ends. */
@@ -81,6 +89,8 @@ const unique = (values: string[]) => [...new Set(values)];
  * else, including the older single-step methods, is built on top of them.
  */
 abstract class CheckersBoard extends Board<CheckersItemType> {
+  abstract readonly variant: CheckersVariant;
+
   protected abstract readonly whiteItemCoords: string[];
 
   protected abstract readonly blackItemCoords: string[];
@@ -140,6 +150,41 @@ abstract class CheckersBoard extends Board<CheckersItemType> {
     Object.keys(this.board).forEach(this.removeItem);
 
     this.init();
+  }
+
+  /** The pieces on the board as `{ coord: 'w' | 'b' | 'W' | 'B' }`. */
+  getPosition(): CheckersPosition {
+    const position: CheckersPosition = {};
+
+    Object.entries(this.board).forEach(([coord, { item }]) => {
+      if (!item) return;
+
+      const letter = item.color === CHECKERS_WHITE ? 'w' : 'b';
+      position[coord] = (item.king ? letter.toUpperCase() : letter) as PieceCode;
+    });
+
+    return position;
+  }
+
+  /** Replaces every piece with the ones in `position`. */
+  setPosition(position: CheckersPosition): this {
+    Object.keys(this.board).forEach(this.removeItem);
+
+    Object.entries(position).forEach(([coord, code]) => {
+      if (!this.isExistCoord(coord)) {
+        throw new Error(`Square ${coord} is not on the board`);
+      }
+
+      this.setItem(
+        coord,
+        this.createItem({
+          color: code.toLowerCase() === 'w' ? CHECKERS_WHITE : CHECKERS_BLACK,
+          king: code === 'W' || code === 'B',
+        })
+      );
+    });
+
+    return this;
   }
 
   getItemsByColor(color: CheckersColorType): CheckersItemType[] {
