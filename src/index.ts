@@ -52,6 +52,7 @@ export type {
   PieceCode,
 } from './packages/checkers/board.js';
 export type {
+  DrawReason,
   DrawRules,
   GameOptions,
   GameStatus,

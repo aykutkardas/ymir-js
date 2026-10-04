@@ -21,6 +21,8 @@ export const VARIANTS: Record<
       'Men move one square forward or sideways and capture the same way.',
       'Kings fly along rows and columns.',
       'Captured pieces leave the board one by one.',
+      'A man that reaches the far row mid-capture keeps capturing as a man.',
+      'One piece each is a draw.',
     ],
   },
   international: {
@@ -31,6 +33,7 @@ export const VARIANTS: Record<
       'Men move one square diagonally forward and capture in all four diagonals.',
       'Kings fly along diagonals.',
       'Captured pieces leave the board when the move ends.',
+      'A lone king draws against up to three pieces after 5 or 16 moves each.',
     ],
   },
 };

@@ -138,7 +138,11 @@ describe('CheckersGame', () => {
   });
 
   it('a side with no legal moves loses', () => {
-    const board = new TurkishCheckersBoard().setPosition({ '3|3': 'w', '4|3': 'b' });
+    const board = new TurkishCheckersBoard().setPosition({
+      '3|3': 'w',
+      '1|7': 'w',
+      '4|3': 'b',
+    });
     const game = new CheckersGame(board, { turn: 'white' });
 
     game.play({ from: '3|3', path: ['5|3'] });
@@ -153,8 +157,9 @@ describe('CheckersGame', () => {
   });
 
   it('threefold repetition is a draw', () => {
+    // One piece each would already be a Turkish draw, so turn that rule off.
     const board = new TurkishCheckersBoard().setPosition({ '0|0': 'W', '7|7': 'B' });
-    const game = new CheckersGame(board);
+    const game = new CheckersGame(board, { drawRules: { onePieceEach: false } });
     const shuffle = () => {
       game.play({ from: '0|0', path: ['0|1'] });
       game.play({ from: '7|7', path: ['7|6'] });
@@ -174,10 +179,10 @@ describe('CheckersGame', () => {
   it('too many king moves without a capture is a draw', () => {
     const board = new TurkishCheckersBoard().setPosition({ '0|0': 'W', '7|7': 'B' });
     const game = new CheckersGame(board, {
-      drawRules: { kingMoves: 4, repetition: false },
+      drawRules: { kingMoves: 4, repetition: false, onePieceEach: false },
     });
 
-    expect(game.drawRules).to.deep.equal({ kingMoves: 4, repetition: false });
+    expect(game.drawRules).to.deep.include({ kingMoves: 4, repetition: false });
 
     game.play({ from: '0|0', path: ['0|1'] });
     game.play({ from: '7|7', path: ['7|6'] });
@@ -191,7 +196,88 @@ describe('CheckersGame', () => {
     expect(CheckersGame.create('international').drawRules).to.deep.equal({
       repetition: 3,
       kingMoves: 50,
+      loneKing: true,
+      onePieceEach: false,
     });
+  });
+
+  it('uses the Turkish draw rules for Turkish by default', () => {
+    expect(CheckersGame.create('turkish').drawRules).to.deep.equal({
+      repetition: 3,
+      kingMoves: false,
+      loneKing: false,
+      onePieceEach: true,
+    });
+  });
+
+  it('Turkish: one piece each is a draw, even king against man', () => {
+    const board = new TurkishCheckersBoard().setPosition({
+      '2|2': 'w',
+      '1|7': 'w',
+      '3|2': 'b',
+      '4|6': 'B',
+    });
+    const game = new CheckersGame(board);
+
+    expect(game.getStatus().state).to.equal('playing');
+
+    game.play({ from: '2|2', path: ['4|2'] });
+    expect(game.getStatus().state).to.equal('playing');
+
+    // Black's king takes one white piece; one piece each remains.
+    const [capture] = game.getLegalMoves();
+    expect(capture.captured).to.have.length(1);
+    game.play(capture);
+
+    expect(game.getStatus()).to.deep.equal({
+      state: 'draw',
+      reason: 'one-piece-each',
+    });
+  });
+
+  // White shuffles one king between 0|1 and 1|0, black its king between
+  // 9|0 and 8|1. None of these squares share a diagonal, so nothing can be
+  // captured and the material stays the same.
+  const shuffleKings = (game: CheckersGame, max: number) => {
+    const white = [{ from: '0|1', path: ['1|0'] }, { from: '1|0', path: ['0|1'] }];
+    const black = [{ from: '9|0', path: ['8|1'] }, { from: '8|1', path: ['9|0'] }];
+    let plies = 0;
+
+    while (game.getStatus().state === 'playing' && plies < max) {
+      const round = Math.floor(plies / 2) % 2;
+      game.play(game.turn === 'white' ? white[round] : black[round]);
+      plies += 1;
+    }
+
+    return plies;
+  };
+
+  it('International: a lone king against two kings draws after 5 moves each', () => {
+    const board = new InternationalCheckersBoard().setPosition({
+      '0|1': 'W',
+      '0|3': 'W',
+      '9|0': 'B',
+    });
+    const game = new CheckersGame(board, { drawRules: { repetition: false } });
+
+    expect(shuffleKings(game, 40)).to.equal(10);
+    expect(game.getStatus()).to.deep.equal({ state: 'draw', reason: 'lone-king' });
+
+    game.undo();
+    expect(game.getStatus().state).to.equal('playing');
+  });
+
+  it('International: a lone king against three pieces draws after 16 moves each', () => {
+    const board = new InternationalCheckersBoard().setPosition({
+      '0|1': 'W',
+      '0|3': 'W',
+      '0|5': 'w',
+      '9|0': 'B',
+    });
+    const game = new CheckersGame(board, { drawRules: { repetition: false } });
+
+    expect(shuffleKings(game, 60)).to.equal(32);
+    expect(game.getStatus()).to.deep.equal({ state: 'draw', reason: 'lone-king' });
   });
 
   it('saves and restores a game', () => {

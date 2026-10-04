@@ -17,6 +17,13 @@ import { play, setMuted } from './sound';
 
 const STEP_MS = 260;
 
+const DRAW_MESSAGES = {
+  repetition: 'Draw — the same position came up three times',
+  'king-moves': 'Draw — 25 king moves each without a capture',
+  'lone-king': 'Draw — a lone king held out long enough',
+  'one-piece-each': 'Draw — one piece each',
+};
+
 type State = {
   game: Game;
   // Bumped after every change to the game so the UI re-renders.
@@ -173,9 +180,7 @@ export function App() {
         ? 'You win'
         : 'The computer wins'
       : gameStatus.state === 'draw'
-        ? gameStatus.reason === 'repetition'
-          ? 'Draw — the same position came up three times'
-          : 'Draw — too many king moves without a capture'
+        ? DRAW_MESSAGES[gameStatus.reason]
         : turn === HUMAN
       ? progress.length
         ? 'Keep capturing'

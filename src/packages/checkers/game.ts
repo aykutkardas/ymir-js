@@ -17,12 +17,27 @@ export type DrawRules = {
    * kings moved and nothing was captured.
    */
   kingMoves: number | false;
+  /**
+   * FMJD endgame rule. One side has a single king; the other has three
+   * pieces including a king (draw after 16 moves each), or two pieces or
+   * fewer including a king (draw after 5 moves each). Counting starts when
+   * that material first appears and restarts when a piece is captured.
+   */
+  loneKing: boolean;
+  /** Turkish "gayyım": draw as soon as each side has a single piece. */
+  onePieceEach: boolean;
 };
+
+export type DrawReason =
+  | 'repetition'
+  | 'king-moves'
+  | 'lone-king'
+  | 'one-piece-each';
 
 export type GameStatus =
   | { state: 'playing' }
   | { state: 'won'; winner: CheckersColorType; reason: 'no-moves' }
-  | { state: 'draw'; reason: 'repetition' | 'king-moves' };
+  | { state: 'draw'; reason: DrawReason };
 
 export type GameOptions = {
   /** Side to move first. Both variants start with white. */
@@ -42,13 +57,45 @@ type Snapshot = {
   position: CheckersPosition;
   turn: CheckersColorType;
   kingMoves: number;
+  loneKingMoves: number;
 };
 
 const DEFAULT_DRAW_RULES: Record<CheckersVariant, DrawRules> = {
-  // FMJD: threefold repetition, and 25 moves each with only kings and no
-  // captures.
-  international: { repetition: 3, kingMoves: 50 },
-  turkish: { repetition: 3, kingMoves: false },
+  // FMJD: threefold repetition, 25 moves each with only kings and no
+  // captures, and the 16- and 5-move endgame rules.
+  international: {
+    repetition: 3,
+    kingMoves: 50,
+    loneKing: true,
+    onePieceEach: false,
+  },
+  // Threefold repetition, and a draw once each side has one piece left.
+  turkish: {
+    repetition: 3,
+    kingMoves: false,
+    loneKing: false,
+    onePieceEach: true,
+  },
+};
+
+/**
+ * Moves (both sides counted) after which the FMJD lone-king rule draws the
+ * position, or null if the rule does not apply to it.
+ */
+const loneKingLimit = (position: CheckersPosition): number | null => {
+  const pieces = Object.values(position);
+  const sides = (['w', 'b'] as const).map((color) => {
+    const own = pieces.filter((code) => code.toLowerCase() === color);
+    return { count: own.length, kings: own.filter((c) => c !== color).length };
+  });
+
+  for (const [lone, other] of [sides, [...sides].reverse()]) {
+    if (lone.count !== 1 || lone.kings !== 1 || other.kings < 1) continue;
+    if (other.count === 3) return 32;
+    if (other.count <= 2) return 10;
+  }
+
+  return null;
 };
 
 const other = (color: CheckersColorType): CheckersColorType =>
@@ -84,6 +131,8 @@ class CheckersGame<B extends CheckersBoard = CheckersBoard> {
   private future: CheckersMove[] = [];
 
   private kingMoves = 0;
+
+  private loneKingMoves = 0;
 
   private seen = new Map<string, number>();
 
@@ -140,7 +189,17 @@ class CheckersGame<B extends CheckersBoard = CheckersBoard> {
   }
 
   getStatus(): GameStatus {
-    const { repetition, kingMoves } = this.drawRules;
+    const { repetition, kingMoves, loneKing, onePieceEach } = this.drawRules;
+    const position = this.board.getPosition();
+    const pieces = Object.values(position);
+
+    if (
+      onePieceEach &&
+      pieces.filter((code) => code.toLowerCase() === 'w').length === 1 &&
+      pieces.filter((code) => code.toLowerCase() === 'b').length === 1
+    ) {
+      return { state: 'draw', reason: 'one-piece-each' };
+    }
 
     if (!this.board.getLegalMoves(this.turn).length) {
       return { state: 'won', winner: other(this.turn), reason: 'no-moves' };
@@ -152,6 +211,12 @@ class CheckersGame<B extends CheckersBoard = CheckersBoard> {
 
     if (kingMoves && this.kingMoves >= kingMoves) {
       return { state: 'draw', reason: 'king-moves' };
+    }
+
+    const limit = loneKing ? loneKingLimit(position) : null;
+
+    if (limit !== null && this.loneKingMoves >= limit) {
+      return { state: 'draw', reason: 'lone-king' };
     }
 
     return { state: 'playing' };
@@ -226,10 +291,15 @@ class CheckersGame<B extends CheckersBoard = CheckersBoard> {
     const item = this.board.getItem(move.from);
     const quietKingMove = !!item?.king && !move.captured.length;
 
+    const inLoneKingEnding = loneKingLimit(before.position) !== null;
+
     this.board.playMove(move);
     this.past.push({ move, before });
     this.turn = other(this.turn);
     this.kingMoves = quietKingMove ? this.kingMoves + 1 : 0;
+    // Count moves inside a lone-king ending; a capture starts a new count.
+    this.loneKingMoves =
+      inLoneKingEnding && !move.captured.length ? this.loneKingMoves + 1 : 0;
     this.countPosition(1);
   }
 
@@ -238,13 +308,15 @@ class CheckersGame<B extends CheckersBoard = CheckersBoard> {
       position: this.board.getPosition(),
       turn: this.turn,
       kingMoves: this.kingMoves,
+      loneKingMoves: this.loneKingMoves,
     };
   }
 
-  private restore({ position, turn, kingMoves }: Snapshot) {
+  private restore({ position, turn, kingMoves, loneKingMoves }: Snapshot) {
     this.board.setPosition(position);
     this.turn = turn;
     this.kingMoves = kingMoves;
+    this.loneKingMoves = loneKingMoves;
   }
 
   private timesSeen(): number {

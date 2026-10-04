@@ -150,7 +150,7 @@ game.redo();
 game.getStatus();
 // { state: 'playing' }
 // { state: 'won', winner: 'white', reason: 'no-moves' }
-// { state: 'draw', reason: 'repetition' | 'king-moves' }
+// { state: 'draw', reason: 'repetition' | 'king-moves' | 'lone-king' | 'one-piece-each' }
 
 const saved = game.toJSON();        // plain JSON: start position + moves
 CheckersGame.fromJSON(saved);       // replays the moves
@@ -160,10 +160,12 @@ To start from a custom position, set up a board and pass it in: `new CheckersGam
 
 **Draw rules** can be changed with `new CheckersGame(board, { drawRules })`:
 
-| Rule                                                      | International (FMJD) | Turkish |
-| --------------------------------------------------------- | -------------------- | ------- |
-| `repetition`: same position, same side to move, this many times | 3              | 3       |
-| `kingMoves`: moves in a row with only kings and no capture | 50 (25 each)        | off     |
+| Rule                                                                 | International (FMJD) | Turkish |
+| -------------------------------------------------------------------- | -------------------- | ------- |
+| `repetition`: same position, same side to move, this many times      | 3                    | 3       |
+| `kingMoves`: moves in a row with only kings and no capture           | 50 (25 each)         | off     |
+| `loneKing`: a lone king against 3 pieces incl. a king draws after 16 moves each; against 2 or fewer incl. a king, after 5 each | on | off |
+| `onePieceEach`: draw as soon as each side has one piece ("gayyım")   | off                  | on      |
 
 ### International notation
 
@@ -184,6 +186,7 @@ board.toPDNMove(move);             // '28x19x8'
 | Kings                         | fly along rows/columns   | fly along diagonals       |
 | Captured pieces are removed   | one by one, during a jump | after the whole move     |
 | Taking the most pieces        | mandatory                | mandatory                 |
+| Man reaching the far row mid-capture | keeps capturing as a man; crowned if the move ends there | same |
 
 ---
 
