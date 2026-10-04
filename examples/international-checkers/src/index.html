@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/vue@next"></script>
+    <title>International Checkers Example</title>
+    <link rel="stylesheet" href="./style.css">
+    </style>
+</head>
+
+<body>
+    <div class="social">
+        <a href="https://twitter.com/aykutkardas?ref_src=twsrc%5Etfw" class="twitter-follow-button"
+            data-show-count="false">Follow @aykutkardas</a>
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        <a class="github-button" href="https://github.com/aykutkardas/ymir-js" data-icon="octicon-star"
+            aria-label="Star aykutkardas/ymir-js on GitHub">Star</a>
+    </div>
+    <div id="app">
+        <div class="board">
+            <div class="row" v-for="row in boardMatrix">
+                <div class="column" v-for="{ id, item } in row" :data-coord="id"
+                    :data-available="availableColumns.includes(id)" @click="moveItem">
+                    <div class="item" :class="{ black: item.color === 'black'}" v-if="item" @click="selectItem"
+                        :data-coord="id" :data-color="item.color" :data-selected="item.selected" :data-king="item.king">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./dist/index.js"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+</body>
+
+</html>
