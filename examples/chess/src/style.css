@@ -196,22 +196,31 @@ h2 {
 }
 
 .piece {
+  display: grid;
   font-size: min(9.5vw, 56px);
   line-height: 1;
   user-select: none;
-  /* The filled glyphs are recoloured; an outline keeps white pieces visible. */
-  font-family: 'Segoe UI Symbol', 'Noto Sans Symbols 2', 'DejaVu Sans', serif;
+  font-family: 'Segoe UI Symbol', 'Noto Sans Symbols 2', 'DejaVu Sans', 'Apple Symbols', serif;
+  filter: drop-shadow(0 2px 1.5px rgb(0 0 0 / 0.25));
 }
 
-.piece.white {
-  color: var(--white-piece);
-  -webkit-text-stroke: 1.5px #1c1917;
-  text-shadow: 0 2px 2px rgb(0 0 0 / 0.25);
+.piece > span {
+  grid-area: 1 / 1;
 }
 
-.piece.black {
-  color: var(--black-piece);
-  text-shadow: 0 2px 2px rgb(0 0 0 / 0.2);
+.piece .line {
+  color: #1c1917;
+}
+
+.piece.white .fill {
+  color: #fafaf9;
+}
+
+.piece.black .fill {
+  color: #1c1917;
+  /* The black glyphs have small gaps inside; a stroke of the same colour
+     closes them so the piece reads as one solid shape on any square. */
+  -webkit-text-stroke: 3px #1c1917;
 }
 
 .rank,

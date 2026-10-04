@@ -15,7 +15,10 @@ const LEVELS = [
   { name: 'Hard', depth: 3 },
 ];
 
-const GLYPHS: Record<ChessPieceType, string> = {
+// Each piece is a filled glyph with the outline glyph on top, so white
+// pieces come out white with a black outline in any font. U+FE0E asks for
+// the text glyph, not the emoji one (the pawn is also an emoji).
+const FILLED: Record<ChessPieceType, string> = {
   k: '♚',
   q: '♛',
   r: '♜',
@@ -23,6 +26,22 @@ const GLYPHS: Record<ChessPieceType, string> = {
   n: '♞',
   p: '♟',
 };
+
+const OUTLINE: Record<ChessPieceType, string> = {
+  k: '♔',
+  q: '♕',
+  r: '♖',
+  b: '♗',
+  n: '♘',
+  p: '♙',
+};
+
+const Piece = ({ type, color }: { type: ChessPieceType; color: ChessColor }) => (
+  <span class={`piece ${color}`} aria-hidden="true">
+    <span class="fill">{FILLED[type]}︎</span>
+    <span class="line">{OUTLINE[type]}︎</span>
+  </span>
+);
 
 const NAMES: Record<ChessPieceType, string> = {
   k: 'king',
@@ -208,7 +227,7 @@ export function App() {
                   onClick={() => onSquare(square)}
                   aria-label={`${square}${piece ? ` ${piece.color} ${NAMES[piece.type]}` : ''}`}
                 >
-                  {piece && <span class={`piece ${piece.color}`}>{GLYPHS[piece.type]}</span>}
+                  {piece && <Piece type={piece.type} color={piece.color} />}
                   {c === cols[0] && <span class="rank">{8 - r}</span>}
                   {r === rows[7] && <span class="file">{FILES[c]}</span>}
                 </button>
@@ -226,7 +245,7 @@ export function App() {
                   onClick={() => commit(pending.from, pending.to, type)}
                   aria-label={NAMES[type]}
                 >
-                  <span class={`piece ${game.turn}`}>{GLYPHS[type]}</span>
+                  <Piece type={type} color={game.turn} />
                 </button>
               ))}
             </div>

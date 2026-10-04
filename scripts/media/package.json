@@ -1,0 +1,14 @@
+{
+  "name": "ymir-media",
+  "private": true,
+  "type": "module",
+  "description": "Records the README GIFs from the example apps.",
+  "scripts": {
+    "record": "node record.mjs"
+  },
+  "devDependencies": {
+    "gifenc": "^1.0.3",
+    "playwright-core": "^1.63.0",
+    "pngjs": "^7.0.0"
+  }
+}
