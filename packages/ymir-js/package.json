@@ -1,6 +1,6 @@
 {
   "name": "ymir-js",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "A TypeScript toolkit for board games: checkers, chess, Go and match-3 with full rules, on a small board core for your own games.",
   "type": "module",
   "main": "./dist/index.js",
