@@ -168,6 +168,17 @@ pnpm dev
 
 ---
 
+## Releasing
+
+Bump the version and push the tag; GitHub Actions publishes to npm (with provenance) and creates a GitHub release.
+
+```sh
+npm version minor
+git push --follow-tags
+```
+
+---
+
 ## Roadmap
 
 | Name                   | Status | Link                                                            |
