@@ -1,6 +1,6 @@
 {
   "name": "@ymir-js/chess",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Chess for ymir-js: every rule, FEN/SAN/UCI/PGN, perft-verified move generation and a small built-in engine.",
   "type": "module",
   "main": "./dist/index.js",

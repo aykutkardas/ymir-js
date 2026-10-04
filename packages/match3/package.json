@@ -1,6 +1,6 @@
 {
   "name": "@ymir-js/match3",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Match-3 for ymir-js: swaps, matches, gravity, refills and cascades reported step by step.",
   "type": "module",
   "main": "./dist/index.js",

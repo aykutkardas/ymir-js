@@ -1,6 +1,6 @@
 {
   "name": "@ymir-js/go",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Go for ymir-js: captures, ko and superko, pass and resign, dead stones, area and territory scoring.",
   "type": "module",
   "main": "./dist/index.js",

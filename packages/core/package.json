@@ -1,6 +1,6 @@
 {
   "name": "@ymir-js/core",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "The ymir-js core: a typed board of squares and items, with movement patterns, directions and pathfinding, for building board games.",
   "type": "module",
   "main": "./dist/index.js",
