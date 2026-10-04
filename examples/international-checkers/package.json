@@ -1,0 +1,27 @@
+{
+  "name": "international-checkers",
+  "version": "0.1.0",
+  "description": "International Checkers game made with ymir-js",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel watch src/index.js  --out-dir src/dist/",
+    "build": "parcel build src/index.js --out-dir src/dist/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aykutkardas/international-checkers.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aykutkardas/international-checkers/issues"
+  },
+  "homepage": "https://github.com/aykutkardas/international-checkers#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "animejs": "^3.2.1",
+    "parcel-bundler": "^1.12.5",
+    "ymir-js": "^0.1.7"
+  }
+}
