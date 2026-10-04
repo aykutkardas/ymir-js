@@ -32,7 +32,7 @@ jobs:
 
     strategy:
       matrix:
-        example: [checkers, match3, go, chess, hnefatafl, sokoban]
+        example: [checkers, match3, go, chess, hnefatafl, sokoban, tactics]
 
     steps:
       - uses: actions/checkout@v7

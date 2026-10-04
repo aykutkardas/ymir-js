@@ -381,6 +381,48 @@ const scenarios = {
     writeGif('sokoban', app.frames, { endHold: 3000 });
   },
 
+  // Tactics: blue's moves come from tactics-game.json (the example's own AI
+  // playing blue); red is the app's AI, which makes the same choices, so the
+  // battle replays exactly. Blue wins.
+  async tactics() {
+    const turns = JSON.parse(readFileSync(new URL('./tactics-game.json', import.meta.url), 'utf8'));
+    const app = await open('tactics', '.board');
+    const { page } = app;
+    const cell = (coord) => page.locator(`.cell[aria-label="${coord}"]`);
+    const yourMove = async () => {
+      for (let i = 0; i < 150 && !/your move|Victory|Defeat/.test(await page.locator('.status').textContent()); i += 1) {
+        await sleep(100);
+      }
+    };
+
+    app.start(110);
+    await sleep(500);
+
+    for (const actions of turns) {
+      await yourMove();
+      await sleep(300);
+      for (const { from, to, target } of actions) {
+        if (!(await cell(from).locator('.unit.blue').count())) {
+          throw new Error(`Replay diverged: no blue unit on ${from}`);
+        }
+        await cell(from).click();
+        await sleep(250);
+        await cell(to).click();
+        await sleep(200 + 120 * 6);
+        if (target) await cell(target).click();
+        else await page.getByRole('button', { name: 'Wait' }).click();
+        await sleep(500);
+      }
+    }
+
+    await yourMove();
+    await sleep(800);
+    const headline = await page.locator('.status').textContent();
+    if (!/Victory/.test(headline)) throw new Error(`Replay ended with "${headline}"`);
+    await app.stop();
+    writeGif('tactics', app.frames, { endHold: 3000 });
+  },
+
   // Match 3: play the hinted swaps and watch the cascades.
   async match3() {
     const app = await open('match3', '.grid');

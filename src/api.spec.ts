@@ -156,3 +156,64 @@ describe('checkers single-step API follows the same rules as getLegalMoves', () 
     ]);
   });
 });
+
+describe('getNeighbors, getReachable and findPath', () => {
+  // . . . . .
+  // . # # # .
+  // . . S # .
+  // . # . . .
+  const board = () => {
+    const b = new Board({ rows: 4, cols: 5 });
+    ['1|1', '1|2', '1|3', '2|3', '3|1'].forEach((coord) => b.setItem(coord, new Item({ name: 'wall' })));
+    return b;
+  };
+
+  it('lists neighbours on the board, four or eight', () => {
+    const b = new Board({ rows: 3, cols: 3 });
+
+    expect(b.getNeighbors('0|0')).to.deep.equal(['1|0', '0|1']);
+    expect(b.getNeighbors('1|1')).to.have.length(4);
+    expect(b.getNeighbors('1|1', { diagonal: true })).to.have.length(8);
+  });
+
+  it('finds every square within a number of steps, with its distance', () => {
+    const reach = board().getReachable('2|2', { steps: 2 });
+
+    expect(Object.fromEntries(reach)).to.deep.equal({
+      '2|2': 0,
+      '2|1': 1,
+      '3|2': 1,
+      '2|0': 2,
+      '3|3': 2,
+    });
+  });
+
+  it('goes around walls when there is no limit', () => {
+    const reach = board().getReachable('2|2');
+
+    expect(reach.get('0|4')).to.equal(6); // down, along the bottom row, up the right side
+    expect(reach.has('1|1')).to.equal(false);
+  });
+
+  it('canEnter decides which squares can be stepped on', () => {
+    const b = board();
+    // Let walls on row 1 be passable, as if they were allies to walk through.
+    const reach = b.getReachable('2|2', { steps: 1, canEnter: (coord) => coord.startsWith('1|') || b.isEmpty(coord) });
+
+    expect(reach.has('1|2')).to.equal(true);
+  });
+
+  it('findPath returns the shortest route, or null', () => {
+    const b = board();
+
+    expect(b.findPath('2|2', '2|0')).to.deep.equal(['2|1', '2|0']);
+    expect(b.findPath('2|2', '0|4')).to.deep.equal(['3|2', '3|3', '3|4', '2|4', '1|4', '0|4']);
+    expect(b.findPath('2|2', '0|4', { steps: 5 })).to.equal(null);
+    expect(b.findPath('2|2', '1|1')).to.equal(null); // a wall
+    expect(b.findPath('2|2', '2|2')).to.deep.equal([]);
+  });
+
+  it('diagonal steps cut corners', () => {
+    expect(new Board({ rows: 3, cols: 3 }).findPath('0|0', '2|2', { diagonal: true })).to.have.length(2);
+  });
+});
