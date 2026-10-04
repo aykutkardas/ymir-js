@@ -2,7 +2,7 @@
 
 > ymir-js is a TypeScript toolkit for board games. It ships complete, tested rule engines for checkers (Turkish and International), chess, Go and match-3, built on a small generic `Board`/`Item` core that you can use for your own games. Zero runtime dependencies, ES module only, Node 20.19+ / 22.12+ or any modern bundler.
 
-Install with `npm install ymir-js` and import named exports, e.g. `import { ChessGame, GoGame, Match3Board, CheckersGame, Board } from 'ymir-js'`. Each part is also published on its own, with the same names: `@ymir-js/core` (Board, Item, pathfinding), `@ymir-js/checkers`, `@ymir-js/chess`, `@ymir-js/go`, `@ymir-js/match3`; `ymir-js` re-exports them all. Older grouped exports (`Core`, `Checkers`, `Chess`, `Go`, `Match3`, `Utils`) still work.
+Install only the packages you need and import named exports from them: `@ymir-js/core` for the board (`import { Board, Item } from '@ymir-js/core'`), plus `@ymir-js/checkers` (`CheckersGame`), `@ymir-js/chess` (`ChessGame`), `@ymir-js/go` (`GoGame`) or `@ymir-js/match3` (`Match3Board`). Each game package depends on `@ymir-js/core`. Existing code may import from the older all-in-one `ymir-js` package, kept for backward compatibility with the same names (and the grouped `Core`, `Checkers`, `Chess`, `Go`, `Match3`, `Utils` exports); use the scoped packages for new code.
 
 Things to know before writing code with it:
 

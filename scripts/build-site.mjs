@@ -1,5 +1,8 @@
 // Builds the GitHub Pages site into _site/:
-//   index.html, llms.txt      copied from site/
+//   index.html, *.js, *.css,  copied from site/
+//   llms.txt
+//   media/                    the README GIFs, for the game cards
+//   lib/core/                 the core's ES modules, for the puzzles
 //   llms-full.txt             README + every public type declaration
 //   examples/<name>/          each example app, built
 //
@@ -18,8 +21,23 @@ const examples = readdirSync(join(root, 'examples')).filter((name) =>
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
 
-cpSync(join(root, 'site', 'index.html'), join(out, 'index.html'));
-cpSync(join(root, 'site', 'llms.txt'), join(out, 'llms.txt'));
+cpSync(join(root, 'site'), out, { recursive: true });
+
+// The pages show the released version: %VERSION% becomes @ymir-js/core's version.
+const { version } = JSON.parse(readFileSync(join(root, 'packages', 'core', 'package.json'), 'utf8'));
+for (const page of ['index.html', join('tutorials', 'index.html')]) {
+  const path = join(out, page);
+  writeFileSync(path, readFileSync(path, 'utf8').replaceAll('%VERSION%', version));
+}
+
+// The README's GIFs, for the game cards.
+cpSync(join(root, 'docs', 'media'), join(out, 'media'), { recursive: true });
+
+// The core's ES modules, for the puzzles on the home page (puzzles.js).
+cpSync(join(root, 'packages', 'core', 'dist'), join(out, 'lib', 'core'), {
+  recursive: true,
+  filter: (path) => !path.endsWith('.d.ts') && !path.includes('.bench.'),
+});
 
 for (const name of examples) {
   const dir = join(root, 'examples', name);

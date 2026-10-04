@@ -1,12 +1,12 @@
 # ymir-js
 
-[![npm](https://img.shields.io/npm/v/ymir-js)](https://www.npmjs.com/package/ymir-js)
+[![npm](https://img.shields.io/npm/v/@ymir-js/core?label=%40ymir-js%2Fcore)](https://www.npmjs.com/package/@ymir-js/core)
 [![Test](https://github.com/aykutkardas/ymir-js/actions/workflows/test.yml/badge.svg)](https://github.com/aykutkardas/ymir-js/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 A TypeScript toolkit for board games. Checkers, chess, Go and match-3 come with their full rules; underneath is a small board core you can use for your own games.
 
-**[Play the examples →](https://aykutkardas.github.io/ymir-js/)**
+**[Play the examples →](https://aykutkardas.github.io/ymir-js/)** · **[Learn the core in puzzles →](https://aykutkardas.github.io/ymir-js/tutorials/)** · **[For agents →](https://aykutkardas.github.io/ymir-js/#agents)**
 
 <table>
   <tr>
@@ -33,11 +33,12 @@ A TypeScript toolkit for board games. Checkers, chess, Go and match-3 come with 
 
 ## Install
 
-```sh
-npm install ymir-js
-```
+Install the core, and the game packages you want:
 
-`ymir-js` has everything. Each part is also its own package, if you only need one game or just the core:
+```sh
+npm install @ymir-js/core     # the board, for your own games
+npm install @ymir-js/chess    # or checkers, go, match3: each brings the core along
+```
 
 | Package | What's in it |
 | --- | --- |
@@ -47,12 +48,12 @@ npm install ymir-js
 | [`@ymir-js/go`](packages/go) | Go |
 | [`@ymir-js/match3`](packages/match3) | Match-3 |
 
-The names are the same in every package (`import { ChessGame } from '@ymir-js/chess'` or `from 'ymir-js'`), and they are the same classes. Needs Node.js 20.19+ or 22.12+, or any modern bundler.
+Every package is an ES module with types and no other dependencies. Needs Node.js 20.19+ or 22.12+, or any modern bundler.
 
 ## Quick start
 
 ```js
-import { ChessGame } from 'ymir-js';
+import { ChessGame } from '@ymir-js/chess';
 
 const game = new ChessGame();
 
@@ -95,7 +96,7 @@ Turkish and International checkers, each with its own rules:
 `CheckersGame` keeps the turn, the moves played and the result.
 
 ```js
-import { CheckersGame } from 'ymir-js';
+import { CheckersGame } from '@ymir-js/checkers';
 
 const game = CheckersGame.create('international'); // or 'turkish'; white moves first
 
@@ -120,7 +121,7 @@ A move is `{ from, path, captured }`: `path` lists every square the piece lands 
 To start from your own position, set up a board and pass it in:
 
 ```js
-import { CheckersGame, TurkishBoard } from 'ymir-js';
+import { CheckersGame, TurkishBoard } from '@ymir-js/checkers';
 
 const board = new TurkishBoard().setPosition({ '2|3': 'w', '5|3': 'B' }); // w/b men, W/B kings
 const game = new CheckersGame(board, { turn: 'black' });
@@ -140,7 +141,7 @@ const game = new CheckersGame(board, { turn: 'black' });
 `TurkishBoard` and `InternationalBoard` hold the rules, and can be used without a game:
 
 ```js
-import { TurkishBoard } from 'ymir-js';
+import { TurkishBoard } from '@ymir-js/checkers';
 
 const board = new TurkishBoard().init();
 
@@ -159,7 +160,7 @@ board.autoPlay('white', { onSelect, onMove });
 International boards read and write standard PDN, numbering the dark squares 1–50 with White at the bottom (ymir draws White at the top, so coords are rotated for you).
 
 ```js
-import { InternationalBoard } from 'ymir-js';
+import { InternationalBoard } from '@ymir-js/checkers';
 
 const board = new InternationalBoard().init();
 
@@ -176,7 +177,7 @@ board.toPDNMove(move); // '28x19x8'
 `ChessGame` knows every rule: castling, en passant, promotion, check, checkmate, stalemate and the draw rules. Its move generator matches the standard [perft](https://www.chessprogramming.org/Perft_Results) counts.
 
 ```js
-import { ChessGame } from 'ymir-js';
+import { ChessGame } from '@ymir-js/chess';
 
 const game = new ChessGame(); // or new ChessGame(fen)
 
@@ -210,7 +211,7 @@ game.board.getPiece('e4'); // { type: 'p', color: 'white' }
 `GoGame` plays a full game: captures, suicide, ko, passing, resigning, dead stones and scoring.
 
 ```js
-import { GoGame } from 'ymir-js';
+import { GoGame } from '@ymir-js/go';
 
 const game = new GoGame({ size: 19 }); // black moves first
 
@@ -248,7 +249,7 @@ GoGame.fromJSON(game.toJSON());
 `Match3Board` handles swapping, matching, falling gems, refills and chain reactions.
 
 ```js
-import { Match3Board } from 'ymir-js';
+import { Match3Board } from '@ymir-js/match3';
 
 const board = new Match3Board({ rows: 8, cols: 8 }).init(); // no ready-made matches, at least one move
 
@@ -457,7 +458,7 @@ Shots, bombs, the cannon and the ship are plain values; like Bomberman, the game
 Every game here is built on the same `Board` and `Item`. Use them for a game of your own:
 
 ```js
-import { Board, Item } from 'ymir-js';
+import { Board, Item } from '@ymir-js/core';
 
 const board = new Board({ rows: 3, cols: 3 });
 
@@ -501,7 +502,7 @@ const next = board.clone(); // a whole new board of the same class, sharing noth
 Coords are plain strings, and a few helpers work on them:
 
 ```js
-import { DIRECTIONS, LINEAR_DIRECTIONS, manhattan, parseCoord, stepCoord, toCoord } from 'ymir-js';
+import { DIRECTIONS, LINEAR_DIRECTIONS, manhattan, parseCoord, stepCoord, toCoord } from '@ymir-js/core';
 
 toCoord(2, 3); // '2|3'
 parseCoord('2|3'); // [2, 3]
@@ -534,7 +535,7 @@ pnpm dev
 
 ## Upgrading
 
-Grouped imports from earlier versions (`Core.Board`, `Checkers.Turkish.Board`, `Utils.parseCoord`, …) still work. These were deprecated in 0.11 and will be removed in 1.0:
+Before the split into `@ymir-js/*` packages, everything came from one package, `ymir-js`. It is still published for backward compatibility, with the same names, so existing imports keep working; new code should use the scoped packages. Grouped imports from earlier versions (`Core.Board`, `Checkers.Turkish.Board`, `Utils.parseCoord`, …) also still work from `ymir-js`. These were deprecated in 0.11 and will be removed in 1.0:
 
 | Deprecated | Use instead |
 | --- | --- |

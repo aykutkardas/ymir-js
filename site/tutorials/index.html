@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorials · ymir-js</title>
+    <meta
+      name="description"
+      content="Learn the ymir-js board core in 11 small puzzles: place, move, swap, find paths and undo, with code that plays out on the board."
+    />
+    <link rel="alternate" type="text/plain" href="../llms.txt" title="llms.txt" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231c1917'/><rect x='6' y='6' width='9' height='9' rx='2' fill='%23fafaf9'/><rect x='17' y='17' width='9' height='9' rx='2' fill='%23fafaf9'/><circle cx='21.5' cy='10.5' r='4' fill='%23f97316'/></svg>"
+    />
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="wrap top-row">
+        <a class="brand" href="../">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="currentColor" /><rect x="6" y="6" width="9" height="9" rx="2" fill="var(--bg)" /><rect x="17" y="17" width="9" height="9" rx="2" fill="var(--bg)" /><circle cx="21.5" cy="10.5" r="4" fill="var(--accent)" /></svg>
+          ymir-js
+        </a>
+        <nav aria-label="Project links">
+          <a href="./" aria-current="page">Tutorials</a>
+          <a href="https://github.com/aykutkardas/ymir-js">GitHub</a>
+          <a href="https://www.npmjs.com/package/@ymir-js/core">npm</a>
+          <a href="https://github.com/aykutkardas/ymir-js#readme">Docs</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+    <section id="puzzles" class="wrap block tutorial">
+        <div class="block-head">
+          <p class="crumbs"><a href="../">ymir-js</a> / Tutorials</p>
+          <h1>Learn the core in 11 puzzles</h1>
+          <p>
+            Each puzzle is a small board and a goal. Change a line or two, press Run, and watch
+            your code play out on the board. No setup, nothing to install.
+          </p>
+          <p class="uses">
+            Everything here is <a href="https://www.npmjs.com/package/@ymir-js/core"><code>@ymir-js/core</code></a>:
+            <code>npm install @ymir-js/core</code>, then
+            <code>import { Board, Item } from '@ymir-js/core'</code>. In the puzzles, <code>board</code> is ready for you.
+          </p>
+        </div>
+
+        <div id="puzzle" class="pz">
+          <aside class="pz-side">
+            <p class="pz-progress"></p>
+            <ol class="pz-list"></ol>
+          </aside>
+
+          <div class="pz-main">
+            <div class="pz-task">
+              <p class="pz-step"></p>
+              <h3 class="pz-title"></h3>
+              <p class="pz-goal"></p>
+              <p class="pz-text"></p>
+            </div>
+
+            <div class="pz-play">
+              <div class="pz-code">
+                <div class="pz-api" aria-label="Methods for this puzzle; click to insert"></div>
+                <div class="pz-editor">
+                  <pre class="pz-highlight" aria-hidden="true"><code></code></pre>
+                  <textarea class="pz-input" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Your code"></textarea>
+                </div>
+                <div class="pz-actions">
+                  <button type="button" class="pz-run">▶ Run</button>
+                  <button type="button" class="pz-solution">Show solution</button>
+                  <button type="button" class="pz-reset">Reset</button>
+                </div>
+              </div>
+
+              <div class="pz-view">
+                <div class="pz-board" aria-label="Puzzle board"></div>
+                <p class="pz-status" aria-live="polite"></p>
+                <div class="pz-result" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <noscript><p>The puzzles need JavaScript.</p></noscript>
+      </section>
+
+      <section class="wrap block next">
+        <h2>What next?</h2>
+        <p>
+          Every game on <a href="../#games">the home page</a> is built from these same calls. The custom ones
+          (Hnefatafl, Sokoban, Tactics, Reversi, Bomberman, Invaders) write their own rules on the core:
+          read their <code>rules.ts</code> in <a href="https://github.com/aykutkardas/ymir-js/tree/main/examples">examples/</a>.
+        </p>
+      </section>
+    </main>
+
+    <footer class="wrap">
+      MIT License · Made by <a href="https://aykutkardas.com">Aykut Kardaş</a> ·
+      <a href="https://github.com/aykutkardas/ymir-js">Source on GitHub</a>
+    </footer>
+
+    <script type="module" src="../main.js"></script>
+    <script type="module" src="../puzzles.js"></script>
+  </body>
+</html>

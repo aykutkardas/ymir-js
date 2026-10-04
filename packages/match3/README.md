@@ -16,6 +16,6 @@ board.swap(hint.from, hint.to); // { valid, points, steps: [...] }
 
 Docs: [Match 3](https://github.com/aykutkardas/ymir-js#match-3) · [Play the demo](https://aykutkardas.github.io/ymir-js/examples/match3/)
 
-All of ymir-js is also available as one package: `npm install ymir-js`.
+All ymir-js packages: [`@ymir-js/core`](https://www.npmjs.com/package/@ymir-js/core), [`@ymir-js/checkers`](https://www.npmjs.com/package/@ymir-js/checkers), [`@ymir-js/chess`](https://www.npmjs.com/package/@ymir-js/chess), [`@ymir-js/go`](https://www.npmjs.com/package/@ymir-js/go) and [`@ymir-js/match3`](https://www.npmjs.com/package/@ymir-js/match3).
 
 MIT License
