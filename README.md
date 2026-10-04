@@ -476,11 +476,30 @@ board.getNeighbors('1|1'); // ['0|1', '2|1', '1|0', '1|2']; { diagonal: true } f
 board.getReachable('0|0', { steps: 2 }); // Map { '0|0' => 0, '1|0' => 1, ... } — empty squares within 2 steps
 board.findPath('0|0', '2|2'); // ['1|0', '2|0', '2|1', '2|2'] — the shortest route
 board.getBoardMatrix(); // rows of { coord, item }
+board.squares(); // [{ coord: '0|0', row: 0, col: 0, item }, ...] — handy for rendering
+board.isEdge('0|1'); // true — on the outer ring
+
+// Find items without walking the board yourself.
+board.findCoord((item) => item.name === 'king'); // '1|1', or null
+board.findCoords((item) => item.data.hp > 0); // every match; every item without a predicate
+board.countItems((item) => item.name === 'pawn'); // 2
+```
+
+Coords are plain strings, and a few helpers work on them:
+
+```js
+import { DIRECTIONS, LINEAR_DIRECTIONS, manhattan, parseCoord, stepCoord, toCoord } from 'ymir-js';
+
+toCoord(2, 3); // '2|3'
+parseCoord('2|3'); // [2, 3]
+stepCoord('2|3', 'top'); // '1|3'; stepCoord('2|3', 'right', 2) → '2|5'
+manhattan('0|0', '2|3'); // 5
+LINEAR_DIRECTIONS; // ['top', 'bottom', 'left', 'right']; ANGULAR_DIRECTIONS for the diagonals, DIRECTIONS for all eight
 ```
 
 - Off-board coords are safe: `getItem` returns `null`, `isEmpty` returns `false`, and `getDirection` / `getDistanceBetweenTwoCoords` return `null`.
 - Methods are bound to the board, so they can be passed as callbacks: `coords.forEach(board.removeItem)`.
-- `getReachable` and `findPath` step onto empty squares by default; pass `canEnter(square, from)` to decide yourself (walk through allies, avoid water…), and `diagonal: true` for eight directions.
+- `getReachable` and `findPath` step onto empty squares by default; pass `canEnter(square, from)` to decide yourself (walk through allies, avoid water…), and `diagonal: true` for eight directions. `getReachable` also takes several starts and counts from the nearest: `getReachable(enemies)` is a distance map to the closest enemy, and a flood fill from a group of pieces.
 - Subclass `Board` and override any method; `super` works. `CheckersBoard` is a full example.
 
 ---
