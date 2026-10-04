@@ -423,6 +423,28 @@ const scenarios = {
     writeGif('tactics', app.frames, { endHold: 3000 });
   },
 
+  // Reversi: a whole game between two copies of the example's computer
+  // player (reversi-game.json), replayed in 2-player mode.
+  async reversi() {
+    const moves = JSON.parse(readFileSync(new URL('./reversi-game.json', import.meta.url), 'utf8'));
+    const app = await open('reversi', '.board');
+    const { page } = app;
+
+    await page.getByRole('tab', { name: '2 players' }).click();
+    app.start(160);
+    await sleep(500);
+
+    for (const coord of moves) {
+      const [r, c] = coord.split('|').map(Number);
+      await page.locator('.cell').nth(r * 8 + c).click();
+      await sleep(330);
+    }
+
+    await sleep(800);
+    await app.stop();
+    writeGif('reversi', app.frames, { endHold: 3000 });
+  },
+
   // Match 3: play the hinted swaps and watch the cascades.
   async match3() {
     const app = await open('match3', '.grid');

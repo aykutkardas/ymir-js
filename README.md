@@ -266,7 +266,7 @@ The games above ship with the library. These don't: each one is an example app t
 | Game | What it shows | Status |
 | --- | --- | --- |
 | [Hnefatafl](https://aykutkardas.github.io/ymir-js/examples/hnefatafl/) (Viking chess) | Rook-like movement with `getColumnsByDirection`, sandwich captures, special squares, an asymmetric goal, a computer player | [Source](examples/hnefatafl) |
-| Reversi | Flipping along all eight directions | planned |
+| [Reversi](https://aykutkardas.github.io/ymir-js/examples/reversi/) | Flipping along all eight lines with one `getColumnsByDirection` call, passing, a computer player | [Source](examples/reversi) |
 | [Sokoban](https://aykutkardas.github.io/ymir-js/examples/sokoban/) | Pushing boxes with `getColumnsByDirection`, levels in the classic text format, undo, a solver | [Source](examples/sokoban) |
 | [Tactics](https://aykutkardas.github.io/ymir-js/examples/tactics/) | Units with typed stats in `item.data`, movement ranges with `getReachable`, paths with `findPath`, a computer player | [Source](examples/tactics) |
 
@@ -377,6 +377,42 @@ const reach = this.getReachable(coord, {
 
 <br clear="right" />
 
+### Reversi
+
+<a href="https://aykutkardas.github.io/ymir-js/examples/reversi/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/reversi.gif" width="260" align="right" alt="Reversi: a whole game, discs flipping, ending on a full board" /></a>
+
+Trap a line of the other colour between your new disc and one of yours, and every trapped disc flips. If you cannot move you pass; when neither side can, the most discs wins. Play against the computer (three levels) or a friend.
+
+The whole flipping rule is the eight lines out of a square, which one core call gives:
+
+```ts
+flipsFor(coord: string, color: Color): string[] {
+  if (!this.isEmpty(coord)) return [];
+
+  const lines = this.getColumnsByDirection(coord, { linear: true, angular: true, stepCount: 7 });
+  const flips = [];
+
+  for (const direction of DIRECTIONS) {
+    const run = [];
+    for (const square of lines[direction]) {
+      const disc = this.getItem(square);
+      if (!disc) break; // empty or off the board: the run is not closed
+      if (disc.color === color) {
+        flips.push(...run);
+        break;
+      }
+      run.push(square);
+    }
+  }
+
+  return flips;
+}
+```
+
+A legal move is any square where that list isn't empty. The computer player (`ai.ts`) searches a few moves ahead with the usual Reversi evaluation: corners are gold, the squares next to an empty corner are traps, and having more moves than the opponent helps.
+
+<br clear="right" />
+
 ## Building your own game
 
 Every game here is built on the same `Board` and `Item`. Use them for a game of your own:
@@ -419,7 +455,7 @@ board.getBoardMatrix(); // rows of { coord, item }
 Each game, including the [custom games](#custom-games), has an example app in [`examples/`](examples), also [playable online](https://aykutkardas.github.io/ymir-js/). They import the library from the package sources in `packages/`, so they always run against the code in the repo:
 
 ```sh
-cd examples/chess   # or checkers, go, match3, hnefatafl, sokoban, tactics
+cd examples/chess   # or checkers, go, match3, hnefatafl, sokoban, tactics, reversi
 pnpm install --ignore-workspace
 pnpm dev
 ```
