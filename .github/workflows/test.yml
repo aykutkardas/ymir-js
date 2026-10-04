@@ -32,7 +32,7 @@ jobs:
 
     strategy:
       matrix:
-        example: [checkers, match3, go, chess]
+        example: [checkers, match3, go, chess, hnefatafl]
 
     steps:
       - uses: actions/checkout@v7
@@ -43,6 +43,8 @@ jobs:
           cache: pnpm
           cache-dependency-path: examples/${{ matrix.example }}/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile --ignore-workspace
+        working-directory: examples/${{ matrix.example }}
+      - run: pnpm run --if-present test
         working-directory: examples/${{ matrix.example }}
       - run: pnpm build
         working-directory: examples/${{ matrix.example }}
