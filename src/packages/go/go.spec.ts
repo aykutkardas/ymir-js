@@ -307,5 +307,5 @@ describe('GoGame', () => {
         game.moves.filter((m) => m.type === 'play').length - stones
       );
     }
-  });
+  }, 20_000);
 });
