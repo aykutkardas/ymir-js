@@ -1,5 +1,6 @@
 import Core from './packages/core/index.js';
 import Checkers from './packages/checkers/index.js';
+import Go from './packages/go/index.js';
 import Match3 from './packages/match3/index.js';
 import Utils from './utils/index.js';
 
@@ -24,6 +25,8 @@ export {
   default as Match3Board,
   Match3Item,
 } from './packages/match3/board.js';
+export { default as GoBoard, GoStone } from './packages/go/board.js';
+export { default as GoGame } from './packages/go/game.js';
 export { default as parseCoord } from './utils/parseCoord.js';
 export {
   CHECKERS_BLACK,
@@ -71,6 +74,22 @@ export type {
   Swap,
   SwapResult,
 } from './packages/match3/board.js';
+export type {
+  GoColor,
+  GoGroup,
+  GoPosition,
+  GoScore,
+  GoScoringRules,
+  GoStoneType,
+} from './packages/go/board.js';
+export type {
+  GoGameOptions,
+  GoIllegalReason,
+  GoKoRule,
+  GoMove,
+  GoStatus,
+  SavedGoGame,
+} from './packages/go/game.js';
 
 // Grouped exports from earlier versions; they keep working.
-export { Core, Checkers, Match3, Utils };
+export { Core, Checkers, Go, Match3, Utils };

@@ -216,6 +216,44 @@ const result = board.swap('3|4', '3|5');
 
 ---
 
+## Go
+
+`GoGame` plays a full game of Go: captures, suicide, ko, passing, resigning, dead stones and scoring. `GoBoard` underneath handles stones, groups and liberties.
+
+```js
+import { GoGame } from 'ymir-js';
+
+const game = new GoGame({ size: 19, rules: 'area', komi: 7.5, ko: 'simple' });
+
+game.play('3|3');              // black; throws if not allowed
+game.checkPlay('3|3');         // { legal: false, reason: 'occupied' | 'suicide' | 'ko' | ... }
+game.getLegalMoves();          // every point the side to move may play
+game.koPoint;                  // the point simple ko forbids right now, or null
+game.captures;                 // { black: 0, white: 0 }
+
+game.pass();
+game.pass();
+game.getStatus();              // { state: 'scoring' } after two passes
+game.toggleDead('3|3');        // mark a dead group
+game.getScore();               // { black, white, territory, neutral, margin, winner }
+
+game.undo();
+game.resign();                 // { state: 'resigned', winner }
+GoGame.fromJSON(game.toJSON());
+```
+
+| Option  | Values                                                                     | Default            |
+| ------- | -------------------------------------------------------------------------- | ------------------ |
+| `size`  | 2–25                                                                       | 19                 |
+| `rules` | `'area'` (stones + territory) or `'territory'` (territory + prisoners)     | `'area'`           |
+| `komi`  | points added to white                                                      | 7.5 area, 6.5 territory |
+| `ko`    | `'simple'` (no immediate recapture) or `'positional'` (no earlier position) | `'simple'`         |
+| `setup` | stones placed first, e.g. handicap; white then moves first                 | none               |
+
+`game.board.toGTP('3|3')` and `fromGTP('D16')` convert to and from GTP vertices.
+
+---
+
 ## Deprecated in 0.11
 
 These still work and will be removed in 1.0:
@@ -234,11 +272,12 @@ These still work and will be removed in 1.0:
 
 - [`examples/checkers`](examples/checkers): Turkish and International checkers against the computer, with undo.
 - [`examples/match3`](examples/match3): a 20-move match-3 puzzle with cascades, hints and auto-shuffle.
+- [`examples/go`](examples/go): Go on 9×9, 13×13 or 19×19, against a simple computer player or a friend, with scoring.
 
 Each one runs on its own:
 
 ```sh
-cd examples/checkers   # or examples/match3
+cd examples/checkers   # or examples/match3, examples/go
 pnpm install --ignore-workspace
 pnpm dev
 ```
@@ -264,6 +303,6 @@ git push --follow-tags
 | International Checkers | Done   | [Source](examples/checkers)               |
 | Chess                  | -      | -                                                               |
 | Match 3 Puzzle         | Done   | [Source](examples/match3)                 |
-| Go                     | -      | -                                                               |
+| Go                     | Done   | [Source](examples/go)                     |
 
 ---
