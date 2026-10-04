@@ -84,12 +84,23 @@ board.getBoardMatrix();
 
 ---
 
+## Examples
+
+Games built with ymir-js live in [`examples/`](examples):
+
+- [Turkish Checkers](examples/turkish-checkers) ([play](https://turkish-checkers.pages.dev/))
+- [International Checkers](examples/international-checkers) ([play](https://international-checkers-demo.surge.sh/))
+
+Each example keeps its own `package.json` and pins the ymir-js version it was built with.
+
+---
+
 ## Roadmap
 
 | Name                   | Status | Link                                                            |
 | ---------------------- | ------ | --------------------------------------------------------------- |
-| Turkish Checkers       | WIP    | [Source](https://github.com/aykutkardas/turkish-checkers)       |
-| International Checkers | WIP    | [Source](https://github.com/aykutkardas/international-checkers) |
+| Turkish Checkers       | WIP    | [Source](examples/turkish-checkers)       |
+| International Checkers | WIP    | [Source](examples/international-checkers) |
 | Chess                  | -      | -                                                               |
 | Match 3 Puzzle         | -      | -                                                               |
 | Go                     | -      | -                                                               |
