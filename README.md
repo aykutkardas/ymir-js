@@ -2,6 +2,8 @@
 
 A toolkit for board games in TypeScript: checkers (Turkish and International), chess, Go and match-3, each with its full rules, on top of a small board and item core you can build your own games on.
 
+**[Play the examples](https://aykutkardas.github.io/ymir-js/)** · [llms.txt](https://aykutkardas.github.io/ymir-js/llms.txt) for LLMs and coding agents
+
 ### Install
 
 ```sh
