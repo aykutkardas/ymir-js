@@ -193,6 +193,41 @@ const writeGif = (name, frames, { endHold = 2500, maxWidth = 420 } = {}) => {
 };
 
 
+/**
+ * Replays a real-time game planned offline: `plan.events` are keys pressed
+ * and released on which 16 ms frame. The page runs on a paused fake clock, so
+ * every frame lands on the same game tick as in the plan; `check` compares
+ * each of `plan.checks` with the page and returns true or what differs.
+ */
+const replay = async (app, plan, check) => {
+  const { page } = app;
+  const board = page.locator('.board');
+  let now = 0;
+  const capture = async () => app.frames.push({ png: await board.screenshot({ animations: 'allow' }), at: now });
+
+  const events = new Map();
+  for (const [frame, type, key] of plan.events) {
+    events.set(frame, [...(events.get(frame) ?? []), { type, key }]);
+  }
+  const checks = new Map(plan.checks.map((entry) => [entry[0], entry]));
+
+  await capture();
+  for (let frame = 0; frame < plan.frames + 40; frame += 1) {
+    for (const { type, key } of events.get(frame) ?? []) {
+      if (type === 'down') await page.keyboard.down(key);
+      if (type === 'up') await page.keyboard.up(key);
+      if (type === 'bomb') await page.keyboard.press('Space');
+    }
+    if (checks.has(frame)) {
+      const result = await check(checks.get(frame));
+      if (result !== true) throw new Error(`Replay diverged on frame ${frame}: ${result}`);
+    }
+    await page.clock.runFor(16);
+    now += 16;
+    if (frame % 6 === 5) await capture();
+  }
+};
+
 /** Plays `count` moves of 9x9 Go with the example's simple heuristic for both sides. */
 const selfPlayGo = (size, count) => {
   let seed = 12;
@@ -449,42 +484,36 @@ const scenarios = {
   },
 
   // Bomberman, in real time: a play-through planned offline against the same
-  // rules (bomberman-game.json: keys pressed on which 16 ms frame), replayed
-  // on the browser's fake clock so every frame lands on the same game tick.
+  // rules (bomberman-game.json), replayed tick for tick. Ends on a win.
   async bomberman() {
     const plan = JSON.parse(readFileSync(new URL('./bomberman-game.json', import.meta.url), 'utf8'));
     const app = await open('bomberman', '.board', { query: `?seed=${plan.seed}`, fakeClock: true });
-    const { page } = app;
-    const board = page.locator('.board');
-    const player = page.locator('.actor.player');
-    let now = 0;
-    const capture = async () => app.frames.push({ png: await board.screenshot({ animations: 'allow' }), at: now });
+    const player = app.page.locator('.actor.player');
 
-    const events = new Map();
-    for (const [frame, type, key] of plan.events) {
-      events.set(frame, [...(events.get(frame) ?? []), { type, key }]);
-    }
-    const checks = new Map(plan.checks.map(([frame, from, to]) => [frame, `${from}>${to}`]));
+    await replay(app, plan, async ([, from, to]) => {
+      const at = `${await player.getAttribute('data-from')}>${await player.getAttribute('data-to')}`;
+      return at === `${from}>${to}` || `${at}, planned ${from}>${to}`;
+    });
 
-    await capture();
-    for (let frame = 0; frame < plan.frames + 40; frame += 1) {
-      for (const { type, key } of events.get(frame) ?? []) {
-        if (type === 'down') await page.keyboard.down(key);
-        if (type === 'up') await page.keyboard.up(key);
-        if (type === 'bomb') await page.keyboard.press('Space');
-      }
-      if (checks.has(frame)) {
-        const at = `${await player.getAttribute('data-from')}>${await player.getAttribute('data-to')}`;
-        if (at !== checks.get(frame)) throw new Error(`Replay diverged on frame ${frame}: ${at}, planned ${checks.get(frame)}`);
-      }
-      await page.clock.runFor(16);
-      now += 16;
-      if (frame % 6 === 5) await capture();
-    }
-
-    const headline = await page.locator('.hud .status').textContent();
+    const headline = await app.page.locator('.hud .status').textContent();
     if (!/win/.test(headline)) throw new Error(`Replay ended with "${headline}"`);
     writeGif('bomberman', app.frames, { endHold: 3000 });
+  },
+
+  // Invaders, in real time: the first wave cleared, ship included, and the
+  // next one marching in (invaders-game.json, replayed tick for tick).
+  async invaders() {
+    const plan = JSON.parse(readFileSync(new URL('./invaders-game.json', import.meta.url), 'utf8'));
+    const app = await open('invaders', '.board', { query: `?seed=${plan.seed}`, fakeClock: true });
+    const cannon = app.page.locator('.cannon');
+    const score = app.page.locator('.hud .score');
+
+    await replay(app, plan, async ([, col, points]) => {
+      const at = `${await cannon.getAttribute('data-col')} ${(await score.textContent()).replace(/\D/g, '')}`;
+      return at === `${col} ${points}` || `${at}, planned ${col} ${points}`;
+    });
+
+    writeGif('invaders', app.frames, { endHold: 2000 });
   },
 
   // Match 3: play the hinted swaps and watch the cascades.

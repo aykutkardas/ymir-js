@@ -267,6 +267,7 @@ The games above ship with the library. These don't: each one is an example app t
 | --- | --- | --- |
 | [Bomberman](https://aykutkardas.github.io/ymir-js/examples/bomberman/) | A real-time game: bombs, crates and power-ups as items, blasts along `getColumnsByDirection`, enemies chasing with `findPath`, time advanced by `tick(ms)` | [Source](examples/bomberman) |
 | [Hnefatafl](https://aykutkardas.github.io/ymir-js/examples/hnefatafl/) (Viking chess) | Rook-like movement with `getColumnsByDirection`, sandwich captures, special squares, an asymmetric goal, a computer player | [Source](examples/hnefatafl) |
+| [Invaders](https://aykutkardas.github.io/ymir-js/examples/invaders/) | A real-time shooter: a formation that marches with `moveItem`, shooters picked by looking down each column with `getColumnsByDirection`, shields that wear away | [Source](examples/invaders) |
 | [Reversi](https://aykutkardas.github.io/ymir-js/examples/reversi/) | Flipping along all eight lines with one `getColumnsByDirection` call, passing, a computer player | [Source](examples/reversi) |
 | [Sokoban](https://aykutkardas.github.io/ymir-js/examples/sokoban/) | Pushing boxes with `getColumnsByDirection`, levels in the classic text format, undo, a solver | [Source](examples/sokoban) |
 | [Tactics](https://aykutkardas.github.io/ymir-js/examples/tactics/) | Units with typed stats in `item.data`, movement ranges with `getReachable`, paths with `findPath`, a computer player | [Source](examples/tactics) |
@@ -444,6 +445,27 @@ A bomb caught in a blast goes off too, so chain reactions come free. Enemies wan
 
 <br clear="right" />
 
+### Invaders
+
+<a href="https://aykutkardas.github.io/ymir-js/examples/invaders/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/invaders.gif" width="260" align="right" alt="Invaders: the first wave shot down, then the next one marching in" /></a>
+
+Five rows of invaders march across, step down at each edge and speed up as you thin them out. Shoot them before they land; shields soak up hits from both sides, and a mystery ship crosses the top now and then. ← → and Space; buttons on a phone.
+
+The invaders and the shields are items, so the formation's march is the arcade's own: every invader moves one square with `moveItem`, the leading ones first so nobody lands on a neighbour, and the whole group steps down and turns when one reaches an edge. Only an invader with nobody below it may drop a bomb, which is one look down its column:
+
+```ts
+shooters(): string[] {
+  return this.invaders().filter((coord) => {
+    const { bottom } = this.board.getColumnsByDirection(coord, { bottom: true, stepCount: ROWS });
+    return !bottom.some((square) => this.board.getItem(square)?.type === 'invader');
+  });
+}
+```
+
+Shots, bombs, the cannon and the ship are plain values; like Bomberman, the game advances with `tick(ms)` and is seeded, and the GIF is a planned game replayed tick for tick.
+
+<br clear="right" />
+
 ## Building your own game
 
 Every game here is built on the same `Board` and `Item`. Use them for a game of your own:
@@ -486,7 +508,7 @@ board.getBoardMatrix(); // rows of { coord, item }
 Each game, including the [custom games](#custom-games), has an example app in [`examples/`](examples), also [playable online](https://aykutkardas.github.io/ymir-js/). They import the library from the package sources in `packages/`, so they always run against the code in the repo:
 
 ```sh
-cd examples/chess   # or checkers, go, match3, hnefatafl, sokoban, tactics, reversi, bomberman
+cd examples/chess   # or checkers, go, match3, hnefatafl, sokoban, tactics, reversi, bomberman, invaders
 pnpm install --ignore-workspace
 pnpm dev
 ```
