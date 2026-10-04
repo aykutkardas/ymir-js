@@ -23,8 +23,8 @@ mkdirSync(out, { recursive: true });
 
 cpSync(join(root, 'site'), out, { recursive: true });
 
-// The pages show the released version: %VERSION% becomes ymir-js's version.
-const { version } = JSON.parse(readFileSync(join(root, 'packages', 'ymir-js', 'package.json'), 'utf8'));
+// The pages show the released version: %VERSION% becomes @ymir-js/core's version.
+const { version } = JSON.parse(readFileSync(join(root, 'packages', 'core', 'package.json'), 'utf8'));
 for (const page of ['index.html', join('tutorials', 'index.html')]) {
   const path = join(out, page);
   writeFileSync(path, readFileSync(path, 'utf8').replaceAll('%VERSION%', version));

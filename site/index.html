@@ -25,7 +25,7 @@
         <nav aria-label="Project links">
           <a href="tutorials/">Tutorials</a>
           <a href="https://github.com/aykutkardas/ymir-js">GitHub</a>
-          <a href="https://www.npmjs.com/package/ymir-js">npm</a>
+          <a href="https://www.npmjs.com/package/@ymir-js/core">npm</a>
           <a href="https://github.com/aykutkardas/ymir-js#readme">Docs</a>
         </nav>
       </div>
@@ -33,7 +33,7 @@
 
     <main>
       <section class="hero wrap">
-        <a class="version" href="https://www.npmjs.com/package/ymir-js">v%VERSION% on npm</a>
+        <a class="version" href="https://www.npmjs.com/package/@ymir-js/core">v%VERSION% on npm</a>
         <h1>Board games,<br />as plain TypeScript.</h1>
         <p class="lede">
           Checkers, chess, Go and match-3 with their full rules, on a small <code>Board</code> and
@@ -41,12 +41,13 @@
         </p>
         <div class="installs">
           <div class="install">
-            <code>npm install ymir-js</code>
-            <button type="button" class="copy" data-copy="npm install ymir-js">Copy</button>
+            <code>npm install @ymir-js/core</code>
+            <button type="button" class="copy" data-copy="npm install @ymir-js/core">Copy</button>
           </div>
           <p>
-            Everything in one package. Or only what you need:
-            <a href="#packages"><code>@ymir-js/core</code> and one package per game</a>.
+            The board for your own games. Add a ready-made game with
+            <a href="#packages">its own package</a>: <code>@ymir-js/chess</code>, <code>@ymir-js/checkers</code>,
+            <code>@ymir-js/go</code> or <code>@ymir-js/match3</code>.
           </p>
         </div>
 
@@ -160,8 +161,8 @@
           <div class="block-head">
             <h2>Packages</h2>
             <p>
-              Install only what you use. Every game package depends on <code>@ymir-js/core</code>, and
-              <code>ymir-js</code> bundles them all. All at v%VERSION%, released together.
+              Install only what you use. Every game package builds on <code>@ymir-js/core</code>; all of
+              them are at v%VERSION% and released together.
             </p>
           </div>
           <div class="pkg-grid">
@@ -240,21 +241,6 @@
                 <a href="https://github.com/aykutkardas/ymir-js/tree/main/packages/match3">Source</a>
               </div>
             </article>
-            <article class="pkg-card all">
-              <div class="pkg-head">
-                <h3><a href="https://www.npmjs.com/package/ymir-js">ymir-js</a></h3>
-                <span class="pkg-for">Everything</span>
-              </div>
-              <p>All of the above in one install, re-exported under the same names.</p>
-              <div class="copy-row">
-                <code>npm install ymir-js</code>
-                <button type="button" class="copy" data-copy="npm install ymir-js">Copy</button>
-              </div>
-              <div class="pkg-links">
-                <a href="https://www.npmjs.com/package/ymir-js">npm</a>
-                <a href="https://github.com/aykutkardas/ymir-js/tree/main/packages/ymir-js">Source</a>
-              </div>
-            </article>
           </div>
         </section>
 
@@ -267,7 +253,6 @@
             <pre class="code"><code data-lang="js">import { ChessGame } from '@ymir-js/chess';
 import { GoGame } from '@ymir-js/go';
 import { CheckersGame } from '@ymir-js/checkers';
-// (or import them all from 'ymir-js')
 
 const chess = new ChessGame();
 chess.move('e4');
@@ -325,9 +310,9 @@ checkers.getLegalMoves(); // [{ from, path, captured }, ...]</code></pre>
             <p>Paste it into your agent, then describe the game you want.</p>
           </div>
           <div class="prompt">
-            <pre><code id="agent-prompt">Use ymir-js for the board and the rules: npm install ymir-js, or only the
-packages needed (@ymir-js/core for a custom game; @ymir-js/checkers,
-@ymir-js/chess, @ymir-js/go or @ymir-js/match3 for those games).
+            <pre><code id="agent-prompt">Use ymir-js for the board and the rules. Install only the packages needed:
+@ymir-js/core for the board (and any custom game), plus @ymir-js/checkers,
+@ymir-js/chess, @ymir-js/go or @ymir-js/match3 for those games.
 Before writing code, read https://aykutkardas.github.io/ymir-js/llms.txt,
 and https://aykutkardas.github.io/ymir-js/llms-full.txt for exact types.
 Coordinates are "row|col" strings. Use the built-in game classes
@@ -345,7 +330,7 @@ game, build on Board and Item from the core, as the custom games do.</code></pre
             <li><strong>Coordinates</strong>Strings <code>"row|col"</code>, from 0, row 0 at the top. Chess also takes <code>"e4"</code>.</li>
             <li><strong>Validated moves</strong><code>play</code> and <code>move</code> throw on an illegal move; ask <code>getLegalMoves()</code> first.</li>
             <li><strong>State</strong>Games report <code>getStatus()</code> and save with <code>toJSON()</code> / <code>fromJSON()</code>.</li>
-            <li><strong>Packages</strong><code>@ymir-js/core</code> plus one package per game (<code>checkers</code>, <code>chess</code>, <code>go</code>, <code>match3</code>); <code>ymir-js</code> re-exports them all under the same names.</li>
+            <li><strong>Packages</strong><code>@ymir-js/core</code> for the board, plus one package per game: <code>@ymir-js/checkers</code>, <code>chess</code>, <code>go</code>, <code>match3</code>.</li>
           </ul>
           <p class="sources">
             Source of truth: the <a href="https://github.com/aykutkardas/ymir-js/blob/main/README.md">README</a>,
