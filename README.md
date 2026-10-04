@@ -139,12 +139,13 @@ board.autoPlay('white', { onSelect, onMove });
 
 ## Examples
 
-Games built with ymir-js live in [`examples/`](examples):
+[`examples/checkers`](examples/checkers) is a small game built on the API above: Turkish and International checkers against the computer, in one app.
 
-- [Turkish Checkers](examples/turkish-checkers) ([play](https://turkish-checkers.pages.dev/))
-- [International Checkers](examples/international-checkers) ([play](https://international-checkers-demo.surge.sh/))
-
-Each example keeps its own `package.json` and pins the ymir-js version it was built with.
+```sh
+cd examples/checkers
+pnpm install --ignore-workspace
+pnpm dev
+```
 
 ---
 
@@ -152,8 +153,8 @@ Each example keeps its own `package.json` and pins the ymir-js version it was bu
 
 | Name                   | Status | Link                                                            |
 | ---------------------- | ------ | --------------------------------------------------------------- |
-| Turkish Checkers       | WIP    | [Source](examples/turkish-checkers)       |
-| International Checkers | WIP    | [Source](examples/international-checkers) |
+| Turkish Checkers       | Done   | [Source](examples/checkers)               |
+| International Checkers | Done   | [Source](examples/checkers)               |
 | Chess                  | -      | -                                                               |
 | Match 3 Puzzle         | -      | -                                                               |
 | Go                     | -      | -                                                               |

@@ -26,3 +26,19 @@ jobs:
       - run: pnpm build
         env:
           CI: true
+
+  example:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.x
+          cache: pnpm
+          cache-dependency-path: examples/checkers/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile --ignore-workspace
+        working-directory: examples/checkers
+      - run: pnpm build
+        working-directory: examples/checkers
