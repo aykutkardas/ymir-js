@@ -1,0 +1,537 @@
+:root {
+  --bg: #f1f3f0;
+  --text: #1a1d1b;
+  --muted: #687068;
+  --line: #dde2dc;
+  --surface: #ffffff;
+  --grass: #4f9a5c;
+  --grass-alt: #4a9257;
+  --frame: #24452c;
+  --stone: #5f6b70;
+  --stone-light: #7d898e;
+  --stone-dark: #434c50;
+  --crate: #b9783f;
+  --crate-dark: #8c5527;
+  --accent: #15803d;
+
+  color-scheme: light;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121513;
+    --text: #edf1ed;
+    --muted: #a0a8a0;
+    --line: #2a2f2b;
+    --surface: #1a1e1b;
+    --grass: #3f7f4a;
+    --grass-alt: #3b7845;
+    --accent: #4ade80;
+
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.layout {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+  display: grid;
+  gap: 16px;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+
+h1 + p {
+  margin: 4px 0 0;
+  font-size: 14px;
+}
+
+h2 {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+
+.ghost {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 7px 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ghost:hover {
+  background: var(--line);
+}
+
+/* Score line */
+
+.hud {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat svg {
+  width: 16px;
+  height: 16px;
+}
+
+.hud .status {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+}
+
+.hud .score {
+  font-weight: 700;
+  min-width: 56px;
+  justify-content: center;
+}
+
+/* Board */
+
+.board {
+  position: relative;
+  aspect-ratio: 13 / 11;
+  border: 8px solid var(--frame);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--grass);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.22);
+  user-select: none;
+}
+
+.squares {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(13, minmax(0, 1fr));
+  grid-template-rows: repeat(11, minmax(0, 1fr));
+}
+
+.square {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+}
+
+.square.odd {
+  background: var(--grass-alt);
+}
+
+.square > * {
+  grid-area: 1 / 1;
+}
+
+.wall {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, var(--stone-light), var(--stone) 45%, var(--stone-dark));
+  box-shadow:
+    inset 0 2px 0 rgb(255 255 255 / 0.18),
+    inset 0 -3px 0 rgb(0 0 0 / 0.25);
+}
+
+.crate {
+  width: 88%;
+  height: 88%;
+  border-radius: 3px;
+  background:
+    linear-gradient(45deg, transparent 44%, var(--crate-dark) 44% 56%, transparent 56%),
+    repeating-linear-gradient(0deg, var(--crate) 0 30%, var(--crate-dark) 30% 34%);
+  box-shadow:
+    inset 0 0 0 2px var(--crate-dark),
+    0 2px 2px rgb(0 0 0 / 0.25);
+}
+
+.bomb {
+  position: relative;
+  width: 64%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #5a5a5a, #161616 60%);
+  box-shadow: 0 3px 3px rgb(0 0 0 / 0.35);
+  animation: tick 600ms ease-in-out infinite alternate;
+}
+
+.bomb::after {
+  content: '';
+  position: absolute;
+  top: -12%;
+  right: -2%;
+  width: 26%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff7c2, #f59e0b 50%, transparent 72%);
+}
+
+.bomb.urgent {
+  animation-duration: 160ms;
+}
+
+@keyframes tick {
+  to {
+    transform: scale(1.12);
+  }
+}
+
+.fire {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, #fffbe0 0 18%, #fcd34d 32%, #f97316 58%, rgb(239 68 68 / 0.75) 80%);
+  animation: burn 120ms linear infinite alternate;
+}
+
+@keyframes burn {
+  to {
+    filter: brightness(1.15);
+    transform: scale(1.05);
+  }
+}
+
+.power {
+  display: grid;
+  place-items: center;
+  width: 74%;
+  aspect-ratio: 1;
+  border-radius: 22%;
+  color: #fff;
+  box-shadow:
+    inset 0 -2px 0 rgb(0 0 0 / 0.2),
+    0 2px 3px rgb(0 0 0 / 0.3);
+  animation: float 900ms ease-in-out infinite alternate;
+}
+
+.power svg {
+  width: 72%;
+  height: 72%;
+}
+
+.power.bomb {
+  background: #334155;
+}
+
+.power.fire {
+  background: #ea580c;
+}
+
+.power.speed {
+  background: #2563eb;
+}
+
+@keyframes float {
+  to {
+    transform: translateY(-6%);
+  }
+}
+
+/* Player and enemies, drawn between squares */
+
+.actor {
+  position: absolute;
+  width: calc(100% / 13);
+  height: calc(100% / 11);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.actor .body {
+  position: relative;
+  width: 74%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.player .body {
+  background: radial-gradient(circle at 38% 32%, #fff, #e8edf2 60%, #c3ccd6);
+  box-shadow:
+    inset 0 -3px 0 rgb(0 0 0 / 0.08),
+    0 3px 3px rgb(0 0 0 / 0.3);
+}
+
+/* A face: two eyes that look the way it walks. */
+.actor .body::before,
+.actor .body::after {
+  content: '';
+  position: absolute;
+  top: 34%;
+  width: 14%;
+  height: 26%;
+  border-radius: 50%;
+  background: #1b1b1b;
+  transition: transform 80ms;
+}
+
+.actor .body::before {
+  left: 30%;
+}
+
+.actor .body::after {
+  right: 30%;
+}
+
+.actor.left .body::before,
+.actor.left .body::after {
+  transform: translateX(-60%);
+}
+
+.actor.right .body::before,
+.actor.right .body::after {
+  transform: translateX(60%);
+}
+
+.actor.top .body::before,
+.actor.top .body::after {
+  transform: translateY(-35%);
+}
+
+.actor.bottom .body::before,
+.actor.bottom .body::after {
+  transform: translateY(35%);
+}
+
+.player .body {
+  border-top: 5px solid #ef4444;
+}
+
+.enemy .body {
+  border-radius: 50% 50% 38% 38%;
+  background: radial-gradient(circle at 38% 30%, #f9a8d4, #db2777 65%);
+  box-shadow: 0 3px 3px rgb(0 0 0 / 0.3);
+  animation: wobble 400ms ease-in-out infinite alternate;
+}
+
+.enemy .body::before,
+.enemy .body::after {
+  background: #fff;
+  box-shadow: inset 0 -2px 0 2px #1b1b1b;
+}
+
+@keyframes wobble {
+  to {
+    transform: scale(1.06, 0.94);
+  }
+}
+
+.player.dead .body {
+  filter: grayscale(1) brightness(0.7);
+  transform: scale(0.8) rotate(25deg);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 4px;
+  background: rgb(10 20 12 / 0.55);
+  color: #fff;
+  text-align: center;
+  animation: fade 300ms ease-out;
+}
+
+.overlay p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.overlay .muted {
+  color: rgb(255 255 255 / 0.75);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.primary {
+  margin-top: 10px;
+  border: 0;
+  border-radius: 10px;
+  padding: 9px 18px;
+  background: #fff;
+  color: #1a1d1b;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Touch controls, for screens without a keyboard */
+
+.touch {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  touch-action: none;
+}
+
+@media (pointer: coarse) {
+  .touch {
+    display: flex;
+  }
+}
+
+.pad {
+  display: grid;
+  grid-template-columns: repeat(3, 56px);
+  grid-template-rows: repeat(3, 56px);
+}
+
+.dir {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 12px;
+  touch-action: none;
+}
+
+.dir:active {
+  background: var(--line);
+}
+
+.dir::before {
+  content: '';
+  display: block;
+  margin: auto;
+  width: 0;
+  height: 0;
+  border: 9px solid transparent;
+}
+
+.dir.top {
+  grid-area: 1 / 2;
+}
+
+.dir.top::before {
+  border-bottom-color: var(--text);
+  margin-top: 2px;
+}
+
+.dir.left {
+  grid-area: 2 / 1;
+}
+
+.dir.left::before {
+  border-right-color: var(--text);
+  margin-left: 6px;
+}
+
+.dir.right {
+  grid-area: 2 / 3;
+}
+
+.dir.right::before {
+  border-left-color: var(--text);
+  margin-left: 22px;
+}
+
+.dir.bottom {
+  grid-area: 3 / 2;
+}
+
+.dir.bottom::before {
+  border-top-color: var(--text);
+  margin-top: 12px;
+}
+
+.drop {
+  width: 96px;
+  height: 96px;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #5a5a5a, #161616 65%);
+  color: #fff;
+  font-weight: 700;
+  touch-action: none;
+}
+
+.rules ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+@media (max-width: 480px) {
+  .hud {
+    flex-wrap: wrap;
+  }
+
+  .hud .status {
+    order: -1;
+    flex-basis: 100%;
+  }
+
+  .board {
+    border-width: 5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bomb,
+  .fire,
+  .power,
+  .enemy .body {
+    animation: none;
+  }
+}

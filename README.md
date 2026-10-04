@@ -265,6 +265,7 @@ The games above ship with the library. These don't: each one is an example app t
 
 | Game | What it shows | Status |
 | --- | --- | --- |
+| [Bomberman](https://aykutkardas.github.io/ymir-js/examples/bomberman/) | A real-time game: bombs, crates and power-ups as items, blasts along `getColumnsByDirection`, enemies chasing with `findPath`, time advanced by `tick(ms)` | [Source](examples/bomberman) |
 | [Hnefatafl](https://aykutkardas.github.io/ymir-js/examples/hnefatafl/) (Viking chess) | Rook-like movement with `getColumnsByDirection`, sandwich captures, special squares, an asymmetric goal, a computer player | [Source](examples/hnefatafl) |
 | [Reversi](https://aykutkardas.github.io/ymir-js/examples/reversi/) | Flipping along all eight lines with one `getColumnsByDirection` call, passing, a computer player | [Source](examples/reversi) |
 | [Sokoban](https://aykutkardas.github.io/ymir-js/examples/sokoban/) | Pushing boxes with `getColumnsByDirection`, levels in the classic text format, undo, a solver | [Source](examples/sokoban) |
@@ -413,6 +414,36 @@ A legal move is any square where that list isn't empty. The computer player (`ai
 
 <br clear="right" />
 
+### Bomberman
+
+<a href="https://aykutkardas.github.io/ymir-js/examples/bomberman/"><img src="https://raw.githubusercontent.com/aykutkardas/ymir-js/main/docs/media/bomberman.gif" width="260" align="right" alt="Bomberman: bombs burning crates, power-ups, every enemy blown up" /></a>
+
+Drop bombs, burn crates, pick up power-ups (more bombs, a longer blast, more speed) and blow up every enemy. Arrow keys or WASD and Space; buttons on a phone.
+
+The only real-time game here, and the board doesn't mind: walls, crates, bombs and power-ups are items, and the player and enemies are plain objects walking between squares. The game advances with `tick(ms)`, which the app calls in fixed 20 ms steps from `requestAnimationFrame` and the tests call directly. A blast is the bomb's four lines, cut at the first thing in the way:
+
+```ts
+blastFrom(coord: string, range: number): string[] {
+  const squares = [coord];
+  const lines = this.board.getColumnsByDirection(coord, { linear: true, stepCount: range });
+
+  for (const move of ['top', 'bottom', 'left', 'right']) {
+    for (const square of lines[move]) {
+      const kind = this.board.getItem(square)?.kind;
+      if (kind === 'wall') break;
+      squares.push(square);
+      if (kind === 'crate' || kind === 'bomb') break; // it burns, and stops the fire
+    }
+  }
+
+  return squares;
+}
+```
+
+A bomb caught in a blast goes off too, so chain reactions come free. Enemies wander, and when you are close they chase you with `findPath(enemy, you, { steps: 6, canEnter })`. Everything random comes from a seeded generator: add `?seed=42` to the URL to play the same map again. The GIF is a planned play-through, replayed on the browser's fake clock tick for tick.
+
+<br clear="right" />
+
 ## Building your own game
 
 Every game here is built on the same `Board` and `Item`. Use them for a game of your own:
@@ -455,7 +486,7 @@ board.getBoardMatrix(); // rows of { coord, item }
 Each game, including the [custom games](#custom-games), has an example app in [`examples/`](examples), also [playable online](https://aykutkardas.github.io/ymir-js/). They import the library from the package sources in `packages/`, so they always run against the code in the repo:
 
 ```sh
-cd examples/chess   # or checkers, go, match3, hnefatafl, sokoban, tactics, reversi
+cd examples/chess   # or checkers, go, match3, hnefatafl, sokoban, tactics, reversi, bomberman
 pnpm install --ignore-workspace
 pnpm dev
 ```
