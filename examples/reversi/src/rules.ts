@@ -1,6 +1,6 @@
 // Reversi, written on top of ymir-js's core Board and Item. A disc is an item;
 // the eight lines out of a square come from the core's ray.
-import { Board, DIRECTIONS, Item } from 'ymir-js';
+import { Board, DIRECTIONS, Item, type BoardSnapshot } from 'ymir-js';
 
 export type Color = 'black' | 'white';
 
@@ -95,7 +95,7 @@ export class ReversiGame {
   turn: Color = 'black';
 
   /** Moves played; `null` is a pass. */
-  history: { color: Color; move: Move | null; before: string }[] = [];
+  history: { color: Color; move: Move | null; before: BoardSnapshot<Disc> }[] = [];
 
   constructor(rows?: string[]) {
     this.board = rows ? new ReversiBoard().load(rows) : new ReversiBoard().setup();
@@ -120,7 +120,7 @@ export class ReversiGame {
     const move = this.legalMoves().find((m) => m.coord === coord);
     if (!move) throw new Error(`${this.turn} cannot play on ${coord}`);
 
-    this.history.push({ color: this.turn, move, before: this.board.toString() });
+    this.history.push({ color: this.turn, move, before: this.board.snapshot() });
     this.board.play(this.turn, move);
     this.turn = other(this.turn);
     this.passIfStuck();
@@ -132,7 +132,7 @@ export class ReversiGame {
     const last = this.history.pop();
     if (!last) return false;
 
-    this.board.load(last.before.split('\n'));
+    this.board.restore(last.before);
     this.turn = last.color;
     // A pass on its own is not something to take back; undo the move before it too.
     if (last.move === null) return this.undo();
@@ -142,7 +142,7 @@ export class ReversiGame {
   /** When the side to move has no move but the other side does, it passes. */
   private passIfStuck() {
     if (!this.legalMoves().length && this.board.movesFor(other(this.turn)).length) {
-      this.history.push({ color: this.turn, move: null, before: this.board.toString() });
+      this.history.push({ color: this.turn, move: null, before: this.board.snapshot() });
       this.turn = other(this.turn);
     }
   }

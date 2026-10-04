@@ -546,20 +546,6 @@ abstract class CheckersBoard extends Board<CheckersItemType> {
 
     play(best);
   }
-
-  /** A copy of this board with the same variant and position. */
-  clone(): this {
-    const Variant = this.constructor as new (config: BoardConfig) => this;
-    const copy = new Variant(this.config);
-
-    Object.entries(this.board).forEach(([coord, { item }]) => {
-      copy.board[coord].item = item
-        ? this.createItem(JSON.parse(JSON.stringify(item)))
-        : null;
-    });
-
-    return copy;
-  }
 }
 
 export default CheckersBoard;

@@ -1,6 +1,6 @@
 // Sokoban, written on top of ymir-js's core Board and Item. Walls, boxes and
 // the player are items on the board; goals are marks on the floor.
-import { Board, Item, LINEAR_DIRECTIONS, stepCoord } from 'ymir-js';
+import { Board, Item, LINEAR_DIRECTIONS, stepCoord, type BoardSnapshot } from 'ymir-js';
 
 export type Kind = 'wall' | 'box' | 'player';
 export type Move = 'top' | 'bottom' | 'left' | 'right';
@@ -84,22 +84,6 @@ export class SokobanBoard extends Board<Tile> {
     return 'walk';
   }
 
-  /** Where the player and the boxes are, as a short key. */
-  key(): string {
-    return `${this.findPlayer()};${this.boxes().sort().join(',')}`;
-  }
-
-  /** Puts the player and boxes back where a key says. */
-  restore(key: string) {
-    const [player, boxes] = key.split(';');
-
-    Object.keys(this.board).forEach((coord) => {
-      if (this.getItem(coord)?.kind !== 'wall') this.removeItem(coord);
-    });
-    this.setItem(player, new Tile('player'));
-    boxes.split(',').filter(Boolean).forEach((coord) => this.setItem(coord, new Tile('box')));
-  }
-
   private findFloor(): Set<string> {
     const reach = this.getReachable(this.findPlayer(), { canEnter: (coord) => this.getItem(coord)?.kind !== 'wall' });
     return new Set(reach.keys());
@@ -114,13 +98,13 @@ export class SokobanGame {
 
   pushes = 0;
 
-  private readonly start: string;
+  private readonly start: BoardSnapshot<Tile>;
 
-  private history: { key: string; push: boolean }[] = [];
+  private history: { before: BoardSnapshot<Tile>; push: boolean }[] = [];
 
   constructor(readonly level: Level) {
     this.board = new SokobanBoard(level);
-    this.start = this.board.key();
+    this.start = this.board.snapshot();
   }
 
   get solved(): boolean {
@@ -131,11 +115,11 @@ export class SokobanGame {
   move(direction: Move): 'walk' | 'push' | null {
     if (this.solved) return null;
 
-    const before = this.board.key();
+    const before = this.board.snapshot();
     const result = this.board.step(direction);
 
     if (result) {
-      this.history.push({ key: before, push: result === 'push' });
+      this.history.push({ before, push: result === 'push' });
       this.moves += 1;
       if (result === 'push') this.pushes += 1;
     }
@@ -147,7 +131,7 @@ export class SokobanGame {
     const last = this.history.pop();
     if (!last) return false;
 
-    this.board.restore(last.key);
+    this.board.restore(last.before);
     this.moves -= 1;
     if (last.push) this.pushes -= 1;
     return true;
