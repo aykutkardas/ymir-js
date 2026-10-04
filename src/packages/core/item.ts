@@ -20,7 +20,7 @@ export type ItemType = {
   [key: string]: any;
 };
 
-class Item {
+class Item implements ItemType {
   name: string;
 
   data: any;
@@ -31,9 +31,9 @@ class Item {
 
   movement: MovementType = {};
 
-  constructor(item) {
+  constructor(item: Partial<ItemType> & { data?: any }) {
     this.data = item.data;
-    this.name = item.name || this.name;
+    this.name = item.name as string;
     this.lock = item.lock || this.lock;
     this.selected = item.selected || this.selected;
     this.movement = item.movement || this.movement;

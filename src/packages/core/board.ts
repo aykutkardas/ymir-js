@@ -12,12 +12,12 @@ export type BoardConfig = {
   y: number;
 };
 
-export type ColumnType = {
-  item: ItemType;
+export type ColumnType<T extends ItemType = ItemType> = {
+  item: T | null;
 };
 
-export type BoardType = {
-  [key: string]: ColumnType;
+export type BoardType<T extends ItemType = ItemType> = {
+  [key: string]: ColumnType<T>;
 };
 
 export type Direction =
@@ -30,18 +30,18 @@ export type Direction =
   | 'top'
   | 'bottom';
 
-export type BoardMatrixItem = {
+export type BoardMatrixItem<T extends ItemType = ItemType> = {
   coord: string;
-  item: ItemType;
+  item: T | null;
 };
 
-class Board {
+class Board<T extends ItemType = ItemType> {
   config: BoardConfig;
 
-  board: BoardType = {};
+  board: BoardType<T> = {};
 
   constructor(config: BoardConfig) {
-    const board = Board.createBoard(config);
+    const board = Board.createBoard<T>(config);
 
     this.config = config;
     this.board = board;
@@ -49,9 +49,11 @@ class Board {
     return this;
   }
 
-  static createBoard = (config: BoardConfig): BoardType => {
+  static createBoard = <T extends ItemType = ItemType>(
+    config: BoardConfig
+  ): BoardType<T> => {
     const { x, y } = config;
-    const board: BoardType = {};
+    const board: BoardType<T> = {};
 
     for (let rowIndex = 0; rowIndex < x; rowIndex += 1) {
       for (let colIndex = 0; colIndex < y; colIndex += 1) {
@@ -62,18 +64,18 @@ class Board {
     return board;
   };
 
-  updateBoard = (board: BoardType) => {
+  updateBoard = (board: BoardType<T>) => {
     this.board = board;
     return this;
   };
 
-  updateBoardWithMatrix = (matrix: ItemType[][]) => {
-    const newBoard: BoardType = {};
+  updateBoardWithMatrix = (matrix: (T | null)[][]) => {
+    const newBoard: BoardType<T> = {};
 
     matrix.forEach((row, rowIndex) => {
       row.forEach((item, colIndex) => {
         newBoard[`${rowIndex}|${colIndex}`] = {
-          item: item ? new Item(item) : null,
+          item: item ? (new Item(item) as unknown as T) : null,
         };
       });
     });
@@ -81,8 +83,8 @@ class Board {
     return this.updateBoard(newBoard);
   };
 
-  getBoardMatrix = (): BoardMatrixItem[][] => {
-    const matrix = [];
+  getBoardMatrix = (): BoardMatrixItem<T>[][] => {
+    const matrix: BoardMatrixItem<T>[][] = [];
 
     Object.entries(this.board).forEach(([coord, data]) => {
       const [rowId, colId] = parseCoord(coord);
@@ -98,7 +100,7 @@ class Board {
     return matrix;
   };
 
-  getItem = (coord: string): ItemType => {
+  getItem = (coord: string): T | null => {
     const isExistCoord = this.isExistCoord(coord);
 
     if (!isExistCoord) return null;
@@ -106,7 +108,7 @@ class Board {
     return this.board[coord].item;
   };
 
-  setItem = (coord: string, item: ItemType): void => {
+  setItem = (coord: string, item: T | null): void => {
     const isExistCoord = this.isExistCoord(coord);
 
     if (!isExistCoord) return;
@@ -179,7 +181,8 @@ class Board {
     });
   };
 
-  isEmpty = (coord: string): boolean => {
+  // Returns undefined for a coord that is not on the board.
+  isEmpty = (coord: string): boolean | undefined => {
     const isExistCoord = this.isExistCoord(coord);
 
     if (!isExistCoord) return;
@@ -192,7 +195,7 @@ class Board {
   getDistanceBetweenTwoCoords = (
     fromCoord: string,
     toCoord: string
-  ): DistanceType => {
+  ): DistanceType | undefined => {
     const isExistFromCoord = this.isExistCoord(fromCoord);
     const isExistToCoord = this.isExistCoord(toCoord);
 
@@ -204,7 +207,10 @@ class Board {
     return { y: toRowId - fromRowId, x: toColId - fromColId };
   };
 
-  getDirection = (fromCoord: string, toCoord: string): Direction => {
+  getDirection = (
+    fromCoord: string,
+    toCoord: string
+  ): Direction | null | undefined => {
     const isExistFromCoord = this.isExistCoord(fromCoord);
     const isExistToCoord = this.isExistCoord(toCoord);
 
@@ -230,14 +236,11 @@ class Board {
     movement: MovementType,
     columnsObj?: boolean
   ): string[] | { [key: string]: string[] } => {
-    const avaiblableColumns = [];
     const columns = getAvailableColumns(coord, movement);
 
     if (columnsObj) return columns;
 
-    return avaiblableColumns
-      .concat(...Object.values(columns))
-      .filter(this.isExistCoord);
+    return Object.values(columns).flat().filter(this.isExistCoord);
   };
 }
 
