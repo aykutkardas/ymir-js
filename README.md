@@ -11,16 +11,17 @@ npm install ymir-js
 ymir-js is published as an ES module and needs Node.js 20.19+ or 22.12+.
 
 ```js
-import { Core, Checkers } from 'ymir-js';
+import { Board, Item, TurkishBoard, InternationalBoard } from 'ymir-js';
 
-const { Board, Item } = Core;
-const turkish = new Checkers.Turkish.Board().init();
+const turkish = new TurkishBoard().init();
 ```
+
+The grouped imports from earlier versions (`Core.Board`, `Checkers.Turkish.Board`, `Utils.parseCoord`) still work.
 
 ### Create Board
 
 ```js
-const board = new Board({ x: 3, y: 3 });
+const board = new Board({ rows: 3, cols: 3 });
 ```
 
 ### Set Item
@@ -74,10 +75,14 @@ board.isEmpty('2|2');
 // => true
 ```
 
+### Off-board squares
+
+Methods that take a coord are safe to call with one that is not on the board: `getItem` returns `null`, `isEmpty` returns `false`, and `getDirection` / `getDistanceBetweenTwoCoords` return `null`.
+
 ### Exist Control
 
 ```js
-const board = new Board({ x: 3, y: 3 });
+const board = new Board({ rows: 3, cols: 3 });
 
 board.isExistCoord('5|5');
 // => false
@@ -134,6 +139,20 @@ board.autoPlay('white', { onSelect, onMove });
 | Kings                         | fly along rows/columns   | fly along diagonals       |
 | Captured pieces are removed   | one by one, during a jump | after the whole move     |
 | Taking the most pieces        | mandatory                | mandatory                 |
+
+---
+
+## Deprecated in 0.11
+
+These still work and will be removed in 1.0:
+
+| Deprecated                                   | Use instead                                   |
+| -------------------------------------------- | --------------------------------------------- |
+| `new Board({ x, y })` (`x` = rows)           | `new Board({ rows, cols })`                   |
+| `board.config.x`, `board.config.y`           | `board.config.rows`, `board.config.cols`      |
+| `getAvailableColumns(coord, movement, true)` | `getColumnsByDirection(coord, movement)`      |
+| `selectItem`, `deselectItem`, `deselectAllItems`, `item.selected`, `item.lock` | Keep selection in your app's state |
+| `AttactCoord` type                           | `AttackCoord`                                 |
 
 ---
 

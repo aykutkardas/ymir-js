@@ -20,7 +20,7 @@ class TurkishCheckersBoard extends CheckersBoard {
 
   protected readonly blackItemCoords = rows(5, 6);
 
-  constructor(config: BoardConfig = { x: 8, y: 8 }) {
+  constructor(config: BoardConfig = { rows: 8, cols: 8 }) {
     super(config);
   }
 
